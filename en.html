@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal AI Agents — A Complete Beginner's Guide</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --bg-code: #f4f5f7;
+  --fg: #1f2328;
+  --fg-soft: #59636e;
+  --border: #d8dde3;
+  --accent: #b5502a;
+  --accent-soft: #fdf3ef;
+  --note-bg: #f2f7fd;
+  --note-border: #7ba7d7;
+  --warn-bg: #fdf6ec;
+  --warn-border: #d9a13b;
+  --sidebar-w: 300px;
+  --maxw: 860px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --bg-soft: #1e2126;
+    --bg-code: #22262c;
+    --fg: #e3e6ea;
+    --fg-soft: #9aa3ad;
+    --border: #333941;
+    --accent: #e08b63;
+    --accent-soft: #2a211d;
+    --note-bg: #1b2530;
+    --note-border: #3f6a99;
+    --warn-bg: #2b2418;
+    --warn-border: #8a6a2b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Pretendard", "Pretendard Variable", -apple-system,
+               BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕",
+               "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: 16.5px;
+  line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* ---------- 레이아웃 ---------- */
+.layout { display: flex; align-items: flex-start; }
+
+#sidebar {
+  width: var(--sidebar-w);
+  flex: 0 0 var(--sidebar-w);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--bg-soft);
+  padding: 28px 18px 60px 24px;
+}
+#sidebar .toc-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--fg-soft);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+#sidebar ul { list-style: none; margin: 0; padding: 0; }
+#sidebar ul ul { padding-left: 13px; }
+#sidebar li { margin: 1px 0; }
+#sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.855rem;
+  line-height: 1.45;
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+#sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+#sidebar a.active {
+  color: var(--accent);
+  font-weight: 600;
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+/* 1단계 항목(부 제목)은 굵게 */
+#sidebar > .toc > ul > li > a { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.lang-switch a, .lang-switch span {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 5px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 5px;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.lang-switch span { background: var(--accent); color: #fff; }
+.lang-switch a { color: var(--fg-soft); }
+.lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
+
+main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 46px 40px 120px;
+  display: flex;
+  justify-content: center;
+}
+.content { width: 100%; max-width: var(--maxw); }
+
+/* ---------- 타이포그래피 ---------- */
+h1, h2, h3, h4 { line-height: 1.35; font-weight: 700; scroll-margin-top: 20px; }
+h1 {
+  font-size: 2.05rem;
+  margin: 0 0 0.6em;
+  padding-bottom: 0.35em;
+  border-bottom: 3px solid var(--accent);
+}
+h2 {
+  font-size: 1.5rem;
+  margin: 2.6em 0 0.8em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 1.16rem; margin: 2em 0 0.6em; color: var(--accent); }
+h4 { font-size: 1.02rem; margin: 1.6em 0 0.5em; }
+p { margin: 0.85em 0; }
+a { color: var(--accent); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 3em 0;
+}
+
+ul, ol { padding-left: 1.4em; margin: 0.8em 0; }
+li { margin: 0.32em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+strong { font-weight: 700; }
+
+/* ---------- 표 ---------- */
+.table-wrap { overflow-x: auto; margin: 1.4em 0; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.93rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 9px 13px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--bg-soft); font-weight: 700; white-space: nowrap; }
+tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--bg-soft) 45%, transparent); }
+
+/* ---------- 코드 ---------- */
+code {
+  font-family: "Cascadia Mono", "Consolas", "D2Coding", "Menlo", monospace;
+  font-size: 0.88em;
+}
+p code, li code, td code, th code {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.codeblock { position: relative; margin: 1.15em 0; }
+.codeblock pre {
+  margin: 0;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 60px 14px 16px;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+.codeblock pre code { background: none; border: 0; padding: 0; font-size: 0.9rem; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg-soft);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 0.74rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s;
+  font-family: inherit;
+}
+.codeblock:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.done { color: #2f8a4d; border-color: #2f8a4d; opacity: 1; }
+
+/* ---------- 인용(참고 상자) ---------- */
+blockquote {
+  margin: 1.3em 0;
+  padding: 12px 18px;
+  background: var(--note-bg);
+  border-left: 4px solid var(--note-border);
+  border-radius: 0 8px 8px 0;
+  color: var(--fg);
+}
+blockquote p { margin: 0.4em 0; }
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ---------- 모바일 ---------- */
+#toc-toggle { display: none; }
+@media (max-width: 980px) {
+  .layout { display: block; }
+  #sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    max-height: 50vh;
+  }
+  #toc-toggle {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    color: var(--fg);
+    font: inherit;
+    font-weight: 700;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  #sidebar .toc { display: none; }
+  #sidebar.open .toc { display: block; }
+  #sidebar .toc-title { display: none; }
+  main { padding: 26px 18px 80px; }
+  body { font-size: 16px; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+}
+
+/* ---------- 인쇄 ---------- */
+@media print {
+  #sidebar, .copy-btn, .lang-switch { display: none !important; }
+  body { font-size: 10.5pt; color: #000; background: #fff; }
+  main { padding: 0; }
+  .content { max-width: none; }
+  h2 { page-break-after: avoid; }
+  .codeblock pre, table, blockquote { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav id="sidebar">
+    <button id="toc-toggle" type="button">Show/hide contents ▾</button>
+    <div class="lang-switch">
+      <span>English</span>
+      <a href="index.html" hreflang="ko">한국어</a>
+    </div>
+    <div class="toc-title">Contents</div>
+    <div class="toc">
+<ul>
+<li><a href="#terminal-ai-agents-a-complete-beginners-guide">Terminal AI Agents — A Complete Beginner's Guide</a><ul>
+<li><a href="#how-to-read-this-document">How to read this document</a></li>
+</ul>
+</li>
+<li><a href="#part-1-why-run-ai-in-a-terminal">Part 1. Why run AI in a terminal</a><ul>
+<li><a href="#11-how-this-differs-from-the-ai-chatbot-you-already-use">1.1 How this differs from the AI chatbot you already use</a></li>
+<li><a href="#12-what-you-can-actually-do-with-it">1.2 What you can actually do with it</a></li>
+<li><a href="#13-answers-to-the-usual-worries">1.3 Answers to the usual worries</a></li>
+</ul>
+</li>
+<li><a href="#part-2-terminal-basics-30-minutes-is-enough">Part 2. Terminal basics — 30 minutes is enough</a><ul>
+<li><a href="#21-what-a-terminal-is">2.1 What a terminal is</a><ul>
+<li><a href="#open-a-terminal">Open a terminal</a></li>
+</ul>
+</li>
+<li><a href="#22-the-shape-of-a-command">2.2 The shape of a command</a></li>
+<li><a href="#23-understanding-folders-and-paths">2.3 Understanding folders and paths</a><ul>
+<li><a href="#how-to-avoid-typing-paths-by-hand-important">How to avoid typing paths by hand (important)</a></li>
+</ul>
+</li>
+<li><a href="#24-the-five-commands-you-must-know">2.4 The five commands you must know</a><ul>
+<li><a href="#1-cd-move-into-a-folder">1. cd — move into a folder</a></li>
+<li><a href="#2-ls-see-what-is-in-the-current-folder">2. ls — see what is in the current folder</a></li>
+<li><a href="#3-pwd-check-where-you-are">3. pwd — check where you are</a></li>
+<li><a href="#4-mkdir-make-a-new-folder">4. mkdir — make a new folder</a></li>
+<li><a href="#5-cls-clear-the-screen">5. cls — clear the screen</a></li>
+</ul>
+</li>
+<li><a href="#25-handy-things-to-know">2.5 Handy things to know</a></li>
+<li><a href="#26-practise-right-now">2.6 Practise right now</a><ul>
+<li><a href="#when-something-does-not-work">When something does not work</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#part-3-preparation-four-supporting-programs">Part 3. Preparation — four supporting programs</a><ul>
+<li><a href="#30-what-you-are-installing-and-why">3.0 What you are installing and why</a></li>
+<li><a href="#31-install-windows-terminal">3.1 Install Windows Terminal</a></li>
+<li><a href="#32-install-nodejs-recommended">3.2 Install Node.js (recommended)</a><ul>
+<li><a href="#method-a-by-command-recommended-fast">Method A — by command (recommended, fast)</a></li>
+<li><a href="#method-b-download-from-the-website">Method B — download from the website</a></li>
+<li><a href="#check-that-it-worked-do-not-skip">Check that it worked (do not skip)</a></li>
+<li><a href="#when-it-does-not-work">When it does not work</a></li>
+</ul>
+</li>
+<li><a href="#33-install-git">3.3 Install Git</a><ul>
+<li><a href="#check">Check</a></li>
+</ul>
+</li>
+<li><a href="#34-allow-scripts-to-run-skip-it-and-you-get-errors">3.4 Allow scripts to run (skip it and you get errors)</a></li>
+<li><a href="#35-text-encoding-for-non-english-users">3.5 Text encoding (for non-English users)</a></li>
+<li><a href="#36-part-3-final-check">3.6 Part 3 final check</a></li>
+</ul>
+</li>
+<li><a href="#part-4-installing-an-ai-agent">Part 4. Installing an AI agent</a><ul>
+<li><a href="#41-which-one-to-choose">4.1 Which one to choose</a></li>
+<li><a href="#42-install-claude-code">4.2 Install Claude Code</a><ul>
+<li><a href="#method-a-dedicated-installer-recommended">Method A — dedicated installer (recommended)</a></li>
+<li><a href="#method-b-via-npm-if-you-already-have-nodejs">Method B — via npm (if you already have Node.js)</a></li>
+<li><a href="#check-that-it-worked">Check that it worked</a></li>
+<li><a href="#log-in">Log in</a></li>
+<li><a href="#commands-worth-knowing">Commands worth knowing</a></li>
+</ul>
+</li>
+<li><a href="#43-install-openai-codex-cli">4.3 Install OpenAI Codex CLI</a><ul>
+<li><a href="#method-a-dedicated-installer-recommended_1">Method A — dedicated installer (recommended)</a></li>
+<li><a href="#method-b-via-npm">Method B — via npm</a></li>
+<li><a href="#method-c-via-winget">Method C — via winget</a></li>
+<li><a href="#check-that-it-worked_1">Check that it worked</a></li>
+<li><a href="#log-in_1">Log in</a></li>
+<li><a href="#run-it">Run it</a></li>
+</ul>
+</li>
+<li><a href="#44-install-antigravity-cli-the-successor-to-gemini-cli">4.4 Install Antigravity CLI (the successor to Gemini CLI)</a><ul>
+<li><a href="#first-some-background-gemini-cli-is-finished">First, some background — Gemini CLI is finished</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#check-that-it-worked_2">Check that it worked</a></li>
+<li><a href="#log-in_2">Log in</a></li>
+<li><a href="#commands-worth-knowing_1">Commands worth knowing</a></li>
+<li><a href="#updating">Updating</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</a><ul>
+<li><a href="#51-prepare-a-working-folder">5.1 Prepare a working folder</a></li>
+<li><a href="#52-make-a-practice-file">5.2 Make a practice file</a></li>
+<li><a href="#53-run-the-ai-and-talk-to-it">5.3 Run the AI and talk to it</a></li>
+<li><a href="#54-understanding-approval-prompts-the-most-important-part">5.4 Understanding approval prompts — the most important part</a></li>
+<li><a href="#55-quitting">5.5 Quitting</a></li>
+<li><a href="#56-starting-again-next-time">5.6 Starting again next time</a></li>
+</ul>
+</li>
+<li><a href="#part-6-things-worth-trying">Part 6. Things worth trying</a><ul>
+<li><a href="#61-file-organisation">6.1 File organisation</a></li>
+<li><a href="#62-data-work">6.2 Data work</a></li>
+<li><a href="#63-writing">6.3 Writing</a></li>
+<li><a href="#64-learning-as-you-go">6.4 Learning as you go</a></li>
+<li><a href="#65-how-to-write-good-instructions">6.5 How to write good instructions</a></li>
+</ul>
+</li>
+<li><a href="#part-7-using-it-safely-five-rules">Part 7. Using it safely — five rules</a><ul>
+<li><a href="#1-only-run-it-in-a-dedicated-working-folder">1. Only run it in a dedicated working folder</a></li>
+<li><a href="#2-copy-the-originals-first">2. Copy the originals first</a></li>
+<li><a href="#3-keep-sensitive-material-out-of-the-working-folder">3. Keep sensitive material out of the working folder</a></li>
+<li><a href="#4-read-the-approval-screen-before-you-click">4. Read the approval screen before you click</a></li>
+<li><a href="#5-do-not-use-auto-approve">5. Do not use auto-approve</a></li>
+</ul>
+</li>
+<li><a href="#part-8-when-something-goes-wrong">Part 8. When something goes wrong</a><ul>
+<li><a href="#81-the-term-is-not-recognized">8.1 "The term ... is not recognized"</a></li>
+<li><a href="#82-cannot-be-loaded-because-running-scripts-is-disabled">8.2 "...cannot be loaded because running scripts is disabled"</a></li>
+<li><a href="#83-non-english-text-shows-as-or-garbled-characters">8.3 Non-English text shows as ??? or garbled characters</a></li>
+<li><a href="#84-red-err-errors-during-installation">8.4 Red ERR! errors during installation</a></li>
+<li><a href="#85-trouble-caused-by-spaces-or-non-english-characters-in-a-path">8.5 Trouble caused by spaces or non-English characters in a path</a></li>
+<li><a href="#86-the-ai-answers-oddly-or-the-conversation-gets-tangled">8.6 The AI answers oddly, or the conversation gets tangled</a></li>
+<li><a href="#87-updating-to-the-latest-version">8.7 Updating to the latest version</a></li>
+<li><a href="#88-removing-them">8.8 Removing them</a></li>
+</ul>
+</li>
+<li><a href="#appendix-a-glossary">Appendix A. Glossary</a></li>
+<li><a href="#appendix-b-one-page-command-summary">Appendix B. One-page command summary</a><ul>
+<li><a href="#terminal-basics">Terminal basics</a></li>
+<li><a href="#installation-once">Installation (once)</a></li>
+<li><a href="#verification">Verification</a></li>
+<li><a href="#the-everyday-flow">The everyday flow</a></li>
+<li><a href="#keyboard-shortcuts">Keyboard shortcuts</a></li>
+</ul>
+</li>
+<li><a href="#appendix-c-summary-for-mac-users">Appendix C. Summary for Mac users</a></li>
+<li><a href="#appendix-d-do-you-need-wsl-linux">Appendix D. Do you need WSL (Linux)?</a><ul>
+<li><a href="#why-plain-windows-is-the-better-choice">Why plain Windows is the better choice</a></li>
+<li><a href="#do-this-instead">Do this instead</a></li>
+<li><a href="#when-wsl-is-the-better-option">When WSL is the better option</a></li>
+</ul>
+</li>
+<li><a href="#wrapping-up-what-comes-next">Wrapping up — what comes next</a><ul>
+<li><a href="#official-documentation">Official documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+  </nav>
+  <main>
+    <article class="content">
+<h1 id="terminal-ai-agents-a-complete-beginners-guide">Terminal AI Agents — A Complete Beginner's Guide</h1>
+<blockquote>
+<p>Written so that you can follow along without being good with computers.<br />
+Based on Windows 11. Work through it in order, start to finish.<br />
+Estimated time: <strong>30 minutes to install + 20 minutes for your first session</strong></p>
+</blockquote>
+<hr />
+<h2 id="how-to-read-this-document">How to read this document</h2>
+<ul>
+<li><strong>First time?</strong> Start at Part 1 and read in order. Do not skip.</li>
+<li><strong>Already used a terminal?</strong> Skip Part 2 and start at Part 3.</li>
+<li><strong>Text in grey boxes</strong> is a command you type into the computer. Copy and paste it as is.</li>
+<li>Every step has a <strong>"Check that it worked"</strong> item. Confirm it before moving on.</li>
+</ul>
+<hr />
+<h1 id="part-1-why-run-ai-in-a-terminal">Part 1. Why run AI in a terminal</h1>
+<h2 id="11-how-this-differs-from-the-ai-chatbot-you-already-use">1.1 How this differs from the AI chatbot you already use</h2>
+<p>When you use ChatGPT or Claude in a web browser, the flow looks like this.</p>
+<pre><code>You: &quot;Tell me how to clean up this Excel file&quot;
+AI:  (explains the method in words)
+You: (read it -&gt; open Excel -&gt; do the work by hand)
+</code></pre>
+<p>The AI only <strong>talks</strong>. You do the actual work. You upload files one at a time, then copy the answer back out by hand.</p>
+<p>A terminal AI agent works differently.</p>
+<pre><code>You: &quot;Clean up the Excel files in this folder&quot;
+AI:  (opens the folder -&gt; reads the files -&gt; edits them -&gt; reports back)
+You: (just review it)
+</code></pre>
+<p><strong>There is one core difference: the AI can read and write files on your computer directly.</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Web chatbot</th>
+<th>Terminal AI agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Giving it files</td>
+<td>Upload one by one</td>
+<td>Reads a whole folder on its own</td>
+</tr>
+<tr>
+<td>Getting results</td>
+<td>Copy and paste out</td>
+<td>Saved straight to a file</td>
+</tr>
+<tr>
+<td>Working across many files</td>
+<td>Effectively impossible</td>
+<td>Hundreds at a time</td>
+</tr>
+<tr>
+<td>Repeat work</td>
+<td>Start over every time</td>
+<td>Set it up once, it handles the rest</td>
+</tr>
+<tr>
+<td>Memory of past work</td>
+<td>Gone when you close the tab</td>
+<td>Left behind as files in the folder</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-what-you-can-actually-do-with-it">1.2 What you can actually do with it</h2>
+<p>These are things you can do without being a programmer.</p>
+<p><strong>Documents and reference material</strong><br />
+- Turn 100 scattered PDFs into a table of titles and summaries<br />
+- Rename files in bulk to a consistent convention<br />
+- Pull one specific section out of many Word files and merge them into one</p>
+<p><strong>Data work</strong><br />
+- Find and fix errors in Excel/CSV files<br />
+- Merge several tables into one and compute statistics<br />
+- Plot data as a chart and save it as an image file</p>
+<p><strong>Research and academic work</strong><br />
+- Rewrite a draft's sentences in an academic register<br />
+- Normalise references to a journal's required style<br />
+- Write and run a script that processes experimental data</p>
+<p><strong>Everyday office work</strong><br />
+- Fill in a recurring report template automatically<br />
+- Gather material from the web and organise it<br />
+- Draft many emails at once</p>
+<p><strong>Programming</strong> (if you are interested)<br />
+- Build a program from scratch<br />
+- Understand and modify code someone else wrote</p>
+<h2 id="13-answers-to-the-usual-worries">1.3 Answers to the usual worries</h2>
+<p><strong>"Do I need to know how to program?"</strong><br />
+No. You say "do this for me" in plain English. You do need to know how to open a terminal and a handful of commands, which Part 2 covers. Thirty minutes is enough.</p>
+<p><strong>"What if it wrecks my files?"</strong><br />
+An AI agent <strong>asks "may I make this change?" every single time</strong> before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 7 (backups, a dedicated folder), the risk is close to zero.</p>
+<p><strong>"Will my files leak?"</strong><br />
+File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. <strong>Do not put personal data, unpublished research data, or company confidential material in your working folder.</strong> Details in Part 7.</p>
+<p><strong>"Does it cost money?"</strong><br />
+A paid subscription is generally required. If you already pay for ChatGPT Plus or Claude Pro, you can use it through that subscription at no extra cost. Google's Antigravity CLI gives you a free allowance when you sign in with a Google account (check the official documentation for the exact limits). Section 4.1 lays this out.</p>
+<p><strong>"Do I need Linux? Do I need WSL?"</strong><br />
+No. <strong>Use it on Windows as is.</strong> Some tools did not support Windows in the past and required WSL (a Linux environment), and a lot of material from that era is still circulating. All three tools now ship a Windows-native installer. See <strong>Appendix D</strong> for how to decide.</p>
+<p><strong>"The black screen scares me."</strong><br />
+That is the most common reaction. In practice you use about five commands; everything else is a plain-English conversation. Think of the black screen as just a window for talking to the AI.</p>
+<hr />
+<h1 id="part-2-terminal-basics-30-minutes-is-enough">Part 2. Terminal basics — 30 minutes is enough</h1>
+<p>You are not trying to become a programmer. You learn just enough to give the AI work.</p>
+<h2 id="21-what-a-terminal-is">2.1 What a terminal is</h2>
+<p><strong>A terminal is a window where you give the computer instructions as text.</strong></p>
+<p>Normally you open a folder by double-clicking it with the mouse. In a terminal you <strong>type</strong> <code>cd foldername</code> instead. The result is the same. Only the method differs.</p>
+<p>The reason this matters is that <strong>AI agents only work this way.</strong> There is no screen to click.</p>
+<h3 id="open-a-terminal">Open a terminal</h3>
+<ol>
+<li>Press the <strong><code>Windows key</code></strong> on your keyboard (the one with the window icon, usually next to the left Ctrl).</li>
+<li>Type <strong><code>terminal</code></strong> into the search box that appears.</li>
+<li>When the app named <strong><code>Terminal</code></strong> shows up, press <strong>Enter</strong>.</li>
+</ol>
+<p>A black (or blue) window opens with text like this.</p>
+<pre><code>PS C:\Users\Jane&gt;
+</code></pre>
+<p>This is normal. Here is what it means.</p>
+<ul>
+<li><code>PS</code> = short for PowerShell. The name of the program taking your commands.</li>
+<li><code>C:\Users\Jane</code> = <strong>where you currently are (which folder)</strong>. This is the important part.</li>
+<li><code>&gt;</code> = the signal that says "type a command here". You type after it.</li>
+</ul>
+<blockquote>
+<p><strong>Remember this</strong>: a terminal always has a "current location". It is exactly like having a particular folder open in File Explorer. Every command runs relative to that location.</p>
+</blockquote>
+<h2 id="22-the-shape-of-a-command">2.2 The shape of a command</h2>
+<p>Most commands look like this.</p>
+<pre><code>command target -option
+</code></pre>
+<p>Here is an example.</p>
+<pre><code>cd Documents
+</code></pre>
+<ul>
+<li><code>cd</code> = the command (means "move into this folder", short for change directory)</li>
+<li><code>Documents</code> = the target (the folder to move into)</li>
+</ul>
+<p>After typing a command you <strong>must press Enter</strong> for it to run. Nothing happens until you do, so if you make a typo, do not panic — just delete it.</p>
+<h2 id="23-understanding-folders-and-paths">2.3 Understanding folders and paths</h2>
+<p>Folders on a computer nest inside each other like a chest of drawers.</p>
+<pre><code>C:\                          &lt;- the C: drive (outermost)
++-- Users\                   &lt;- the users folder
+    +-- Jane\                &lt;- your folder
+        +-- Documents\
+        +-- Downloads\
+        +-- Desktop\
+</code></pre>
+<p>Writing that out on one line gives you a <strong>path</strong>.</p>
+<pre><code>C:\Users\Jane\Documents
+</code></pre>
+<p>The backslash (<code>\</code>) is the separator between drawers. On some non-English keyboards it is displayed as a currency symbol (for example the won sign on Korean keyboards), but <strong>it is the same character.</strong> Do not worry about it.</p>
+<h3 id="how-to-avoid-typing-paths-by-hand-important">How to avoid typing paths by hand (important)</h3>
+<p>Typing paths by hand invites typos. There are much easier ways.</p>
+<p><strong>Method 1 — copy it from File Explorer</strong><br />
+1. Open the folder you want in File Explorer.<br />
+2. <strong>Click once on the address bar</strong> at the top. The path turns into text.<br />
+3. Copy it with <code>Ctrl + C</code>.<br />
+4. In the terminal, type <code>cd</code> (with <strong>a space</strong> after <code>cd</code>), then <strong>click the right mouse button once</strong> to paste.</p>
+<p><strong>Method 2 — open a terminal straight from Explorer (easiest)</strong><br />
+1. Open the folder you want in File Explorer.<br />
+2. <strong>Right-click on empty space</strong> inside the folder.<br />
+3. Choose <strong>"Open in Terminal"</strong>.</p>
+<p>The terminal opens already at that folder. <strong>This is the method you will use most.</strong></p>
+<blockquote>
+<p><strong>Careful</strong>: if the path <strong>contains spaces, wrap it in double quotes.</strong><br />
+Wrong: <code>cd C:\My Documents\Research Data</code><br />
+Right: <code>cd "C:\My Documents\Research Data"</code></p>
+</blockquote>
+<h2 id="24-the-five-commands-you-must-know">2.4 The five commands you must know</h2>
+<p>This is all you need.</p>
+<h3 id="1-cd-move-into-a-folder">1. <code>cd</code> — move into a folder</h3>
+<pre><code>cd Documents
+</code></pre>
+<p>Moves into the Documents folder.</p>
+<pre><code>cd ..
+</code></pre>
+<p>Two dots means <strong>go up one level (outwards)</strong>.</p>
+<pre><code>cd \
+</code></pre>
+<p>Goes to the very top of the C: drive.</p>
+<h3 id="2-ls-see-what-is-in-the-current-folder">2. <code>ls</code> — see what is in the current folder</h3>
+<pre><code>ls
+</code></pre>
+<p>Lists the files and folders where you are. The same as looking inside a folder in Explorer.</p>
+<h3 id="3-pwd-check-where-you-are">3. <code>pwd</code> — check where you are</h3>
+<pre><code>pwd
+</code></pre>
+<p>Shows the full path of your current location. Use it when you get lost.</p>
+<h3 id="4-mkdir-make-a-new-folder">4. <code>mkdir</code> — make a new folder</h3>
+<pre><code>mkdir myresearch
+</code></pre>
+<p>Creates a folder called <code>myresearch</code> where you are.</p>
+<h3 id="5-cls-clear-the-screen">5. <code>cls</code> — clear the screen</h3>
+<pre><code>cls
+</code></pre>
+<p>Tidies up a cluttered screen. It clears the display only — no files are deleted.</p>
+<h2 id="25-handy-things-to-know">2.5 Handy things to know</h2>
+<table>
+<thead>
+<tr>
+<th>What you want</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Paste</td>
+<td><strong>Right-click</strong> (Ctrl+V also works)</td>
+</tr>
+<tr>
+<td>Copy</td>
+<td>Select text by dragging, then <code>Ctrl + C</code></td>
+</tr>
+<tr>
+<td>Recall the command you just typed</td>
+<td><strong>Up arrow key</strong></td>
+</tr>
+<tr>
+<td>Force-stop a running job</td>
+<td><code>Ctrl + C</code></td>
+</tr>
+<tr>
+<td>Autocomplete a command</td>
+<td>Type the first few letters and press <strong>Tab</strong></td>
+</tr>
+<tr>
+<td>Make the text bigger</td>
+<td><code>Ctrl</code> + mouse wheel</td>
+</tr>
+<tr>
+<td>Close the terminal</td>
+<td>Type <code>exit</code> and press Enter</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Do learn the Tab key.</strong> Type <code>cd Doc</code>, press Tab, and it completes to <code>cd Documents\</code> by itself. It prevents typos.</p>
+<h2 id="26-practise-right-now">2.6 Practise right now</h2>
+<p>Open a terminal and type the following in order. Press Enter after each line.</p>
+<pre><code>pwd
+</code></pre>
+<p>-&gt; shows where you are.</p>
+<pre><code>ls
+</code></pre>
+<p>-&gt; shows a file list.</p>
+<pre><code>cd Documents
+</code></pre>
+<p>-&gt; moves into the documents folder.</p>
+<pre><code>pwd
+</code></pre>
+<p>-&gt; you can see the location has changed.</p>
+<pre><code>mkdir ai-practice
+</code></pre>
+<p>-&gt; creates a new folder.</p>
+<pre><code>ls
+</code></pre>
+<p>-&gt; the <code>ai-practice</code> folder you just made appears in the list.</p>
+<pre><code>cd ..
+</code></pre>
+<p>-&gt; back out again.</p>
+<p><strong>If you got this far, terminal basics are done.</strong> That really is all of it.</p>
+<h3 id="when-something-does-not-work">When something does not work</h3>
+<table>
+<thead>
+<tr>
+<th>What the screen says</th>
+<th>What it means</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>...cannot find path</code></td>
+<td>No such folder</td>
+<td>Check the spelling; run <code>ls</code> to see the real names</td>
+</tr>
+<tr>
+<td><code>...is not recognized...</code></td>
+<td>No such command</td>
+<td>Check the spelling of the command</td>
+</tr>
+<tr>
+<td><code>Access is denied</code></td>
+<td>A folder you lack permission for</td>
+<td>Try somewhere else</td>
+</tr>
+</tbody>
+</table>
+<p><strong>No error will break your computer.</strong> Try things freely.</p>
+<hr />
+<h1 id="part-3-preparation-four-supporting-programs">Part 3. Preparation — four supporting programs</h1>
+<p>Before installing an AI agent, install the programs it runs on.</p>
+<h2 id="30-what-you-are-installing-and-why">3.0 What you are installing and why</h2>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Program</th>
+<th>Why it is needed</th>
+<th>Required?</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Windows Terminal</td>
+<td>The window you talk to the AI in. The old console mangles non-English text</td>
+<td>Required</td>
+<td>2 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Node.js</td>
+<td>The engine needed if you install via <code>npm</code></td>
+<td>Recommended</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Git</td>
+<td>Used internally by the AI. With it, Claude Code uses Git Bash as its shell</td>
+<td>Recommended</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Execution policy, encoding</td>
+<td>Skip it and you get errors later</td>
+<td>Required</td>
+<td>3 min</td>
+</tr>
+</tbody>
+</table>
+<p><strong>All of these are free, safe, official programs.</strong></p>
+<blockquote>
+<p><strong>Why Node.js is only "recommended"</strong><br />
+AI agents used to be installable only through <code>npm</code> (the installer that ships with Node.js). Today Claude Code, Antigravity CLI and Codex CLI all provide <strong>dedicated installers that work without Node.js</strong>. It is still worth having: it gives you a fallback route when an install goes wrong, and a good share of the tools the AI writes for you will use it. <strong>If you are short on time, skip section 3.2 and go to Part 4.</strong></p>
+</blockquote>
+<h2 id="31-install-windows-terminal">3.1 Install Windows Terminal</h2>
+<p>Windows 11 nearly always has it already. If the terminal opened fine in section 2.1, <strong>skip this step.</strong></p>
+<p>If not, type this into a terminal (or Command Prompt).</p>
+<pre><code>winget install --id Microsoft.WindowsTerminal -e
+</code></pre>
+<h2 id="32-install-nodejs-recommended">3.2 Install Node.js (recommended)</h2>
+<p>Node.js is the underlying engine that runs and installs programs. It is used when you install an AI agent the <code>npm</code> way, and often needed to run the tools the AI builds for you.</p>
+<h3 id="method-a-by-command-recommended-fast">Method A — by command (recommended, fast)</h3>
+<p>Type this into the terminal and press Enter.</p>
+<pre><code>winget install --id OpenJS.NodeJS.LTS -e
+</code></pre>
+<p>It takes a few minutes. When you see <code>Successfully installed</code>, it is done.</p>
+<h3 id="method-b-download-from-the-website">Method B — download from the website</h3>
+<p>Use this if the command does not work.</p>
+<ol>
+<li>Go to <strong>https://nodejs.org</strong> in a browser.</li>
+<li>Click the green button marked <strong>"LTS"</strong>. (LTS = the long-term support stable release. Do not pick Current.)</li>
+<li>Double-click the downloaded file (<code>node-v24...msi</code>).</li>
+<li>When the installer opens, <strong>change nothing and keep pressing "Next"</strong>.</li>
+<li>If a checkbox reading <code>Automatically install the necessary tools...</code> appears, <strong>leave it unchecked.</strong> It is unnecessary and slow.</li>
+<li><strong>"Install"</strong> -&gt; then <strong>"Finish"</strong>.</li>
+</ol>
+<h3 id="check-that-it-worked-do-not-skip">Check that it worked (do not skip)</h3>
+<p><strong>Close the terminal window completely and open a new one.</strong> (Skip this and it will look like the install failed.)</p>
+<p>In the new terminal, type:</p>
+<pre><code>node --version
+</code></pre>
+<p>Success looks like this.</p>
+<pre><code>v24.9.0
+</code></pre>
+<p>The numbers can differ. Any version number starting with <code>v</code> is fine. (As of September 2026 the LTS line is 24.x, and 22.x is still supported.)</p>
+<pre><code>npm --version
+</code></pre>
+<p>Check this too. A number like <code>10.9.2</code> means you are fine.</p>
+<blockquote>
+<p><strong>What is <code>node</code> and what is <code>npm</code>?</strong><br />
+<code>node</code> is the engine; <code>npm</code> is the tool that installs programs. Installing Node.js gives you both.</p>
+</blockquote>
+<h3 id="when-it-does-not-work">When it does not work</h3>
+<p>If you see <code>'node' is not recognized...</code>:</p>
+<ol>
+<li>Confirm you closed and reopened the terminal. (This is the most common cause.)</li>
+<li>If that fails, <strong>reboot</strong> and check again.</li>
+<li>Still failing? See section 8.1.</li>
+</ol>
+<h2 id="33-install-git">3.3 Install Git</h2>
+<p>Git is a tool programmers use to track file history, and AI agents use it internally. <strong>You do not need to learn it — just have it installed.</strong></p>
+<p>On Windows there is a second reason. Installing Git also installs <strong>Git Bash</strong>, which Claude Code detects automatically and uses as its command shell. The Linux-style commands that fill the internet then work as written, and errors drop noticeably. It is not mandatory, but you are better off with it.</p>
+<pre><code>winget install --id Git.Git -e
+</code></pre>
+<p>To get it from the website, download from <strong>https://git-scm.com/download/win</strong> and install. The installer asks a lot of questions; <strong>leaving every default alone and pressing Next</strong> is fine.</p>
+<h3 id="check">Check</h3>
+<p>Open a new terminal and type:</p>
+<pre><code>git --version
+</code></pre>
+<pre><code>git version 2.52.0.windows.1
+</code></pre>
+<p>Output like that means you are set.</p>
+<h2 id="34-allow-scripts-to-run-skip-it-and-you-get-errors">3.4 Allow scripts to run (skip it and you get errors)</h2>
+<p>For security, Windows blocks external scripts by default. You have to lift that for AI agents to run.</p>
+<p>Type this into the terminal.</p>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+</code></pre>
+<p>When it asks whether you want to change the execution policy, type <strong><code>Y</code></strong> and press Enter.</p>
+<blockquote>
+<p><strong>Is that dangerous?</strong><br />
+<code>RemoteSigned</code> is the middle setting: "run scripts I wrote myself, and run downloaded ones only if they are signed." It is the standard developers use, and it does not disable security. Because of <code>-Scope CurrentUser</code> it applies to your account only, not the whole machine.</p>
+</blockquote>
+<h2 id="35-text-encoding-for-non-english-users">3.5 Text encoding (for non-English users)</h2>
+<p>If you work with file names or output in a language other than English, the console can show them as <code>???</code> or as garbled characters. This setting prevents that. <strong>If you only ever handle English text, you can skip it.</strong></p>
+<p>Type this into the terminal.</p>
+<pre><code>notepad $PROFILE
+</code></pre>
+<p>Notepad opens. If it asks <strong>"Cannot find the file. Do you want to create a new file?"</strong>, choose <strong>Yes</strong>.</p>
+<p>Paste these three lines into Notepad.</p>
+<pre><code class="language-powershell">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+</code></pre>
+<p>Save with <code>Ctrl + S</code> and close Notepad. <strong>Close the terminal and open a new one.</strong></p>
+<blockquote>
+<p>This file (<code>$PROFILE</code>) runs automatically every time you start the terminal. Put it here once and you never touch it again.</p>
+</blockquote>
+<h2 id="36-part-3-final-check">3.6 Part 3 final check</h2>
+<p>Open a new terminal and type each of these, confirming that a version number comes back.</p>
+<pre><code>node --version
+</code></pre>
+<pre><code>npm --version
+</code></pre>
+<pre><code>git --version
+</code></pre>
+<p><strong>If all three return version numbers, you are ready.</strong> If any one fails, see Part 8.</p>
+<hr />
+<h1 id="part-4-installing-an-ai-agent">Part 4. Installing an AI agent</h1>
+<h2 id="41-which-one-to-choose">4.1 Which one to choose</h2>
+<p>Pick one of three. <strong>If this is your first time, install one and get comfortable before adding more.</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Claude Code</th>
+<th>Codex CLI</th>
+<th>Antigravity CLI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Made by</td>
+<td>Anthropic</td>
+<td>OpenAI</td>
+<td>Google</td>
+</tr>
+<tr>
+<td>Terminal command</td>
+<td><code>claude</code></td>
+<td><code>codex</code></td>
+<td><code>agy</code></td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Included in Claude Pro (about $20/month)</td>
+<td>Included in ChatGPT Plus (about $20/month)</td>
+<td>Free allowance with a Google account</td>
+</tr>
+<tr>
+<td>Writing and documents</td>
+<td>Strong</td>
+<td>Fair</td>
+<td>Fair</td>
+</tr>
+<tr>
+<td>Writing code</td>
+<td>Strong</td>
+<td>Strong</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Install difficulty</td>
+<td>Easy</td>
+<td>Easy</td>
+<td>Easy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendations</strong></p>
+<ul>
+<li><strong>I want to try it without paying</strong> -&gt; <strong>Antigravity CLI</strong> (section 4.4)</li>
+<li><strong>I already pay for ChatGPT Plus</strong> -&gt; <strong>Codex CLI</strong> (section 4.3)</li>
+<li><strong>I already pay for Claude Pro, or documents and research are my main use</strong> -&gt; <strong>Claude Code</strong> (section 4.2)</li>
+</ul>
+<p>Installing all three causes no conflicts. Still, start with one.</p>
+<blockquote>
+<p><strong>If you came here looking for Gemini CLI</strong><br />
+Google's <code>gemini</code> command (Gemini CLI) <strong>stopped serving individual users on 18 June 2026</strong>. Its successor is <strong>Antigravity CLI (<code>agy</code>)</strong>, covered in section 4.4. Older material online still tells you to run <code>npm install -g @google/gemini-cli</code>; install it that way today and you will be blocked at the login step. Section 4.4 has the details.</p>
+</blockquote>
+<hr />
+<h2 id="42-install-claude-code">4.2 Install Claude Code</h2>
+<h3 id="method-a-dedicated-installer-recommended">Method A — dedicated installer (recommended)</h3>
+<p>Type this into the terminal.</p>
+<pre><code>irm https://claude.ai/install.ps1 | iex
+</code></pre>
+<p>It takes one to three minutes. No Node.js needed, and it keeps itself updated. <strong>Use this if you are starting out.</strong></p>
+<blockquote>
+<p><code>irm ... | iex</code> means "download an install script from the internet and run it immediately." Check that the address is <code>claude.ai</code> before you run it. Never use this pattern with an address you do not trust.</p>
+</blockquote>
+<h3 id="method-b-via-npm-if-you-already-have-nodejs">Method B — via npm (if you already have Node.js)</h3>
+<pre><code>npm install -g @anthropic-ai/claude-code
+</code></pre>
+<p>Lines of text scrolling past is normal. A few yellow <code>WARN</code> messages can be ignored. A red <code>ERR!</code> means you should look at Part 8. Requires Node.js 22 or later.</p>
+<blockquote>
+<p><code>-g</code> means "install for the whole machine." You need it so the command works from any folder.<br />
+Do not use <code>sudo npm install -g</code>. It creates permission problems.</p>
+</blockquote>
+<p><strong>Do only one of the two.</strong> If you already installed via npm, run <code>claude install</code> to migrate to the dedicated installer.</p>
+<h3 id="check-that-it-worked">Check that it worked</h3>
+<p><strong>Close the terminal completely, open a new one</strong>, then type:</p>
+<pre><code>claude --version
+</code></pre>
+<p>A version number followed by <code>(Claude Code)</code> means success.</p>
+<h3 id="log-in">Log in</h3>
+<p>Make a folder to work in and run it there.</p>
+<pre><code>mkdir C:\ai-work
+</code></pre>
+<pre><code>cd C:\ai-work
+</code></pre>
+<pre><code>claude
+</code></pre>
+<p>On first run it asks you the following, in order.</p>
+<ol>
+<li><strong>Pick a theme (colours)</strong> — choose with the arrow keys and press Enter. Any of them is fine.</li>
+<li><strong>Pick a login method</strong> — two options. (The wording shifts slightly between versions.)<br />
+   - Sign in with a subscription account -&gt; for Claude Pro/Max subscribers. <strong>Most people pick this.</strong><br />
+   - Sign in with a Console (API) account -&gt; pay-as-you-go, for company or institutional accounts.</li>
+<li>A browser opens automatically. Sign in to your Claude account and click <strong>"Authorize"</strong>.</li>
+<li>A long string (a code) appears on screen. <strong>Copy it, paste it into the terminal</strong> and press Enter.</li>
+<li>It asks whether you trust the folder. Choose <strong><code>Yes, proceed</code></strong>.</li>
+</ol>
+<p>The chat window appears. <strong>You only log in once; after this, typing <code>claude</code> starts you straight away.</strong></p>
+<h3 id="commands-worth-knowing">Commands worth knowing</h3>
+<p>Inside the chat you can use special commands beginning with <code>/</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/help</code></td>
+<td>Show help</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>Check login state and the model in use</td>
+</tr>
+<tr>
+<td><code>/init</code></td>
+<td>Analyse the current folder and draft a rules file</td>
+</tr>
+<tr>
+<td><code>/clear</code></td>
+<td>Reset the conversation (when starting a new topic)</td>
+</tr>
+<tr>
+<td><code>/doctor</code></td>
+<td>Diagnose installation problems</td>
+</tr>
+<tr>
+<td><code>exit</code></td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="43-install-openai-codex-cli">4.3 Install OpenAI Codex CLI</h2>
+<h3 id="method-a-dedicated-installer-recommended_1">Method A — dedicated installer (recommended)</h3>
+<pre><code>irm https://chatgpt.com/codex/install.ps1 | iex
+</code></pre>
+<h3 id="method-b-via-npm">Method B — via npm</h3>
+<pre><code>npm install -g @openai/codex
+</code></pre>
+<h3 id="method-c-via-winget">Method C — via winget</h3>
+<pre><code>winget install --id OpenAI.Codex -e
+</code></pre>
+<blockquote>
+<p><strong>Use only one of the three.</strong> Installing more than one way leaves you with tangled versions that are hard to diagnose later.</p>
+</blockquote>
+<h3 id="check-that-it-worked_1">Check that it worked</h3>
+<p>Open a new terminal and type:</p>
+<pre><code>codex --version
+</code></pre>
+<h3 id="log-in_1">Log in</h3>
+<pre><code>codex login
+</code></pre>
+<p>A browser opens. Sign in with your <strong>ChatGPT account</strong>. ChatGPT Plus/Pro subscribers use the allowance included in their subscription, with nothing extra to pay.</p>
+<p>To confirm you are logged in:</p>
+<pre><code>codex login status
+</code></pre>
+<h3 id="run-it">Run it</h3>
+<p>Move into your working folder and type:</p>
+<pre><code>codex
+</code></pre>
+<hr />
+<h2 id="44-install-antigravity-cli-the-successor-to-gemini-cli">4.4 Install Antigravity CLI (the successor to Gemini CLI)</h2>
+<h3 id="first-some-background-gemini-cli-is-finished">First, some background — Gemini CLI is finished</h3>
+<p>On 19 May 2026 Google announced the end of individual-user support for Gemini CLI and the Gemini Code Assist IDE extensions, and <strong>service actually stopped on 18 June 2026</strong>. The successor is <strong>Antigravity CLI</strong>, whose terminal command is <code>agy</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Gemini CLI (retired)</th>
+<th>Antigravity CLI (current)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Command</td>
+<td><code>gemini</code></td>
+<td><code>agy</code></td>
+</tr>
+<tr>
+<td>Install</td>
+<td><code>npm install -g @google/gemini-cli</code></td>
+<td>Dedicated install script</td>
+</tr>
+<tr>
+<td>Form</td>
+<td>Open source (TypeScript), an npm package</td>
+<td>A Google-distributed binary</td>
+</tr>
+<tr>
+<td>Rules file</td>
+<td><code>GEMINI.md</code></td>
+<td><code>AGENTS.md</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Who can still use Gemini CLI</strong>: holders of a Gemini Code Assist Standard/Enterprise licence, users of Code Assist for GitHub through Google Cloud, and holders of a paid Gemini API key. Individual users outside those categories cannot even log in.</p>
+<p><strong>If you already installed Gemini CLI</strong>, remove it first.</p>
+<pre><code>npm uninstall -g @google/gemini-cli
+</code></pre>
+<h3 id="install">Install</h3>
+<p>Type this into <strong>an ordinary (non-administrator) PowerShell</strong>.</p>
+<pre><code>irm https://antigravity.google/cli/install.ps1 | iex
+</code></pre>
+<p>It installs to <code>C:\Users\yourname\AppData\Local\agy\bin</code>, and the install script registers it on your PATH for you.</p>
+<blockquote>
+<p>If you use Command Prompt (cmd), do this instead.<br />
+<code>curl -fsSL https://antigravity.google/cli/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</code></p>
+</blockquote>
+<h3 id="check-that-it-worked_2">Check that it worked</h3>
+<p><strong>Close the terminal completely, open a new one</strong>, then type:</p>
+<pre><code>agy --version
+</code></pre>
+<p>A version number means success. If it says <code>agy</code> cannot be found, nine times out of ten you did not open a new terminal. If that is not it, see section 8.1.</p>
+<h3 id="log-in_2">Log in</h3>
+<p>Move into your working folder and run:</p>
+<pre><code>agy
+</code></pre>
+<p>A browser opens automatically. Sign in with your Google account and grant permission; you return to the terminal with a chat window ready. Your credentials are stored in Windows Credential Manager, so <strong>from now on typing <code>agy</code> starts you straight away.</strong></p>
+<p>On first run it asks whether you trust the working folder (Workspace Trust). If you created the folder yourself, choose to trust it.</p>
+<h3 id="commands-worth-knowing_1">Commands worth knowing</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/help</code></td>
+<td>Show commands and shortcuts</td>
+</tr>
+<tr>
+<td><code>/permissions</code></td>
+<td>Manage tool permissions</td>
+</tr>
+<tr>
+<td><code>/clear</code> (or <code>/new</code>)</td>
+<td>Reset the conversation</td>
+</tr>
+<tr>
+<td><code>/resume</code></td>
+<td>Continue an earlier conversation</td>
+</tr>
+<tr>
+<td><code>/usage</code></td>
+<td>Check your remaining allowance</td>
+</tr>
+<tr>
+<td><code>/logout</code></td>
+<td>Log out (clears stored credentials)</td>
+</tr>
+<tr>
+<td><code>/exit</code> (or <code>/quit</code>)</td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="updating">Updating</h3>
+<p>Running the install script again upgrades you to the latest version.</p>
+<pre><code>irm https://antigravity.google/cli/install.ps1 | iex
+</code></pre>
+<hr />
+<h1 id="part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</h1>
+<h2 id="51-prepare-a-working-folder">5.1 Prepare a working folder</h2>
+<p><strong>An AI agent only handles files inside the folder you launched it from.</strong> That is a safety feature as much as anything.</p>
+<p>Do not launch it on your Desktop or in <code>C:\Users\yourname</code>. That would let the AI rummage through every file on the machine.</p>
+<p>Make a practice folder.</p>
+<pre><code>mkdir C:\ai-practice
+</code></pre>
+<pre><code>cd C:\ai-practice
+</code></pre>
+<h2 id="52-make-a-practice-file">5.2 Make a practice file</h2>
+<p>There is nothing to do in an empty folder, so create one file to work with.</p>
+<pre><code>notepad notes.txt
+</code></pre>
+<p>Notepad asks whether to create the file. Choose <strong>Yes</strong>, write a few lines, save with <code>Ctrl + S</code>, and close it.</p>
+<p>Example:</p>
+<pre><code>January 2026 revenue: 12,000
+February 2026 revenue: 14,500
+March 2026 revenue: 9,800
+</code></pre>
+<h2 id="53-run-the-ai-and-talk-to-it">5.3 Run the AI and talk to it</h2>
+<pre><code>claude
+</code></pre>
+<p>(If you installed Codex, type <code>codex</code>; for Antigravity CLI, <code>agy</code>.)</p>
+<p>When the chat window appears, <strong>just talk to it in plain English.</strong></p>
+<p>Try this as your first message.</p>
+<pre><code>Check what files are in this folder and summarise their contents
+</code></pre>
+<p>The AI will look through the folder, read <code>notes.txt</code>, and summarise it.</p>
+<p>Next, try this.</p>
+<pre><code>Turn the revenue data in notes.txt into a table, calculate the average and
+the month-on-month change, and save it as revenue-summary.md
+</code></pre>
+<h2 id="54-understanding-approval-prompts-the-most-important-part">5.4 Understanding approval prompts — the most important part</h2>
+<p>When the AI is about to <strong>modify or create a file</strong>, you see a screen like this.</p>
+<pre><code>About to create file: revenue-summary.md
+
+  1. Yes                         (allow once)
+  2. Yes, and don't ask again    (allow from now on)
+  3. No, tell Claude what to do  (refuse and redirect)
+</code></pre>
+<p>Choose with the arrow keys and press Enter.</p>
+<p><strong>Rules for beginners</strong></p>
+<ul>
+<li><strong>Read-only actions</strong> -&gt; allow freely with <code>1. Yes</code></li>
+<li><strong>Creating a new file</strong> -&gt; <code>1. Yes</code></li>
+<li><strong>Editing or deleting an existing file</strong> -&gt; <strong>read it carefully</strong> before deciding</li>
+<li><strong>Do not pick option 2 (allow from now on) at first.</strong> Save it for when you are comfortable.</li>
+<li>If something looks off, pick <strong><code>3. No</code></strong> and say "don't do that, do X instead".</li>
+</ul>
+<p><strong>To stop a job midway, press <code>Ctrl + C</code>.</strong></p>
+<h2 id="55-quitting">5.5 Quitting</h2>
+<p>Type this in the chat and you are done.</p>
+<pre><code>exit
+</code></pre>
+<p>Or press <code>Ctrl + C</code> twice.</p>
+<h2 id="56-starting-again-next-time">5.6 Starting again next time</h2>
+<ol>
+<li>Open your working folder in File Explorer.</li>
+<li>Right-click on empty space -&gt; <strong>"Open in Terminal"</strong>.</li>
+<li>Type <code>claude</code>. (Or <code>codex</code> / <code>agy</code>.)</li>
+</ol>
+<p>You are already logged in, so it starts immediately.</p>
+<hr />
+<h1 id="part-6-things-worth-trying">Part 6. Things worth trying</h1>
+<p>Instructions work better the <strong>more specific</strong> they are. Copy the examples below and adapt them.</p>
+<h2 id="61-file-organisation">6.1 File organisation</h2>
+<pre><code>Rename every file in this folder to &quot;date_title&quot; format.
+Use the file's creation date, formatted like 20260901.
+Show me the planned list first, before renaming anything.
+</code></pre>
+<pre><code>Look through the PDFs in this folder and build a table of
+file name, title, page count and a one-line summary. Save it as index.md
+</code></pre>
+<h2 id="62-data-work">6.2 Data work</h2>
+<pre><code>Open data.csv, tell me how many rows have empty cells,
+and suggest ways to handle them.
+Do not modify the file yet.
+</code></pre>
+<pre><code>Draw a bar chart of the monthly revenue in revenue.xlsx
+and save it as a PNG. Put a title and axis labels on it.
+</code></pre>
+<h2 id="63-writing">6.3 Writing</h2>
+<pre><code>Read draft.md and rewrite it in a dry, objective academic register.
+Leave the original untouched and save the revision as draft-revised.md
+Also summarise what you changed and why.
+</code></pre>
+<pre><code>Write an email in three tones (formal / concise / friendly) covering the following.
+Content: (describe the situation here)
+</code></pre>
+<h2 id="64-learning-as-you-go">6.4 Learning as you go</h2>
+<pre><code>Explain what you just did in terms a beginner would understand.
+</code></pre>
+<pre><code>Suggest five useful things I could do in this folder.
+</code></pre>
+<h2 id="65-how-to-write-good-instructions">6.5 How to write good instructions</h2>
+<table>
+<thead>
+<tr>
+<th>Poor</th>
+<th>Good</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Clean this up"</td>
+<td>"Rename files to date_title order, and show me the list before renaming"</td>
+</tr>
+<tr>
+<td>"Analyse this"</td>
+<td>"Calculate the monthly average and month-on-month change, and put it in a table"</td>
+</tr>
+<tr>
+<td>"Fix it"</td>
+<td>"Fix only spelling and spacing; do not change sentence structure"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Four habits</strong></p>
+<ol>
+<li>Say <strong>what to do + how to do it + where to save the result</strong>, together.</li>
+<li>For risky work, add <strong>"show me the plan first and run it only after I approve"</strong>.</li>
+<li>To protect the original, say explicitly <strong>"do not touch the original, work on a copy"</strong>.</li>
+<li>If you dislike the result, do not say "do it again" — say <strong>"change X to Y"</strong>.</li>
+</ol>
+<hr />
+<h1 id="part-7-using-it-safely-five-rules">Part 7. Using it safely — five rules</h1>
+<h2 id="1-only-run-it-in-a-dedicated-working-folder">1. Only run it in a dedicated working folder</h2>
+<p>An AI agent treats the folder you launched it from, and everything below it, as its working scope.</p>
+<ul>
+<li><strong>Do not</strong>: launch it on the Desktop, in <code>C:\Users\yourname</code>, or at the root of C:</li>
+<li><strong>Do</strong>: create purpose-specific folders like <code>C:\ai-work\project1</code> and launch inside them</li>
+</ul>
+<h2 id="2-copy-the-originals-first">2. Copy the originals first</h2>
+<p>The AI can edit a file wrongly, and you can approve the wrong thing.</p>
+<p><strong>Duplicate the whole folder before you start.</strong> It is the simplest and most reliable safeguard there is.</p>
+<h2 id="3-keep-sensitive-material-out-of-the-working-folder">3. Keep sensitive material out of the working folder</h2>
+<p>File contents the AI reads are sent to a server to produce an answer.</p>
+<p>Do not put these in your working folder:<br />
+- Files containing national ID numbers, bank account numbers or passwords<br />
+- Unpublished research data, manuscripts under review<br />
+- Company confidential material, contracts<br />
+- Lists containing other people's personal data</p>
+<blockquote>
+<p>If your institution's rules forbid sending something outside, do not bring it into the folder in the first place.</p>
+</blockquote>
+<h2 id="4-read-the-approval-screen-before-you-click">4. Read the approval screen before you click</h2>
+<p>Hammering <code>Yes</code> to get through faster is a dangerous habit. <strong>Read what it is about to do, at least once.</strong></p>
+<p>Stop and check whenever you see these words in particular: <strong>delete, rm, overwrite, all, force</strong>.</p>
+<h2 id="5-do-not-use-auto-approve">5. Do not use auto-approve</h2>
+<p>Claude Code's <code>--dangerously-skip-permissions</code>, Codex CLI's <code>--full-auto</code>/<code>--yolo</code>, and Antigravity CLI's auto-approve setting all mean "stop asking and just do everything." <strong>They are as dangerous as they sound. Beginners should never use them.</strong></p>
+<p>Tip articles online sometimes recommend turning this on for convenience. That advice comes from people working in code repositories where a bad deletion is recoverable. Do not use it in a folder holding your original data.</p>
+<hr />
+<h1 id="part-8-when-something-goes-wrong">Part 8. When something goes wrong</h1>
+<h2 id="81-the-term-is-not-recognized">8.1 "The term ... is not recognized"</h2>
+<pre><code>'claude' is not recognized as the name of a cmdlet, function, script file...
+</code></pre>
+<p><strong>Try in this order</strong></p>
+<ol>
+<li><strong>Close the terminal completely and open a new one.</strong> (Nine times out of ten this fixes it.)</li>
+<li>If that fails, <strong>reboot</strong>.</li>
+<li>Still failing? Check where it installed.</li>
+</ol>
+<pre><code>npm config get prefix
+</code></pre>
+<p>You get a path like <code>C:\Users\yourname\AppData\Roaming\npm</code>. Register it with Windows.</p>
+<ul>
+<li><code>Windows key</code> -&gt; search <code>environment variables</code> -&gt; run <strong>"Edit environment variables for your account"</strong></li>
+<li>Select <strong><code>Path</code></strong> in the upper list -&gt; <strong>"Edit"</strong></li>
+<li><strong>"New"</strong> -&gt; paste the path -&gt; press <strong>"OK"</strong> on every window to close them</li>
+<li>Open a new terminal and try again</li>
+</ul>
+<h2 id="82-cannot-be-loaded-because-running-scripts-is-disabled">8.2 "...cannot be loaded because running scripts is disabled"</h2>
+<p>You skipped the execution policy step in section 3.4.</p>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+</code></pre>
+<p>Type <code>Y</code> and press Enter.</p>
+<h2 id="83-non-english-text-shows-as-or-garbled-characters">8.3 Non-English text shows as <code>???</code> or garbled characters</h2>
+<p>Temporary fix:</p>
+<pre><code>chcp 65001
+</code></pre>
+<p>Permanent fix: do the profile setup in section 3.5.</p>
+<p>If that still fails, change a Windows setting.<br />
+- <code>Windows key</code> -&gt; search <code>region</code> -&gt; <strong>"Date, time &amp; regional formatting"</strong> -&gt; <strong>"Additional date, time &amp; regional settings"</strong> -&gt; <strong>"Region"</strong> -&gt; <strong>"Administrative"</strong> tab -&gt; <strong>"Change system locale"</strong><br />
+- Tick <strong>"Beta: Use Unicode UTF-8 for worldwide language support"</strong> -&gt; reboot</p>
+<blockquote>
+<p>This can cause side effects in some older non-Unicode programs. Use it only when nothing else works.</p>
+</blockquote>
+<h2 id="84-red-err-errors-during-installation">8.4 Red <code>ERR!</code> errors during installation</h2>
+<p><strong>If it is a permissions problem</strong>: reopen the terminal <strong>as administrator</strong>.<br />
+<code>Windows key</code> -&gt; search <code>Terminal</code> -&gt; right-click the entry -&gt; <strong>"Run as administrator"</strong></p>
+<p><strong>If it is a network problem</strong>: corporate and university firewalls block these installs often. Try again on a personal connection (phone tethering, for instance).</p>
+<h2 id="85-trouble-caused-by-spaces-or-non-english-characters-in-a-path">8.5 Trouble caused by spaces or non-English characters in a path</h2>
+<p>Paths like <code>D:\My Research\2026 Data</code> occasionally cause problems.</p>
+<p><strong>Fix</strong>: build working folders using <strong>letters, numbers and underscores only</strong> where you can.</p>
+<ul>
+<li>Good: <code>C:\ai-work\project2026</code></li>
+<li>Avoid: <code>C:\My Documents\2026 Research Data (final)</code></li>
+</ul>
+<p>When you must use an existing path, <strong>wrap it in double quotes.</strong></p>
+<pre><code>cd &quot;D:\My Research\2026 Data&quot;
+</code></pre>
+<h2 id="86-the-ai-answers-oddly-or-the-conversation-gets-tangled">8.6 The AI answers oddly, or the conversation gets tangled</h2>
+<p>In a long conversation the AI can get dragged along by earlier context.</p>
+<ul>
+<li>Type <code>/clear</code> -&gt; resets the conversation (the same command in all three tools)</li>
+<li>Or <code>exit</code> and start again</li>
+</ul>
+<p>Getting into the habit of pressing <code>/clear</code> whenever the topic changes noticeably improves answer quality.</p>
+<h2 id="87-updating-to-the-latest-version">8.7 Updating to the latest version</h2>
+<p><strong>Update the same way you installed.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>If you used the dedicated installer</th>
+<th>If you used npm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td>Updates itself (<code>claude update</code> to check now)</td>
+<td><code>npm install -g @anthropic-ai/claude-code@latest</code></td>
+</tr>
+<tr>
+<td>Codex CLI</td>
+<td><code>irm https://chatgpt.com/codex/install.ps1 \| iex</code></td>
+<td><code>npm install -g @openai/codex@latest</code></td>
+</tr>
+<tr>
+<td>Antigravity CLI</td>
+<td><code>irm https://antigravity.google/cli/install.ps1 \| iex</code></td>
+<td>(not applicable)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Do not use <code>npm update -g</code>.</strong> It only moves within the version range recorded at first install, so it often fails to reach the latest release. Use <code>npm install</code> with <code>@latest</code>.</p>
+</blockquote>
+<p>If you installed Codex through winget, use <code>winget upgrade --id OpenAI.Codex -e</code>.</p>
+<h2 id="88-removing-them">8.8 Removing them</h2>
+<pre><code>npm uninstall -g @anthropic-ai/claude-code
+</code></pre>
+<pre><code>npm uninstall -g @openai/codex
+</code></pre>
+<pre><code>winget uninstall --id OpenAI.Codex -e
+</code></pre>
+<p>For dedicated installers, follow the uninstall instructions in each tool's official documentation.</p>
+<p>If a retired Gemini CLI is still lying around, remove it like this.</p>
+<pre><code>npm uninstall -g @google/gemini-cli
+</code></pre>
+<hr />
+<h1 id="appendix-a-glossary">Appendix A. Glossary</h1>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Terminal</td>
+<td>A window for giving the computer text instructions</td>
+</tr>
+<tr>
+<td>PowerShell</td>
+<td>The program on Windows that receives and runs those commands</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td>Command Line Interface. Working with text only, no mouse</td>
+</tr>
+<tr>
+<td>Path</td>
+<td>The address of a file or folder, e.g. <code>C:\Users\Jane\Documents</code></td>
+</tr>
+<tr>
+<td>Directory</td>
+<td>Another word for folder. Same thing</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>The engine program some AI agents need in order to run</td>
+</tr>
+<tr>
+<td>npm</td>
+<td>The tool that installs and manages programs. Ships with Node.js</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>A tool for tracking file history</td>
+</tr>
+<tr>
+<td>Global install (<code>-g</code>)</td>
+<td>Installing machine-wide so it works from any folder</td>
+</tr>
+<tr>
+<td>Execution policy</td>
+<td>The Windows security setting that decides whether scripts may run</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>An AI that uses tools on its own to get work done</td>
+</tr>
+<tr>
+<td>Token</td>
+<td>The unit an AI counts text in. Used to measure usage</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>The standard for connecting an AI to outside services such as Google Drive</td>
+</tr>
+<tr>
+<td>WSL</td>
+<td>The feature that runs Linux inside Windows. Not needed any more (Appendix D)</td>
+</tr>
+<tr>
+<td>Git Bash</td>
+<td>The Linux-style command window installed with Git. Claude Code uses it as its shell</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code> / <code>AGENTS.md</code></td>
+<td>The file holding your working folder's rules. The AI reads it every time</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>How much conversation and file content the AI holds at once. When it overflows, the earliest parts are forgotten</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-b-one-page-command-summary">Appendix B. One-page command summary</h1>
+<h2 id="terminal-basics">Terminal basics</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pwd</code></td>
+<td>Show where you are</td>
+</tr>
+<tr>
+<td><code>ls</code></td>
+<td>List files in the current folder</td>
+</tr>
+<tr>
+<td><code>cd foldername</code></td>
+<td>Move into that folder</td>
+</tr>
+<tr>
+<td><code>cd ..</code></td>
+<td>Move up one level</td>
+</tr>
+<tr>
+<td><code>mkdir foldername</code></td>
+<td>Create a new folder</td>
+</tr>
+<tr>
+<td><code>cls</code></td>
+<td>Clear the screen</td>
+</tr>
+<tr>
+<td><code>exit</code></td>
+<td>Close the terminal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="installation-once">Installation (once)</h2>
+<pre><code>winget install --id OpenJS.NodeJS.LTS -e
+</code></pre>
+<pre><code>winget install --id Git.Git -e
+</code></pre>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+</code></pre>
+<p>For AI agents, install <strong>only the one you need</strong> of the three.</p>
+<pre><code>irm https://claude.ai/install.ps1 | iex
+</code></pre>
+<pre><code>irm https://chatgpt.com/codex/install.ps1 | iex
+</code></pre>
+<pre><code>irm https://antigravity.google/cli/install.ps1 | iex
+</code></pre>
+<h2 id="verification">Verification</h2>
+<pre><code>node --version
+</code></pre>
+<pre><code>npm --version
+</code></pre>
+<pre><code>git --version
+</code></pre>
+<pre><code>claude --version
+</code></pre>
+<h2 id="the-everyday-flow">The everyday flow</h2>
+<ol>
+<li>Open your working folder in Explorer</li>
+<li>Right-click empty space -&gt; <strong>"Open in Terminal"</strong></li>
+<li>Type <code>claude</code> (or <code>codex</code> / <code>agy</code>)</li>
+<li>Give instructions in plain English</li>
+<li>Read the approval screen and choose</li>
+<li><code>exit</code> to quit</li>
+</ol>
+<h2 id="keyboard-shortcuts">Keyboard shortcuts</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Up arrow</td>
+<td>Recall the previous command</td>
+</tr>
+<tr>
+<td><code>Tab</code></td>
+<td>Autocomplete folder and file names</td>
+</tr>
+<tr>
+<td>Right-click</td>
+<td>Paste</td>
+</tr>
+<tr>
+<td><code>Ctrl + C</code></td>
+<td>Stop a running job</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + mouse wheel</td>
+<td>Change text size</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-c-summary-for-mac-users">Appendix C. Summary for Mac users</h1>
+<p>This document is written for Windows. On a Mac, only these things differ; everything else is the same.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Windows</th>
+<th>Mac</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Open a terminal</td>
+<td>Windows key -&gt; "Terminal"</td>
+<td><code>Cmd + Space</code> -&gt; "Terminal"</td>
+</tr>
+<tr>
+<td>Install tool</td>
+<td>winget</td>
+<td>Homebrew (<code>brew</code>)</td>
+</tr>
+<tr>
+<td>Install Node.js</td>
+<td><code>winget install OpenJS.NodeJS.LTS</code></td>
+<td><code>brew install node</code></td>
+</tr>
+<tr>
+<td>Path separator</td>
+<td><code>\</code> (backslash)</td>
+<td><code>/</code> (slash)</td>
+</tr>
+<tr>
+<td>Execution policy setup</td>
+<td>Needed</td>
+<td>Not needed</td>
+</tr>
+<tr>
+<td>Text encoding setup</td>
+<td>Needed</td>
+<td>Not needed</td>
+</tr>
+</tbody>
+</table>
+<p>If you do not have Homebrew, install it first following the instructions at <strong>https://brew.sh</strong>.</p>
+<p>For AI agents, use <code>curl</code> instead of <code>irm ... | iex</code>. Everything else is identical.</p>
+<pre><code>curl -fsSL https://claude.ai/install.sh | bash
+</code></pre>
+<pre><code>curl -fsSL https://antigravity.google/cli/install.sh | bash
+</code></pre>
+<p>Install Codex CLI through Homebrew.</p>
+<pre><code>brew install --cask codex
+</code></pre>
+<p>The <code>npm install -g ...</code> route is exactly the same as on Windows.</p>
+<hr />
+<h1 id="appendix-d-do-you-need-wsl-linux">Appendix D. Do you need WSL (Linux)?</h1>
+<p><strong>Short answer: if you are the audience for this guide, just use Windows.</strong></p>
+<p>You will find articles online saying "Claude Code requires WSL". Most of them were written in 2024–2025, when it genuinely did not support Windows and WSL (Windows Subsystem for Linux, a feature that runs Linux inside Windows) was the only route. <strong>All three tools now ship Windows-native installers, and WSL is not needed.</strong></p>
+<h2 id="why-plain-windows-is-the-better-choice">Why plain Windows is the better choice</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Windows as is</th>
+<th>WSL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Setup</td>
+<td>One command</td>
+<td>Install Linux, then install everything again inside it</td>
+</tr>
+<tr>
+<td>Reaching Windows files</td>
+<td><code>D:\research</code> directly</td>
+<td>Via <code>/mnt/d/research</code>, and <strong>slow</strong></td>
+</tr>
+<tr>
+<td>Non-English file names and paths</td>
+<td>Fine</td>
+<td>Sometimes mangled</td>
+</tr>
+<tr>
+<td>Working with office documents</td>
+<td>Natural</td>
+<td>Awkward</td>
+</tr>
+<tr>
+<td>Extra things to learn</td>
+<td>None</td>
+<td>One more set of Linux concepts</td>
+</tr>
+</tbody>
+</table>
+<p><strong>WSL is a net loss when your work is documents and data sitting in Windows folders.</strong> Reading and writing Windows drives (<code>/mnt/c</code>, <code>/mnt/d</code>) from WSL is measurably slow, and it becomes obvious once you are working across hundreds of files.</p>
+<h2 id="do-this-instead">Do this instead</h2>
+<p>The way to reduce friction on Windows is not WSL — it is <strong>installing Git for Windows</strong> (section 3.3). When Claude Code detects Git Bash it uses that as its shell instead of PowerShell, and since most material online (and most of what the AI knows) is written in Linux-style commands, errors drop.</p>
+<h2 id="when-wsl-is-the-better-option">When WSL is the better option</h2>
+<p>Consider WSL if one of these applies to you. Most readers of this guide will not be in that position.</p>
+<ul>
+<li>You need Linux-only development tools (Docker, particular Python packages, and so on)</li>
+<li>You are building something that will run on a server and want your environment to match it</li>
+<li>You want to give the AI risky work while keeping it isolated from Windows itself</li>
+</ul>
+<blockquote>
+<p>If you do go with WSL, keep your working files inside WSL (<code>~/projects/...</code>). Crossing back and forth to Windows drives is the slowest and most trouble-prone arrangement.</p>
+</blockquote>
+<hr />
+<h1 id="wrapping-up-what-comes-next">Wrapping up — what comes next</h1>
+<p>If you got this far, you have the fundamentals. Once you are comfortable, try these.</p>
+<ol>
+<li>
+<p><strong>Put a rules file in your working folder</strong> — create a rules file saying "in this folder, work according to these rules" and the AI follows it without being told each time. Claude Code reads <code>CLAUDE.md</code>; Codex CLI and Antigravity CLI read <code>AGENTS.md</code>. In Claude Code, <code>/init</code> drafts one for you.</p>
+</li>
+<li>
+<p><strong>Save the instructions you reuse</strong> — keep the prompts for recurring work in a text file and paste them in.</p>
+</li>
+<li>
+<p><strong>Connect outside services (MCP)</strong> — you can wire services like Google Drive or Notion directly into the AI. Attempt this once the basics feel routine.</p>
+</li>
+<li>
+<p><strong>Compare the tools</strong> — giving the same job to Claude, Codex and Antigravity teaches you their different characters.</p>
+</li>
+</ol>
+<h2 id="official-documentation">Official documentation</h2>
+<ul>
+<li>Claude Code — https://code.claude.com/docs</li>
+<li>Codex CLI — https://developers.openai.com/codex/cli</li>
+<li>Antigravity CLI — https://antigravity.google/docs/cli/install</li>
+</ul>
+<hr />
+<p><em>This document is written for Windows 11. Screens shift a little as versions move on, but the overall flow stays the same.</em></p>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  // 표를 가로 스크롤 가능한 래퍼로 감싼다 (좁은 화면 대응)
+  document.querySelectorAll('table').forEach(function (t) {
+    if (t.parentElement.classList.contains('table-wrap')) return;
+    var w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+
+  // 코드 블록에 복사 버튼 달기
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var box = document.createElement('div');
+    box.className = 'codeblock';
+    pre.parentNode.insertBefore(box, pre);
+    box.appendChild(pre);
+
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function () {
+      var text = pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.classList.remove('done');
+        }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+    box.appendChild(btn);
+  });
+
+  // 모바일 목차 토글
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('toc-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', function () { sidebar.classList.toggle('open'); });
+    sidebar.querySelectorAll('.toc a').forEach(function (a) {
+      a.addEventListener('click', function () { sidebar.classList.remove('open'); });
+    });
+  }
+
+  // 스크롤 위치에 따라 현재 항목 강조
+  var links = Array.prototype.slice.call(document.querySelectorAll('#sidebar .toc a'));
+  var map = {};
+  links.forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href') || '').replace(/^#/, '');
+    var el = id ? document.getElementById(id) : null;
+    if (el) map[id] = a;
+  });
+  var targets = Object.keys(map).map(function (id) { return document.getElementById(id); });
+  if ('IntersectionObserver' in window && targets.length) {
+    var current = null;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var a = map[e.target.id];
+        if (!a || a === current) return;
+        if (current) current.classList.remove('active');
+        a.classList.add('active');
+        current = a;
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>

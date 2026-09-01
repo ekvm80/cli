@@ -1,0 +1,8 @@
+# 한국어 파일명 사본 (index.html 과 내용 동일)
+터미널_AI_에이전트_입문_가이드.html
+
+# 잡동사니
+*.bak
+__pycache__/
+.DS_Store
+Thumbs.db
