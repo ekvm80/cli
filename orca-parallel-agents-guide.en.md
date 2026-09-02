@@ -9,7 +9,7 @@
 ## How to read this document
 
 - **Parts 1–6 are all you need to start using it.** Follow them in order.
-- **Open the appendices only when you need them.** They cover Mac/Linux installation, how git worktrees actually behave, script automation, and remote execution.
+- **Open the appendices only when you need them.** They cover Mac/Linux installation, how workspaces (git worktrees) actually behave, script automation, and remote execution.
 - **Text in grey boxes** is a command you type into the computer.
 
 ---
@@ -37,12 +37,12 @@ One thing at a time. While the agent works for five minutes, you wait. If you op
 Here is how Orca works.
 
 ```
-Task A -> folder copy A -> Claude Code     ┐
-Task B -> folder copy B -> Codex           ├─ all in one window
-Task C -> folder copy C -> Antigravity     ┘
+Workspace A -> folder copy A -> Claude Code     ┐
+Workspace B -> folder copy B -> Codex           ├─ all in one window
+Workspace C -> folder copy C -> Antigravity     ┘
 ```
 
-**There is one core idea: every task gets its own copy of the folder.** Different copies means no shared files to fight over, so nothing collides. Those copies are made using Git's `worktree` feature (see **Appendix B** for how it actually behaves).
+**There is one core idea: every workspace gets its own copy of the folder.** Different copies means no shared files to fight over, so nothing collides. Those copies are made using Git's `worktree` feature (see **Appendix B** for how it actually behaves).
 
 ## 1.3 Basic facts
 
@@ -58,7 +58,7 @@ Task C -> folder copy C -> Antigravity     ┘
 
 **What is included**
 
-- Task tabs — one task = one folder copy
+- Workspace tabs — one workspace = one folder copy
 - Agent terminals — split the window however you like
 - A diff view — comment directly on the changed lines and hand it back to the agent
 - A built-in browser — point at a page element and say "fix this"
@@ -112,9 +112,9 @@ If you use Mac or Linux, or prefer installing from a terminal, see **Appendix A*
 
 The first time you open Orca it asks the following, in order.
 
-1. **Access to your home directory** — so it can find repositories. Allow it.
+1. **Access to your home directory** — so it can find the folders you will use as projects. Allow it.
 2. **Whether to import existing settings** — it offers to import `~/.claude`, `~/.codex` and your terminal settings. **Import them.** Your credentials and preferences carry over, which removes most of the setup.
-3. **An empty screen** — nothing is there until you add a repository. That is normal.
+3. **An empty screen** — nothing is there until you add a project. That is normal.
 
 ### Check your shell
 
@@ -155,10 +155,10 @@ What you get:
 
 - **Usage and rate-limit proximity in the status bar** — this matters when running in parallel
 - **One-click switching between multiple accounts** — it prevents overlapping credential refreshes
-- Per-repository hooks and memory files
-- The working directory is set to that task's folder when it launches
+- Per-project hooks and memory files
+- The working directory is set to that workspace's folder when it launches
 
-**Claude Agent Teams** (an agent directing sub-agents) is **off by default.** Turning it on shows sub-agents as expandable child rows in the task list. Leave it off at first; it makes it hard to tell what is doing what.
+**Claude Agent Teams** (an agent directing sub-agents) is **off by default.** Turning it on shows sub-agents as expandable child rows in the workspace list. Leave it off at first; it makes it hard to tell what is doing what.
 
 ## 3.4 Codex CLI
 
@@ -185,7 +185,7 @@ Install and log into `agy` first ([Beginner's guide, section 4.4](en.html#44-ins
 
 The reasoning is clear enough. A task folder is a disposable copy, so if something goes wrong you delete the whole thing.
 
-**But that reasoning depends on working inside a Git repository.** Point it at a folder holding original data, or a cloud-sync folder, and the premise breaks. Only files Git tracks come back when you delete and start over.
+**But that reasoning depends on working inside a Git repository.** Point it at a folder holding original data and the premise breaks. Only files Git tracks come back when you delete and start over. Section 4.1 covers which folders to point it at.
 
 > **Set it to `Manual` at first.** Move to `Yolo` once you have watched what the agents actually do. Doing it the other way round means an accident before you have had the chance to learn.
 
@@ -195,51 +195,90 @@ The reasoning is clear enough. A task folder is a disposable copy, so if somethi
 
 This is the actual usage. No difficult concepts appear here.
 
+## 4.0 Two words to settle first
+
+The words on Orca's screen differ from the words in Orca's own documentation. This guide follows **what the screen says**.
+
+| On screen | In the documentation | What this guide calls it |
+|---|---|---|
+| **Project** | repo | project |
+| **Workspace** | worktree | workspace |
+
+The documentation still uses older wording such as `Add Repo` and `worktree`, so looking for those names on screen will not find them. The screen is the current one.
+
 ## 4.1 Add a project — point it at a folder
 
-1. Click **`Add Repo`** in the left sidebar.
+Near the top of the left sidebar there is a heading reading **`Projects`**, with a few small icons to its right.
+
+1. Click the **folder icon with a `+` on it**. Hovering over it shows the tooltip **`Add Project`**.
 2. **Choose the folder you want to work in.**
 3. Done. Orca reads that folder's git state and takes its default branch as the base reference.
 
-> **The folder has to be a Git repository.** Orca's whole approach leans on git features. If it is not one yet, open a terminal there and run `git init` once.
+> **There are two icons side by side. Do not mix them up.**
 >
-> **Avoid cloud-sync folders.** Sync clients can corrupt a repository by syncing files inside `.git`. Use a plain local path such as `C:\projects\my-project`.
+> | Icon | Tooltip on hover | What it does |
+> |---|---|---|
+> | **folder with `+`** | `Add Project` | **Add a project (folder)** ← the one to click now |
+> | plain `+` | `New workspace` | Create a new workspace (used in section 4.2) |
 
-To base tasks on a different branch, adjust it in the repository settings.
+> **The folder has to be a Git repository.** Orca's whole approach leans on git features. If it is not one yet, open a terminal there and run `git init` once.
 
-## 4.2 Create one task and launch an agent
+To base workspaces on a different branch, adjust it in the project settings.
 
-1. Click **`+`** next to the repository name.
-2. **Type a task name.** (Leave it blank and one is generated for you.)
+### About cloud-sync folders (Google Drive, OneDrive and so on)
+
+**It does work. It is just not what I would recommend.**
+
+You can add a folder inside Google Drive, OneDrive or Dropbox as a project, and it will usually work fine. It is not blocked. Two things do cause real trouble, though.
+
+1. **Risk of a corrupted repository** — Git reads and writes hundreds of files inside `.git` very quickly. If a sync client catches one of those intermediate states and uploads it, or overwrites it with another machine's version, the repository breaks. **The risk grows when the same folder syncs across several machines.**
+2. **Speed** — every workspace you create adds another folder copy, and the sync client will try to upload all of it. Create several in parallel and you notice.
+
+**So do this instead.**
+
+| Situation | What to do |
+|---|---|
+| One machine only, sync is just for backup | Carry on. Adding `.git` to the sync client's exclusion list reduces the risk |
+| The same folder syncs across several machines | **Move it to a local path**, such as `C:\projects\my-project` |
+| You want backup and history together | Keep it on a local path and **push to a remote such as GitHub.** Git is itself a backup tool |
+
+> In short: **a sync folder is not forbidden, but a local path plus a remote repository is safer and faster.**
+
+## 4.2 Create one workspace and launch an agent
+
+1. Click **`+`**. Either place works.
+   - **Hover over a project name** in the sidebar and a `+` appears on the right. Its tooltip reads **`Create workspace for <project>`**. With several projects, this is the unambiguous one.
+   - Or the **plain `+`** to the right of the `Projects` heading at the top of the sidebar (tooltip: `New workspace`). Its tooltip also shows the keyboard shortcut.
+2. **Type a workspace name.** (Leave it blank and one is generated for you.)
 3. Choose the starting reference. **Usually leave it on the default branch.**
 4. A launcher appears with your default agent preselected. Pick the agent you want from the terminal's **dropdown** — Claude Code, Codex, Antigravity CLI and so on.
 5. The agent starts. **Instruct it in plain English as usual.**
 
-At this point Orca has created **a dedicated folder copy for that task** in the background. You never create or manage those folders yourself.
+At this point Orca has created **a dedicated folder copy for that workspace** in the background. You never create or manage those folders yourself.
 
-## 4.3 Add a second and third task — that is the parallelism
+## 4.3 Add a second and third workspace — that is the parallelism
 
 **Just repeat 4.2.**
 
-Press `+` again for a second task and launch an agent. Same for the third. Each task has a different folder copy, so **none of them affect each other.**
+Press `+` again for a second workspace and launch an agent. Same for the third. Each workspace has a different folder copy, so **none of them affect each other.**
 
 While the first agent works you can already be instructing the second and third. The waiting disappears.
 
 ## 4.4 Split the window to watch them at once
 
-**Drag a task tab to the right or bottom edge of the window.** The window splits so you can see several tasks side by side.
+**Drag a workspace tab to the right or bottom edge of the window.** The window splits so you can see several workspaces side by side.
 
 To watch three, drag one to the right and another to the bottom for a three-way split.
 
 ## 4.5 Review the results and ship
 
-1. Open each task's **diff view**.
+1. Open each workspace's **diff view**.
 2. If something needs changing, use **`Annotate AI Diff`** to comment on that line. The agent reads it and revises.
 3. When you are happy, **commit and push directly from Orca**.
 
 ## 4.6 Clean up
 
-Delete a task you no longer need with **one click**. The folder copy and the branch go together.
+Delete a workspace you no longer need with **one click**. The folder copy and the branch go together.
 
 If unmerged changes remain, Orca shows a review step first. Even on a forced delete it keeps the problematic branch for inspection.
 
@@ -247,7 +286,7 @@ If unmerged changes remain, Orca shows a review step first. Even on a forced del
 
 **Pattern A — race: the same job across several agents**
 
-Create three tasks and **give the same instruction to three different agents**. The official reasoning goes like this.
+Create three workspaces and **give the same instruction to three different agents**. The official reasoning goes like this.
 
 > Different agents make different mistakes. Running the same task in parallel is cheaper than sequential retries, and disagreement is itself a signal.
 
@@ -255,13 +294,13 @@ If all three agree, the answer is probably right; if they diverge, that is the s
 
 **Pattern B — division of labour: different jobs at once**
 
-Assign a different job to each task. Files are isolated, so nothing collides. This is the pattern that actually increases throughput.
+Assign a different job to each workspace. Files are isolated, so nothing collides. This is the pattern that actually increases throughput.
 
 ## 4.8 Do this once, up front — share dependencies
 
-A new task folder is **a clean copy**. Anything Git does not track — `node_modules`, `.venv`, `.env` — is missing. Reinstalling every time cancels out the benefit of parallelism.
+A new workspace folder is **a clean copy**. Anything Git does not track — `node_modules`, `.venv`, `.env` — is missing. Reinstalling every time cancels out the benefit of parallelism.
 
-**Fix**: set the paths to share under **`Worktree Shared Paths`** in the repository settings. Do it once, and every task folder from then on shares them.
+**Fix**: set the paths to share under **`Worktree Shared Paths`** in the repository settings. Do it once, and every workspace folder from then on shares them.
 
 Managing this through config files (`orca.yaml`, `.worktreeinclude`) is covered in **Appendix B**.
 
@@ -275,7 +314,7 @@ Agents, terminals and the browser all run on your PC. Nothing extra to configure
 
 **When it fits**: iterating quickly on a machine with enough capacity. In other words, ordinary daily work.
 
-**Watch out for**: memory. Running many tasks uses a lot of it — this is an Electron app, and each task carries its own folder copy and terminal. **Start with two or three** and find where your machine tops out.
+**Watch out for**: memory. Running many workspaces uses a lot of it — this is an Electron app, and each workspace carries its own folder copy and terminal. **Start with two or three** and find where your machine tops out.
 
 Running on a remote server, checking in from a phone, or spinning up a disposable cloud machine per task are covered in **Appendix D**. Read it when you need it.
 
@@ -359,21 +398,21 @@ They are all on [GitHub Releases](https://github.com/stablyai/orca/releases). To
 
 ---
 
-# Appendix B. How task folders (worktrees) actually behave
+# Appendix B. How workspaces (worktrees) actually behave
 
-What Part 4 calls a "folder copy" is a **Git `worktree`**.
+What Part 4 calls a "folder copy" is a **Git `worktree`**. Orca's screen calls it a **Workspace**, while the official documentation still says `worktree`.
 
 ## Where they live, and what they are
 
 - **They are real `git worktree` checkouts**, created in a directory Orca manages
 - You can `cd` into that path from a terminal and **use plain `git` as normal.** It is not an Orca-specific format
-- Each task has its own file space, its own branch and its own terminal session. That is why parallel execution is safe
+- Each workspace has its own file space, its own branch and its own terminal session. That is why parallel execution is safe
 
 ## Base reference and branch names
 
 - The base ref is usually `origin/main`
 - You can also branch from a local branch, **a specific commit SHA**, or a remote branch
-- Branch names are derived from the task name. Link a GitHub PR, a Linear/Jira issue or a GitLab MR and the name comes from there instead
+- Branch names are derived from the workspace name. Link a GitHub PR, a Linear/Jira issue or a GitLab MR and the name comes from there instead
 - To set it yourself, open **Advanced** in the `Create Worktree` dialog
 
 ## Sharing dependencies — three ways
@@ -419,10 +458,10 @@ orca worktree current --json
 
 | Command | What it does |
 |---|---|
-| `orca worktree create --name <name> --agent <agent> --prompt "<instruction>" --json` | Create a task, launch the agent and send the instruction in one go |
-| `orca worktree ps --json` | List active tasks |
-| `orca worktree set` | Edit task metadata |
-| `orca worktree rm` | Delete a task |
+| `orca worktree create --name <name> --agent <agent> --prompt "<instruction>" --json` | Create a workspace, launch the agent and send the instruction in one go |
+| `orca worktree ps --json` | List active workspaces |
+| `orca worktree set` | Edit workspace metadata |
+| `orca worktree rm` | Delete a workspace |
 | `orca terminal list --json` | List terminals |
 | `orca terminal create` / `split` | Create or split a terminal |
 | `orca terminal send` | Send input to a terminal (line break added automatically) |
@@ -451,9 +490,9 @@ Besides the local desktop (Part 5) there are three more modes. You can mix them 
 
 | Mode | Structure | When it fits |
 |---|---|---|
-| **SSH targets** | Agents and task folders on a remote machine; editor, diff and UI on your laptop | You already have a VPS or GPU box with the repo and tools set up |
+| **SSH targets** | Agents and workspace folders on a remote machine; editor, diff and UI on your laptop | You already have a VPS or GPU box with the repo and tools set up |
 | **Remote Orca servers** | Orca runs continuously on a separate machine; laptop, browser, mobile and automation all connect to the same runtime | Keeping sessions alive. Mobile access |
-| **Cloud VMs** | A disposable virtual machine per task, created and destroyed by recipes committed to your repo | When you need full isolation |
+| **Cloud VMs** | A disposable virtual machine per workspace, created and destroyed by recipes committed to your repo | When you need full isolation |
 
 Where to configure:
 
@@ -470,7 +509,8 @@ Where to configure:
 ## Not verified
 
 - What name `agy` actually shows under in the agent dropdown (the source code indicates support; the documentation still says "Gemini")
-- A practical ceiling on concurrent tasks (machine-dependent, and no official figure exists)
+- A practical ceiling on concurrent workspaces (machine-dependent, and no official figure exists)
+- The button names in sections 4.1 and 4.2 (`Add Project`, `New workspace`, `Create workspace for ...`) come from the repository source (`src/renderer/src/components/sidebar/`). The official documentation still writes `Add Repo`
 - Real-world performance of dependency sharing on Windows, where it falls back to symlinks
 - Minimum system requirements (not stated in the official documentation)
 

@@ -434,9 +434,13 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#part-4-creating-a-project-and-working-in-parallel">Part 4. Creating a project and working in parallel</a><ul>
-<li><a href="#41-add-a-project-point-it-at-a-folder">4.1 Add a project — point it at a folder</a></li>
-<li><a href="#42-create-one-task-and-launch-an-agent">4.2 Create one task and launch an agent</a></li>
-<li><a href="#43-add-a-second-and-third-task-that-is-the-parallelism">4.3 Add a second and third task — that is the parallelism</a></li>
+<li><a href="#40-two-words-to-settle-first">4.0 Two words to settle first</a></li>
+<li><a href="#41-add-a-project-point-it-at-a-folder">4.1 Add a project — point it at a folder</a><ul>
+<li><a href="#about-cloud-sync-folders-google-drive-onedrive-and-so-on">About cloud-sync folders (Google Drive, OneDrive and so on)</a></li>
+</ul>
+</li>
+<li><a href="#42-create-one-workspace-and-launch-an-agent">4.2 Create one workspace and launch an agent</a></li>
+<li><a href="#43-add-a-second-and-third-workspace-that-is-the-parallelism">4.3 Add a second and third workspace — that is the parallelism</a></li>
 <li><a href="#44-split-the-window-to-watch-them-at-once">4.4 Split the window to watch them at once</a></li>
 <li><a href="#45-review-the-results-and-ship">4.5 Review the results and ship</a></li>
 <li><a href="#46-clean-up">4.6 Clean up</a></li>
@@ -460,7 +464,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#older-and-prerelease-builds">Older and prerelease builds</a></li>
 </ul>
 </li>
-<li><a href="#appendix-b-how-task-folders-worktrees-actually-behave">Appendix B. How task folders (worktrees) actually behave</a><ul>
+<li><a href="#appendix-b-how-workspaces-worktrees-actually-behave">Appendix B. How workspaces (worktrees) actually behave</a><ul>
 <li><a href="#where-they-live-and-what-they-are">Where they live, and what they are</a></li>
 <li><a href="#base-reference-and-branch-names">Base reference and branch names</a></li>
 <li><a href="#sharing-dependencies-three-ways">Sharing dependencies — three ways</a></li>
@@ -497,7 +501,7 @@ Estimated time: <strong>10 minutes to install + 20 minutes for your first parall
 <h2 id="how-to-read-this-document">How to read this document</h2>
 <ul>
 <li><strong>Parts 1–6 are all you need to start using it.</strong> Follow them in order.</li>
-<li><strong>Open the appendices only when you need them.</strong> They cover Mac/Linux installation, how git worktrees actually behave, script automation, and remote execution.</li>
+<li><strong>Open the appendices only when you need them.</strong> They cover Mac/Linux installation, how workspaces (git worktrees) actually behave, script automation, and remote execution.</li>
 <li><strong>Text in grey boxes</strong> is a command you type into the computer.</li>
 </ul>
 <hr />
@@ -512,11 +516,11 @@ Estimated time: <strong>10 minutes to install + 20 minutes for your first parall
 </code></pre>
 <p>One thing at a time. While the agent works for five minutes, you wait. If you open two terminals and run two agents in the same folder, <strong>they edit the same files and tangle with each other.</strong></p>
 <p>Here is how Orca works.</p>
-<pre><code>Task A -&gt; folder copy A -&gt; Claude Code     ┐
-Task B -&gt; folder copy B -&gt; Codex           ├─ all in one window
-Task C -&gt; folder copy C -&gt; Antigravity     ┘
+<pre><code>Workspace A -&gt; folder copy A -&gt; Claude Code     ┐
+Workspace B -&gt; folder copy B -&gt; Codex           ├─ all in one window
+Workspace C -&gt; folder copy C -&gt; Antigravity     ┘
 </code></pre>
-<p><strong>There is one core idea: every task gets its own copy of the folder.</strong> Different copies means no shared files to fight over, so nothing collides. Those copies are made using Git's <code>worktree</code> feature (see <strong>Appendix B</strong> for how it actually behaves).</p>
+<p><strong>There is one core idea: every workspace gets its own copy of the folder.</strong> Different copies means no shared files to fight over, so nothing collides. Those copies are made using Git's <code>worktree</code> feature (see <strong>Appendix B</strong> for how it actually behaves).</p>
 <h2 id="13-basic-facts">1.3 Basic facts</h2>
 <table>
 <thead>
@@ -558,7 +562,7 @@ Task C -&gt; folder copy C -&gt; Antigravity     ┘
 </table>
 <p><strong>What is included</strong></p>
 <ul>
-<li>Task tabs — one task = one folder copy</li>
+<li>Workspace tabs — one workspace = one folder copy</li>
 <li>Agent terminals — split the window however you like</li>
 <li>A diff view — comment directly on the changed lines and hand it back to the agent</li>
 <li>A built-in browser — point at a page element and say "fix this"</li>
@@ -636,9 +640,9 @@ Orca reuses the credentials each CLI has already stored. You do not enter any AP
 <h2 id="23-first-launch">2.3 First launch</h2>
 <p>The first time you open Orca it asks the following, in order.</p>
 <ol>
-<li><strong>Access to your home directory</strong> — so it can find repositories. Allow it.</li>
+<li><strong>Access to your home directory</strong> — so it can find the folders you will use as projects. Allow it.</li>
 <li><strong>Whether to import existing settings</strong> — it offers to import <code>~/.claude</code>, <code>~/.codex</code> and your terminal settings. <strong>Import them.</strong> Your credentials and preferences carry over, which removes most of the setup.</li>
-<li><strong>An empty screen</strong> — nothing is there until you add a repository. That is normal.</li>
+<li><strong>An empty screen</strong> — nothing is there until you add a project. That is normal.</li>
 </ol>
 <h3 id="check-your-shell">Check your shell</h3>
 <p>On Windows, <code>Settings → Terminal</code> lets you choose PowerShell or CMD as the default shell. Leave it on <strong>PowerShell</strong> unless you have a reason not to.</p>
@@ -689,10 +693,10 @@ Orca reuses the credentials each CLI has already stored. You do not enter any AP
 <ul>
 <li><strong>Usage and rate-limit proximity in the status bar</strong> — this matters when running in parallel</li>
 <li><strong>One-click switching between multiple accounts</strong> — it prevents overlapping credential refreshes</li>
-<li>Per-repository hooks and memory files</li>
-<li>The working directory is set to that task's folder when it launches</li>
+<li>Per-project hooks and memory files</li>
+<li>The working directory is set to that workspace's folder when it launches</li>
 </ul>
-<p><strong>Claude Agent Teams</strong> (an agent directing sub-agents) is <strong>off by default.</strong> Turning it on shows sub-agents as expandable child rows in the task list. Leave it off at first; it makes it hard to tell what is doing what.</p>
+<p><strong>Claude Agent Teams</strong> (an agent directing sub-agents) is <strong>off by default.</strong> Turning it on shows sub-agents as expandable child rows in the workspace list. Leave it off at first; it makes it hard to tell what is doing what.</p>
 <h2 id="34-codex-cli">3.4 Codex CLI</h2>
 <p>It imports <code>~/.codex</code>. One-click launch works, but there is <strong>no usage display.</strong> You have to check how much of your ChatGPT allowance you have used outside Orca.</p>
 <h2 id="35-antigravity-cli-agy">3.5 Antigravity CLI (<code>agy</code>)</h2>
@@ -724,68 +728,149 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 </tbody>
 </table>
 <p>The reasoning is clear enough. A task folder is a disposable copy, so if something goes wrong you delete the whole thing.</p>
-<p><strong>But that reasoning depends on working inside a Git repository.</strong> Point it at a folder holding original data, or a cloud-sync folder, and the premise breaks. Only files Git tracks come back when you delete and start over.</p>
+<p><strong>But that reasoning depends on working inside a Git repository.</strong> Point it at a folder holding original data and the premise breaks. Only files Git tracks come back when you delete and start over. Section 4.1 covers which folders to point it at.</p>
 <blockquote>
 <p><strong>Set it to <code>Manual</code> at first.</strong> Move to <code>Yolo</code> once you have watched what the agents actually do. Doing it the other way round means an accident before you have had the chance to learn.</p>
 </blockquote>
 <hr />
 <h1 id="part-4-creating-a-project-and-working-in-parallel">Part 4. Creating a project and working in parallel</h1>
 <p>This is the actual usage. No difficult concepts appear here.</p>
+<h2 id="40-two-words-to-settle-first">4.0 Two words to settle first</h2>
+<p>The words on Orca's screen differ from the words in Orca's own documentation. This guide follows <strong>what the screen says</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>On screen</th>
+<th>In the documentation</th>
+<th>What this guide calls it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project</strong></td>
+<td>repo</td>
+<td>project</td>
+</tr>
+<tr>
+<td><strong>Workspace</strong></td>
+<td>worktree</td>
+<td>workspace</td>
+</tr>
+</tbody>
+</table>
+<p>The documentation still uses older wording such as <code>Add Repo</code> and <code>worktree</code>, so looking for those names on screen will not find them. The screen is the current one.</p>
 <h2 id="41-add-a-project-point-it-at-a-folder">4.1 Add a project — point it at a folder</h2>
+<p>Near the top of the left sidebar there is a heading reading <strong><code>Projects</code></strong>, with a few small icons to its right.</p>
 <ol>
-<li>Click <strong><code>Add Repo</code></strong> in the left sidebar.</li>
+<li>Click the <strong>folder icon with a <code>+</code> on it</strong>. Hovering over it shows the tooltip <strong><code>Add Project</code></strong>.</li>
 <li><strong>Choose the folder you want to work in.</strong></li>
 <li>Done. Orca reads that folder's git state and takes its default branch as the base reference.</li>
 </ol>
 <blockquote>
+<p><strong>There are two icons side by side. Do not mix them up.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Icon</th>
+<th>Tooltip on hover</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>folder with <code>+</code></strong></td>
+<td><code>Add Project</code></td>
+<td><strong>Add a project (folder)</strong> ← the one to click now</td>
+</tr>
+<tr>
+<td>plain <code>+</code></td>
+<td><code>New workspace</code></td>
+<td>Create a new workspace (used in section 4.2)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>The folder has to be a Git repository.</strong> Orca's whole approach leans on git features. If it is not one yet, open a terminal there and run <code>git init</code> once.</p>
-<p><strong>Avoid cloud-sync folders.</strong> Sync clients can corrupt a repository by syncing files inside <code>.git</code>. Use a plain local path such as <code>C:\projects\my-project</code>.</p>
 </blockquote>
-<p>To base tasks on a different branch, adjust it in the repository settings.</p>
-<h2 id="42-create-one-task-and-launch-an-agent">4.2 Create one task and launch an agent</h2>
+<p>To base workspaces on a different branch, adjust it in the project settings.</p>
+<h3 id="about-cloud-sync-folders-google-drive-onedrive-and-so-on">About cloud-sync folders (Google Drive, OneDrive and so on)</h3>
+<p><strong>It does work. It is just not what I would recommend.</strong></p>
+<p>You can add a folder inside Google Drive, OneDrive or Dropbox as a project, and it will usually work fine. It is not blocked. Two things do cause real trouble, though.</p>
 <ol>
-<li>Click <strong><code>+</code></strong> next to the repository name.</li>
-<li><strong>Type a task name.</strong> (Leave it blank and one is generated for you.)</li>
+<li><strong>Risk of a corrupted repository</strong> — Git reads and writes hundreds of files inside <code>.git</code> very quickly. If a sync client catches one of those intermediate states and uploads it, or overwrites it with another machine's version, the repository breaks. <strong>The risk grows when the same folder syncs across several machines.</strong></li>
+<li><strong>Speed</strong> — every workspace you create adds another folder copy, and the sync client will try to upload all of it. Create several in parallel and you notice.</li>
+</ol>
+<p><strong>So do this instead.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One machine only, sync is just for backup</td>
+<td>Carry on. Adding <code>.git</code> to the sync client's exclusion list reduces the risk</td>
+</tr>
+<tr>
+<td>The same folder syncs across several machines</td>
+<td><strong>Move it to a local path</strong>, such as <code>C:\projects\my-project</code></td>
+</tr>
+<tr>
+<td>You want backup and history together</td>
+<td>Keep it on a local path and <strong>push to a remote such as GitHub.</strong> Git is itself a backup tool</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>In short: <strong>a sync folder is not forbidden, but a local path plus a remote repository is safer and faster.</strong></p>
+</blockquote>
+<h2 id="42-create-one-workspace-and-launch-an-agent">4.2 Create one workspace and launch an agent</h2>
+<ol>
+<li>Click <strong><code>+</code></strong>. Either place works.<br />
+   - <strong>Hover over a project name</strong> in the sidebar and a <code>+</code> appears on the right. Its tooltip reads <strong><code>Create workspace for &lt;project&gt;</code></strong>. With several projects, this is the unambiguous one.<br />
+   - Or the <strong>plain <code>+</code></strong> to the right of the <code>Projects</code> heading at the top of the sidebar (tooltip: <code>New workspace</code>). Its tooltip also shows the keyboard shortcut.</li>
+<li><strong>Type a workspace name.</strong> (Leave it blank and one is generated for you.)</li>
 <li>Choose the starting reference. <strong>Usually leave it on the default branch.</strong></li>
 <li>A launcher appears with your default agent preselected. Pick the agent you want from the terminal's <strong>dropdown</strong> — Claude Code, Codex, Antigravity CLI and so on.</li>
 <li>The agent starts. <strong>Instruct it in plain English as usual.</strong></li>
 </ol>
-<p>At this point Orca has created <strong>a dedicated folder copy for that task</strong> in the background. You never create or manage those folders yourself.</p>
-<h2 id="43-add-a-second-and-third-task-that-is-the-parallelism">4.3 Add a second and third task — that is the parallelism</h2>
+<p>At this point Orca has created <strong>a dedicated folder copy for that workspace</strong> in the background. You never create or manage those folders yourself.</p>
+<h2 id="43-add-a-second-and-third-workspace-that-is-the-parallelism">4.3 Add a second and third workspace — that is the parallelism</h2>
 <p><strong>Just repeat 4.2.</strong></p>
-<p>Press <code>+</code> again for a second task and launch an agent. Same for the third. Each task has a different folder copy, so <strong>none of them affect each other.</strong></p>
+<p>Press <code>+</code> again for a second workspace and launch an agent. Same for the third. Each workspace has a different folder copy, so <strong>none of them affect each other.</strong></p>
 <p>While the first agent works you can already be instructing the second and third. The waiting disappears.</p>
 <h2 id="44-split-the-window-to-watch-them-at-once">4.4 Split the window to watch them at once</h2>
-<p><strong>Drag a task tab to the right or bottom edge of the window.</strong> The window splits so you can see several tasks side by side.</p>
+<p><strong>Drag a workspace tab to the right or bottom edge of the window.</strong> The window splits so you can see several workspaces side by side.</p>
 <p>To watch three, drag one to the right and another to the bottom for a three-way split.</p>
 <h2 id="45-review-the-results-and-ship">4.5 Review the results and ship</h2>
 <ol>
-<li>Open each task's <strong>diff view</strong>.</li>
+<li>Open each workspace's <strong>diff view</strong>.</li>
 <li>If something needs changing, use <strong><code>Annotate AI Diff</code></strong> to comment on that line. The agent reads it and revises.</li>
 <li>When you are happy, <strong>commit and push directly from Orca</strong>.</li>
 </ol>
 <h2 id="46-clean-up">4.6 Clean up</h2>
-<p>Delete a task you no longer need with <strong>one click</strong>. The folder copy and the branch go together.</p>
+<p>Delete a workspace you no longer need with <strong>one click</strong>. The folder copy and the branch go together.</p>
 <p>If unmerged changes remain, Orca shows a review step first. Even on a forced delete it keeps the problematic branch for inspection.</p>
 <h2 id="47-two-ways-to-use-it">4.7 Two ways to use it</h2>
 <p><strong>Pattern A — race: the same job across several agents</strong></p>
-<p>Create three tasks and <strong>give the same instruction to three different agents</strong>. The official reasoning goes like this.</p>
+<p>Create three workspaces and <strong>give the same instruction to three different agents</strong>. The official reasoning goes like this.</p>
 <blockquote>
 <p>Different agents make different mistakes. Running the same task in parallel is cheaper than sequential retries, and disagreement is itself a signal.</p>
 </blockquote>
 <p>If all three agree, the answer is probably right; if they diverge, that is the spot a human needs to judge. <strong>This is useful for validating analysis scripts</strong> — have three write the same processing and look at where the results fail to match.</p>
 <p><strong>Pattern B — division of labour: different jobs at once</strong></p>
-<p>Assign a different job to each task. Files are isolated, so nothing collides. This is the pattern that actually increases throughput.</p>
+<p>Assign a different job to each workspace. Files are isolated, so nothing collides. This is the pattern that actually increases throughput.</p>
 <h2 id="48-do-this-once-up-front-share-dependencies">4.8 Do this once, up front — share dependencies</h2>
-<p>A new task folder is <strong>a clean copy</strong>. Anything Git does not track — <code>node_modules</code>, <code>.venv</code>, <code>.env</code> — is missing. Reinstalling every time cancels out the benefit of parallelism.</p>
-<p><strong>Fix</strong>: set the paths to share under <strong><code>Worktree Shared Paths</code></strong> in the repository settings. Do it once, and every task folder from then on shares them.</p>
+<p>A new workspace folder is <strong>a clean copy</strong>. Anything Git does not track — <code>node_modules</code>, <code>.venv</code>, <code>.env</code> — is missing. Reinstalling every time cancels out the benefit of parallelism.</p>
+<p><strong>Fix</strong>: set the paths to share under <strong><code>Worktree Shared Paths</code></strong> in the repository settings. Do it once, and every workspace folder from then on shares them.</p>
 <p>Managing this through config files (<code>orca.yaml</code>, <code>.worktreeinclude</code>) is covered in <strong>Appendix B</strong>.</p>
 <hr />
 <h1 id="part-5-where-it-runs-local-desktop">Part 5. Where it runs — local desktop</h1>
 <p><strong>This is the default, and it is what most people should use.</strong></p>
 <p>Agents, terminals and the browser all run on your PC. Nothing extra to configure. Installing as in Part 2 leaves you here.</p>
 <p><strong>When it fits</strong>: iterating quickly on a machine with enough capacity. In other words, ordinary daily work.</p>
-<p><strong>Watch out for</strong>: memory. Running many tasks uses a lot of it — this is an Electron app, and each task carries its own folder copy and terminal. <strong>Start with two or three</strong> and find where your machine tops out.</p>
+<p><strong>Watch out for</strong>: memory. Running many workspaces uses a lot of it — this is an Electron app, and each workspace carries its own folder copy and terminal. <strong>Start with two or three</strong> and find where your machine tops out.</p>
 <p>Running on a remote server, checking in from a phone, or spinning up a disposable cloud machine per task are covered in <strong>Appendix D</strong>. Read it when you need it.</p>
 <hr />
 <h1 id="part-6-things-to-be-careful-about">Part 6. Things to be careful about</h1>
@@ -893,19 +978,19 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 </tbody>
 </table>
 <hr />
-<h1 id="appendix-b-how-task-folders-worktrees-actually-behave">Appendix B. How task folders (worktrees) actually behave</h1>
-<p>What Part 4 calls a "folder copy" is a <strong>Git <code>worktree</code></strong>.</p>
+<h1 id="appendix-b-how-workspaces-worktrees-actually-behave">Appendix B. How workspaces (worktrees) actually behave</h1>
+<p>What Part 4 calls a "folder copy" is a <strong>Git <code>worktree</code></strong>. Orca's screen calls it a <strong>Workspace</strong>, while the official documentation still says <code>worktree</code>.</p>
 <h2 id="where-they-live-and-what-they-are">Where they live, and what they are</h2>
 <ul>
 <li><strong>They are real <code>git worktree</code> checkouts</strong>, created in a directory Orca manages</li>
 <li>You can <code>cd</code> into that path from a terminal and <strong>use plain <code>git</code> as normal.</strong> It is not an Orca-specific format</li>
-<li>Each task has its own file space, its own branch and its own terminal session. That is why parallel execution is safe</li>
+<li>Each workspace has its own file space, its own branch and its own terminal session. That is why parallel execution is safe</li>
 </ul>
 <h2 id="base-reference-and-branch-names">Base reference and branch names</h2>
 <ul>
 <li>The base ref is usually <code>origin/main</code></li>
 <li>You can also branch from a local branch, <strong>a specific commit SHA</strong>, or a remote branch</li>
-<li>Branch names are derived from the task name. Link a GitHub PR, a Linear/Jira issue or a GitLab MR and the name comes from there instead</li>
+<li>Branch names are derived from the workspace name. Link a GitHub PR, a Linear/Jira issue or a GitLab MR and the name comes from there instead</li>
 <li>To set it yourself, open <strong>Advanced</strong> in the <code>Create Worktree</code> dialog</li>
 </ul>
 <h2 id="sharing-dependencies-three-ways">Sharing dependencies — three ways</h2>
@@ -965,19 +1050,19 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 <tbody>
 <tr>
 <td><code>orca worktree create --name &lt;name&gt; --agent &lt;agent&gt; --prompt "&lt;instruction&gt;" --json</code></td>
-<td>Create a task, launch the agent and send the instruction in one go</td>
+<td>Create a workspace, launch the agent and send the instruction in one go</td>
 </tr>
 <tr>
 <td><code>orca worktree ps --json</code></td>
-<td>List active tasks</td>
+<td>List active workspaces</td>
 </tr>
 <tr>
 <td><code>orca worktree set</code></td>
-<td>Edit task metadata</td>
+<td>Edit workspace metadata</td>
 </tr>
 <tr>
 <td><code>orca worktree rm</code></td>
-<td>Delete a task</td>
+<td>Delete a workspace</td>
 </tr>
 <tr>
 <td><code>orca terminal list --json</code></td>
@@ -1029,7 +1114,7 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 <tbody>
 <tr>
 <td><strong>SSH targets</strong></td>
-<td>Agents and task folders on a remote machine; editor, diff and UI on your laptop</td>
+<td>Agents and workspace folders on a remote machine; editor, diff and UI on your laptop</td>
 <td>You already have a VPS or GPU box with the repo and tools set up</td>
 </tr>
 <tr>
@@ -1039,7 +1124,7 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 </tr>
 <tr>
 <td><strong>Cloud VMs</strong></td>
-<td>A disposable virtual machine per task, created and destroyed by recipes committed to your repo</td>
+<td>A disposable virtual machine per workspace, created and destroyed by recipes committed to your repo</td>
 <td>When you need full isolation</td>
 </tr>
 </tbody>
@@ -1058,7 +1143,8 @@ Orca's official supported-agent list still shows only the old name "Gemini". The
 <h2 id="not-verified">Not verified</h2>
 <ul>
 <li>What name <code>agy</code> actually shows under in the agent dropdown (the source code indicates support; the documentation still says "Gemini")</li>
-<li>A practical ceiling on concurrent tasks (machine-dependent, and no official figure exists)</li>
+<li>A practical ceiling on concurrent workspaces (machine-dependent, and no official figure exists)</li>
+<li>The button names in sections 4.1 and 4.2 (<code>Add Project</code>, <code>New workspace</code>, <code>Create workspace for ...</code>) come from the repository source (<code>src/renderer/src/components/sidebar/</code>). The official documentation still writes <code>Add Repo</code></li>
 <li>Real-world performance of dependency sharing on Windows, where it falls back to symlinks</li>
 <li>Minimum system requirements (not stated in the official documentation)</li>
 </ul>

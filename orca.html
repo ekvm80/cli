@@ -434,9 +434,13 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#4부-프로젝트-만들고-병렬로-쓰기">4부. 프로젝트 만들고 병렬로 쓰기</a><ul>
-<li><a href="#41-프로젝트-추가하기-폴더-지정">4.1 프로젝트 추가하기 — 폴더 지정</a></li>
-<li><a href="#42-작업-하나-만들어-에이전트-띄우기">4.2 작업 하나 만들어 에이전트 띄우기</a></li>
-<li><a href="#43-두-번째세-번째-작업-추가하기-이게-병렬입니다">4.3 두 번째·세 번째 작업 추가하기 = 이게 병렬입니다</a></li>
+<li><a href="#40-용어-두-개만-맞춰-둡시다">4.0 용어 두 개만 맞춰 둡시다</a></li>
+<li><a href="#41-프로젝트-추가하기-폴더-지정">4.1 프로젝트 추가하기 — 폴더 지정</a><ul>
+<li><a href="#클라우드-동기화-폴더google-드라이브-등에-대해">클라우드 동기화 폴더(Google 드라이브 등)에 대해</a></li>
+</ul>
+</li>
+<li><a href="#42-작업공간-하나-만들어-에이전트-띄우기">4.2 작업공간 하나 만들어 에이전트 띄우기</a></li>
+<li><a href="#43-두-번째세-번째-작업공간-추가하기-이게-병렬입니다">4.3 두 번째·세 번째 작업공간 추가하기 = 이게 병렬입니다</a></li>
 <li><a href="#44-화면-분할해서-동시에-보기">4.4 화면 분할해서 동시에 보기</a></li>
 <li><a href="#45-결과-검토하고-반영하기">4.5 결과 검토하고 반영하기</a></li>
 <li><a href="#46-정리하기">4.6 정리하기</a></li>
@@ -460,7 +464,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#이전-버전-시험판">이전 버전 · 시험판</a></li>
 </ul>
 </li>
-<li><a href="#부록-b-작업-폴더worktree의-실제-동작">부록 B. 작업 폴더(worktree)의 실제 동작</a><ul>
+<li><a href="#부록-b-작업공간worktree의-실제-동작">부록 B. 작업공간(worktree)의 실제 동작</a><ul>
 <li><a href="#저장-위치와-성질">저장 위치와 성질</a></li>
 <li><a href="#기준점과-브랜치-이름">기준점과 브랜치 이름</a></li>
 <li><a href="#의존성-공유-세-가지-방법">의존성 공유 — 세 가지 방법</a></li>
@@ -497,7 +501,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <h2 id="이-문서를-읽는-방법">이 문서를 읽는 방법</h2>
 <ul>
 <li><strong>1부~5부만 읽으면 쓸 수 있습니다.</strong> 순서대로 따라 하세요.</li>
-<li><strong>부록은 필요할 때만</strong> 펼치세요. Mac·Linux 설치, git worktree의 내부 동작, 스크립트 자동화, 원격 실행이 들어 있습니다.</li>
+<li><strong>부록은 필요할 때만</strong> 펼치세요. Mac·Linux 설치, 작업공간(worktree)의 내부 동작, 스크립트 자동화, 원격 실행이 들어 있습니다.</li>
 <li><strong>회색 상자 안의 글자</strong>는 컴퓨터에 입력하는 명령어입니다.</li>
 </ul>
 <hr />
@@ -512,11 +516,11 @@ blockquote p:last-child { margin-bottom: 0; }
 </code></pre>
 <p>한 번에 한 가지 일만 됩니다. 에이전트가 5분간 작업하는 동안 사람은 기다립니다. 터미널을 두 개 열어 같은 폴더에서 두 에이전트를 돌리면 <strong>서로 같은 파일을 고쳐서 뒤엉킵니다.</strong></p>
 <p>Orca의 방식은 이렇습니다.</p>
-<pre><code>작업 A → 폴더 사본 A → Claude Code    ┐
-작업 B → 폴더 사본 B → Codex          ├─ 한 화면에서 동시에
-작업 C → 폴더 사본 C → Antigravity    ┘
+<pre><code>작업공간 A → 폴더 사본 A → Claude Code    ┐
+작업공간 B → 폴더 사본 B → Codex          ├─ 한 화면에서 동시에
+작업공간 C → 폴더 사본 C → Antigravity    ┘
 </code></pre>
-<p><strong>핵심은 하나입니다 — 작업마다 폴더 사본을 따로 만들어 준다.</strong> 사본이 다르니 서로 건드릴 파일이 없고, 따라서 충돌하지 않습니다. 이 사본을 만드는 데 Git의 <code>worktree</code> 기능을 씁니다(자세한 동작은 <strong>부록 B</strong>).</p>
+<p><strong>핵심은 하나입니다 — 작업공간마다 폴더 사본을 따로 만들어 준다.</strong> 사본이 다르니 서로 건드릴 파일이 없고, 따라서 충돌하지 않습니다. 이 사본을 만드는 데 Git의 <code>worktree</code> 기능을 씁니다(자세한 동작은 <strong>부록 B</strong>).</p>
 <h2 id="13-기본-정보">1.3 기본 정보</h2>
 <table>
 <thead>
@@ -558,7 +562,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </table>
 <p><strong>들어 있는 기능</strong></p>
 <ul>
-<li>작업 탭 — 작업 하나 = 폴더 사본 하나</li>
+<li>작업공간(Workspace) 탭 — 작업공간 하나 = 폴더 사본 하나</li>
 <li>에이전트 터미널 — 화면을 원하는 대로 분할</li>
 <li>변경 내용 비교(diff) 화면 — 바뀐 부분에 직접 코멘트를 달아 에이전트에게 되돌려 줌</li>
 <li>내장 브라우저 — 화면 요소를 집어서 "이걸 고쳐" 라고 지시</li>
@@ -636,9 +640,9 @@ Orca는 각 CLI가 이미 저장해 둔 로그인 정보를 그대로 가져다 
 <h2 id="23-첫-실행">2.3 첫 실행</h2>
 <p>설치가 끝나고 Orca를 처음 열면 순서대로 이런 것들을 묻습니다.</p>
 <ol>
-<li><strong>홈 디렉터리 접근 권한</strong> — 저장소를 찾기 위한 것입니다. 허용합니다.</li>
+<li><strong>홈 디렉터리 접근 권한</strong> — 프로젝트로 쓸 폴더를 찾기 위한 것입니다. 허용합니다.</li>
 <li><strong>기존 설정을 가져올지</strong> — <code>~/.claude</code>, <code>~/.codex</code>, 터미널 설정을 가져오겠다고 묻습니다. <strong>가져오세요.</strong> 로그인 정보와 설정이 그대로 넘어와서 추가 작업이 없어집니다.</li>
-<li><strong>빈 화면</strong> — 저장소를 추가하기 전이라 아무것도 없습니다. 정상입니다.</li>
+<li><strong>빈 화면</strong> — 프로젝트를 추가하기 전이라 아무것도 없습니다. 정상입니다.</li>
 </ol>
 <h3 id="터미널셸-확인">터미널(셸) 확인</h3>
 <p>Windows에서는 <code>Settings → Terminal</code> 에서 기본 셸을 PowerShell 또는 CMD 중 고를 수 있습니다. 특별한 이유가 없으면 <strong>PowerShell</strong> 로 둡니다.</p>
@@ -689,10 +693,10 @@ Orca는 각 CLI가 이미 저장해 둔 로그인 정보를 그대로 가져다 
 <ul>
 <li><strong>상태바에 사용량과 한도 근접도 표시</strong> — 병렬로 돌릴 때 이게 중요합니다</li>
 <li><strong>계정 여러 개 원클릭 전환</strong> — 전환 중 인증 갱신이 겹치지 않게 막아 줍니다</li>
-<li>저장소별 훅·메모리 파일 지원</li>
-<li>작업 디렉터리가 해당 작업 폴더로 맞춰진 채 실행됨</li>
+<li>프로젝트별 훅·메모리 파일 지원</li>
+<li>작업 디렉터리가 해당 작업공간 폴더로 맞춰진 채 실행됨</li>
 </ul>
-<p><strong>Claude Agent Teams</strong>(에이전트가 하위 에이전트를 부리는 기능)는 <strong>기본 꺼져 있습니다.</strong> 켜면 하위 에이전트들이 작업 목록의 하위 항목으로 펼쳐져 보입니다. 처음에는 꺼 두세요. 무엇이 무엇을 하는지 알기 어려워집니다.</p>
+<p><strong>Claude Agent Teams</strong>(에이전트가 하위 에이전트를 부리는 기능)는 <strong>기본 꺼져 있습니다.</strong> 켜면 하위 에이전트들이 작업공간 목록의 하위 항목으로 펼쳐져 보입니다. 처음에는 꺼 두세요. 무엇이 무엇을 하는지 알기 어려워집니다.</p>
 <h2 id="34-codex-cli">3.4 Codex CLI</h2>
 <p><code>~/.codex</code> 를 가져옵니다. 원클릭 실행은 되지만 <strong>사용량 표시는 없습니다.</strong> ChatGPT 구독 한도를 얼마나 썼는지는 Orca 밖에서 확인해야 합니다.</p>
 <h2 id="35-antigravity-cli-agy">3.5 Antigravity CLI (<code>agy</code>)</h2>
@@ -724,68 +728,149 @@ Orca 공식 문서의 지원 목록에는 아직 낡은 이름인 "Gemini"만 �
 </tbody>
 </table>
 <p>설계 의도는 분명합니다. 작업 폴더는 버리는 사본이므로 잘못돼도 통째로 지우면 됩니다.</p>
-<p><strong>그러나 이 전제는 "Git 저장소 안에서만 작업한다"에 의존합니다.</strong> 원본 데이터가 든 폴더나 Google 드라이브 동기화 폴더를 대상으로 삼으면 전제가 깨집니다. 지워도 복구되는 것은 Git이 추적하는 파일뿐입니다.</p>
+<p><strong>그러나 이 전제는 "Git 저장소 안에서만 작업한다"에 의존합니다.</strong> 원본 데이터가 든 폴더를 대상으로 삼으면 전제가 깨집니다. 지워도 복구되는 것은 Git이 추적하는 파일뿐입니다. 어떤 폴더를 대상으로 삼을지는 4.1절에 정리해 두었습니다.</p>
 <blockquote>
 <p><strong>처음에는 <code>Manual</code> 로 바꿔 두세요.</strong> 무엇을 하려는지 눈으로 익힌 다음에 <code>Yolo</code> 로 옮기면 됩니다. 순서를 거꾸로 하면 배울 기회 없이 사고가 납니다.</p>
 </blockquote>
 <hr />
 <h1 id="4부-프로젝트-만들고-병렬로-쓰기">4부. 프로젝트 만들고 병렬로 쓰기</h1>
 <p>여기가 실제 사용법입니다. 어려운 개념은 나오지 않습니다.</p>
+<h2 id="40-용어-두-개만-맞춰-둡시다">4.0 용어 두 개만 맞춰 둡시다</h2>
+<p>Orca 화면에서 쓰는 말과, Orca 공식 문서에서 쓰는 말이 다릅니다. 이 문서는 <strong>화면에 나오는 말</strong>을 기준으로 씁니다.</p>
+<table>
+<thead>
+<tr>
+<th>화면에 나오는 말</th>
+<th>공식 문서의 말</th>
+<th>이 문서에서 부르는 말</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project</strong></td>
+<td>repo (저장소)</td>
+<td>프로젝트</td>
+</tr>
+<tr>
+<td><strong>Workspace</strong></td>
+<td>worktree</td>
+<td>작업공간</td>
+</tr>
+</tbody>
+</table>
+<p>공식 문서는 아직 <code>Add Repo</code>, <code>worktree</code> 같은 옛 표기를 쓰고 있어서, 문서를 보고 화면에서 그 이름을 찾으면 없습니다. 화면 쪽이 최신입니다.</p>
 <h2 id="41-프로젝트-추가하기-폴더-지정">4.1 프로젝트 추가하기 — 폴더 지정</h2>
+<p>왼쪽 사이드바 위쪽에 <strong><code>Projects</code></strong> 라는 제목이 있고, 그 오른쪽에 작은 아이콘이 몇 개 있습니다.</p>
 <ol>
-<li>왼쪽 사이드바의 <strong><code>Add Repo</code></strong> 를 누릅니다.</li>
+<li><strong>폴더에 <code>+</code> 가 붙은 아이콘</strong>을 누릅니다. 마우스를 올리면 <strong><code>Add Project</code></strong> 라는 설명이 뜹니다.</li>
 <li><strong>작업할 폴더를 고릅니다.</strong></li>
 <li>끝입니다. Orca가 그 폴더의 Git 상태를 읽고 기본 브랜치를 기준점으로 잡습니다.</li>
 </ol>
 <blockquote>
+<p><strong>아이콘이 두 개 나란히 있습니다. 헷갈리지 마세요.</strong></p>
+<table>
+<thead>
+<tr>
+<th>아이콘</th>
+<th>설명(마우스 올렸을 때)</th>
+<th>하는 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>폴더 + <code>+</code></strong></td>
+<td><code>Add Project</code></td>
+<td><strong>프로젝트(폴더) 추가</strong> ← 지금 누를 것</td>
+</tr>
+<tr>
+<td>그냥 <code>+</code></td>
+<td><code>New workspace</code></td>
+<td>새 작업공간 만들기 (4.2절에서 씁니다)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>폴더는 Git 저장소여야 합니다.</strong> Orca의 작동 방식이 Git 기능에 기대고 있기 때문입니다. 아직 저장소가 아니라면 그 폴더에서 터미널을 열고 <code>git init</code> 을 한 번 실행하면 됩니다.</p>
-<p><strong>Google 드라이브 동기화 폴더는 피하세요.</strong> 드라이브가 Git 내부 파일을 동기화하면서 저장소를 깨뜨리는 사례가 있습니다. <code>C:\projects\내프로젝트</code> 처럼 동기화되지 않는 로컬 경로를 쓰세요.</p>
 </blockquote>
-<p>기준점을 다른 브랜치로 바꾸려면 저장소 설정에서 조정합니다.</p>
-<h2 id="42-작업-하나-만들어-에이전트-띄우기">4.2 작업 하나 만들어 에이전트 띄우기</h2>
+<p>기준점을 다른 브랜치로 바꾸려면 프로젝트 설정에서 조정합니다.</p>
+<h3 id="클라우드-동기화-폴더google-드라이브-등에-대해">클라우드 동기화 폴더(Google 드라이브 등)에 대해</h3>
+<p><strong>되기는 됩니다. 다만 권하지 않습니다.</strong></p>
+<p>Google 드라이브, OneDrive, Dropbox 안의 폴더도 프로젝트로 추가할 수 있고 대부분 정상 동작합니다. 안 되는 것이 아닙니다. 그러나 다음 두 가지가 실제로 문제를 일으킵니다.</p>
 <ol>
-<li>저장소 이름 옆의 <strong><code>+</code></strong> 를 누릅니다.</li>
+<li><strong>저장소 손상 위험</strong> — Git은 <code>.git</code> 폴더 안의 파일 수백 개를 빠르게 읽고 씁니다. 동기화 프로그램이 그 중간 상태를 붙잡아 올리거나 다른 기기의 버전으로 덮어쓰면 저장소가 깨집니다. <strong>여러 기기에서 같은 폴더를 동기화할 때 위험이 커집니다.</strong></li>
+<li><strong>속도</strong> — 작업공간을 만들 때마다 폴더 사본이 하나 생기고, 동기화 프로그램이 그것을 전부 업로드하려 듭니다. 병렬로 여러 개를 만들면 체감이 큽니다.</li>
+</ol>
+<p><strong>그래서 이렇게 하세요.</strong></p>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>권하는 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한 대에서만 쓰고, 동기화는 백업 목적</td>
+<td>그대로 써도 됩니다. 다만 <code>.git</code> 을 동기화 제외 목록에 넣으면 위험이 줄어듭니다</td>
+</tr>
+<tr>
+<td>여러 기기에서 같은 폴더를 동기화</td>
+<td><strong>로컬 경로로 옮기세요.</strong> <code>C:\projects\내프로젝트</code> 처럼</td>
+</tr>
+<tr>
+<td>백업과 이력을 같이 원한다</td>
+<td>로컬 경로에 두고 <strong>GitHub 등 원격 저장소에 푸시</strong>하세요. Git 자체가 백업 도구입니다</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>요약: <strong>동기화 폴더가 금지는 아니지만, 로컬 경로 + 원격 저장소 조합이 더 안전하고 빠릅니다.</strong></p>
+</blockquote>
+<h2 id="42-작업공간-하나-만들어-에이전트-띄우기">4.2 작업공간 하나 만들어 에이전트 띄우기</h2>
+<ol>
+<li><strong><code>+</code></strong> 를 누릅니다. 두 곳 중 어디서 눌러도 됩니다.<br />
+   - 사이드바에 추가된 <strong>프로젝트 이름 위에 마우스를 올리면</strong> 오른쪽에 <code>+</code> 가 나타납니다. 설명은 <strong><code>Create workspace for &lt;프로젝트명&gt;</code></strong> 입니다. 프로젝트가 여러 개일 때는 이쪽이 확실합니다.<br />
+   - 또는 사이드바 맨 위 <code>Projects</code> 제목 오른쪽의 <strong>그냥 <code>+</code></strong> (설명: <code>New workspace</code>). 단축키도 이 설명에 함께 표시됩니다.</li>
 <li><strong>작업 이름을 입력</strong>합니다. (비워 두면 자동으로 생성됩니다.)</li>
 <li>시작 기준점을 고릅니다. <strong>보통 기본 브랜치 그대로 둡니다.</strong></li>
 <li>실행 화면이 뜨고 기본 에이전트가 미리 선택되어 있습니다. 터미널의 <strong>드롭다운에서 원하는 에이전트</strong>를 고릅니다 — Claude Code, Codex, Antigravity CLI 등.</li>
 <li>에이전트가 실행됩니다. <strong>평소처럼 한국어로 지시하면 됩니다.</strong></li>
 </ol>
-<p>이 시점에 Orca가 배경에서 <strong>그 작업 전용 폴더 사본을 만들어 둡니다.</strong> 사용자가 직접 폴더를 만들거나 관리할 필요는 없습니다.</p>
-<h2 id="43-두-번째세-번째-작업-추가하기-이게-병렬입니다">4.3 두 번째·세 번째 작업 추가하기 = 이게 병렬입니다</h2>
+<p>이 시점에 Orca가 배경에서 <strong>그 작업공간 전용 폴더 사본을 만들어 둡니다.</strong> 사용자가 직접 폴더를 만들거나 관리할 필요는 없습니다.</p>
+<h2 id="43-두-번째세-번째-작업공간-추가하기-이게-병렬입니다">4.3 두 번째·세 번째 작업공간 추가하기 = 이게 병렬입니다</h2>
 <p><strong>4.2를 반복하면 끝입니다.</strong></p>
 <p><code>+</code> 를 다시 눌러 두 번째 작업을 만들고 에이전트를 띄웁니다. 세 번째도 같습니다. 각 작업은 폴더 사본이 다르므로 <strong>서로 아무 영향을 주지 않습니다.</strong></p>
 <p>첫 에이전트가 일하는 동안 두 번째, 세 번째에게도 지시를 넣을 수 있습니다. 기다리는 시간이 사라집니다.</p>
 <h2 id="44-화면-분할해서-동시에-보기">4.4 화면 분할해서 동시에 보기</h2>
-<p>작업 탭을 <strong>화면 오른쪽 가장자리나 아래쪽 가장자리로 끌어다 놓습니다.</strong> 화면이 분할되어 여러 작업을 나란히 볼 수 있습니다.</p>
+<p>작업공간 탭을 <strong>화면 오른쪽 가장자리나 아래쪽 가장자리로 끌어다 놓습니다.</strong> 화면이 분할되어 여러 작업공간을 나란히 볼 수 있습니다.</p>
 <p>세 개를 동시에 관찰하려면 오른쪽으로 한 번, 아래로 한 번 끌어 3분할을 만듭니다.</p>
 <h2 id="45-결과-검토하고-반영하기">4.5 결과 검토하고 반영하기</h2>
 <ol>
-<li>각 작업의 <strong>변경 내용 비교(diff) 화면</strong>을 엽니다.</li>
+<li>각 작업공간의 <strong>변경 내용 비교(diff) 화면</strong>을 엽니다.</li>
 <li>고칠 부분이 있으면 <strong><code>Annotate AI Diff</code></strong> 로 그 줄에 코멘트를 답니다. 에이전트가 그걸 읽고 수정합니다.</li>
 <li>만족하면 <strong>Orca 안에서 바로 커밋하고 푸시</strong>합니다.</li>
 </ol>
 <h2 id="46-정리하기">4.6 정리하기</h2>
-<p>쓸모없어진 작업은 <strong>원클릭으로 삭제</strong>합니다. 폴더 사본과 브랜치가 함께 지워집니다.</p>
+<p>쓸모없어진 작업공간은 <strong>원클릭으로 삭제</strong>합니다. 폴더 사본과 브랜치가 함께 지워집니다.</p>
 <p>아직 반영하지 않은 변경이 남아 있으면 Orca가 먼저 검토 화면을 띄웁니다. 강제로 지워도 문제되는 브랜치는 남겨 둡니다.</p>
 <h2 id="47-두-가지-사용-패턴">4.7 두 가지 사용 패턴</h2>
 <p><strong>패턴 A — 경쟁: 같은 일을 여러 에이전트에게</strong></p>
-<p>작업 세 개를 만들고 <strong>같은 지시를 세 에이전트에게 각각</strong> 넣습니다. 공식 문서의 논리는 이렇습니다.</p>
+<p>작업공간 세 개를 만들고 <strong>같은 지시를 세 에이전트에게 각각</strong> 넣습니다. 공식 문서의 논리는 이렇습니다.</p>
 <blockquote>
 <p>에이전트마다 다른 실수를 한다. 같은 과제를 병렬로 돌리는 것이 순차 재시도보다 싸고, 의견이 갈리는 것 자체가 신호가 된다.</p>
 </blockquote>
 <p>셋이 같은 답을 내면 맞을 가능성이 높고, 갈리면 사람이 판단해야 하는 지점이라는 뜻입니다. <strong>분석 스크립트 검증에 쓸 만합니다</strong> — 같은 처리를 셋에게 각각 짜게 해서 결과가 어긋나는 곳을 찾는 방식.</p>
 <p><strong>패턴 B — 분업: 서로 다른 일을 동시에</strong></p>
-<p>작업마다 다른 과제를 배정합니다. 파일이 격리돼 있어 충돌하지 않습니다. 이쪽이 실제 처리량을 늘리는 용법입니다.</p>
+<p>작업공간마다 다른 과제를 배정합니다. 파일이 격리돼 있어 충돌하지 않습니다. 이쪽이 실제 처리량을 늘리는 용법입니다.</p>
 <h2 id="48-처음에-한-번은-해둘-것-의존성-공유">4.8 처음에 한 번은 해둘 것 — 의존성 공유</h2>
-<p>새 작업 폴더는 <strong>깨끗한 사본</strong>입니다. 그래서 <code>node_modules</code>, <code>.venv</code>, <code>.env</code> 처럼 Git이 추적하지 않는 것들이 빠져 있습니다. 매번 다시 설치하면 병렬의 이점이 사라집니다.</p>
-<p><strong>해결</strong>: 저장소 설정의 <strong><code>Worktree Shared Paths</code></strong> 에 공유할 경로를 지정합니다. 한 번 해두면 이후 모든 작업 폴더가 그것을 공유합니다.</p>
+<p>새 작업공간 폴더는 <strong>깨끗한 사본</strong>입니다. 그래서 <code>node_modules</code>, <code>.venv</code>, <code>.env</code> 처럼 Git이 추적하지 않는 것들이 빠져 있습니다. 매번 다시 설치하면 병렬의 이점이 사라집니다.</p>
+<p><strong>해결</strong>: 저장소 설정의 <strong><code>Worktree Shared Paths</code></strong> 에 공유할 경로를 지정합니다. 한 번 해두면 이후 모든 작업공간 폴더가 그것을 공유합니다.</p>
 <p>설정 파일로 관리하는 방법(<code>orca.yaml</code>, <code>.worktreeinclude</code>)은 <strong>부록 B</strong> 에 있습니다.</p>
 <hr />
 <h1 id="5부-실행-위치-로컬-데스크톱">5부. 실행 위치 — 로컬 데스크톱</h1>
 <p><strong>기본값이고, 대부분의 경우 이대로 쓰면 됩니다.</strong></p>
 <p>에이전트, 터미널, 브라우저가 전부 내 PC에서 돕니다. 별도 설정이 필요 없습니다. 2부대로 설치하면 이 상태입니다.</p>
 <p><strong>적합한 경우</strong>: 사양이 되는 장비에서 빠르게 반복 작업할 때. 즉 평소 작업 전부.</p>
-<p><strong>유의점</strong>: 작업을 여러 개 띄우면 메모리를 상당히 씁니다. Electron 기반 앱이고 각 작업이 폴더 사본과 터미널을 따로 갖기 때문입니다. 처음에는 <strong>두세 개로 시작해서 장비가 버티는 선을 확인</strong>하세요.</p>
+<p><strong>유의점</strong>: 작업공간을 여러 개 띄우면 메모리를 상당히 씁니다. Electron 기반 앱이고 각 작업공간이 폴더 사본과 터미널을 따로 갖기 때문입니다. 처음에는 <strong>두세 개로 시작해서 장비가 버티는 선을 확인</strong>하세요.</p>
 <p>원격 서버에서 돌리거나, 밖에서 휴대폰으로 확인하거나, 작업마다 일회용 클라우드 장비를 쓰는 방식은 <strong>부록 D</strong> 에 있습니다. 필요해질 때 보면 됩니다.</p>
 <hr />
 <h1 id="6부-주의사항">6부. 주의사항</h1>
@@ -893,19 +978,19 @@ Orca 공식 문서의 지원 목록에는 아직 낡은 이름인 "Gemini"만 �
 </tbody>
 </table>
 <hr />
-<h1 id="부록-b-작업-폴더worktree의-실제-동작">부록 B. 작업 폴더(worktree)의 실제 동작</h1>
-<p>4부에서 "폴더 사본"이라고 부른 것의 정체는 <strong>Git의 <code>worktree</code></strong> 입니다.</p>
+<h1 id="부록-b-작업공간worktree의-실제-동작">부록 B. 작업공간(worktree)의 실제 동작</h1>
+<p>4부에서 "폴더 사본"이라고 부른 것의 정체는 <strong>Git의 <code>worktree</code></strong> 입니다. Orca 화면에서는 이것을 <strong>Workspace(작업공간)</strong> 라고 부르고, 공식 문서에서는 아직 <code>worktree</code> 라고 씁니다.</p>
 <h2 id="저장-위치와-성질">저장 위치와 성질</h2>
 <ul>
 <li><strong>진짜 <code>git worktree</code> 입니다.</strong> Orca가 관리하는 디렉터리에 별도 체크아웃이 생깁니다</li>
 <li>터미널에서 그 경로로 <code>cd</code> 해서 <strong>평소처럼 <code>git</code> 명령을 쓸 수 있습니다.</strong> Orca 전용 형식이 아닙니다</li>
-<li>각 작업이 별도의 파일 공간, 별도 브랜치, 별도 터미널 세션을 가집니다. 이것이 병렬 실행이 안전한 이유입니다</li>
+<li>각 작업공간이 별도의 파일 공간, 별도 브랜치, 별도 터미널 세션을 가집니다. 이것이 병렬 실행이 안전한 이유입니다</li>
 </ul>
 <h2 id="기준점과-브랜치-이름">기준점과 브랜치 이름</h2>
 <ul>
 <li>기준점(base ref)은 보통 <code>origin/main</code> 입니다</li>
 <li>로컬 브랜치, <strong>특정 커밋 SHA</strong>, 원격 브랜치에서도 분기할 수 있습니다</li>
-<li>브랜치 이름은 작업 이름에서 자동 생성됩니다. GitHub PR, Linear/Jira 이슈, GitLab MR을 연결하면 그쪽 정보에서 따옵니다</li>
+<li>브랜치 이름은 작업공간 이름에서 자동 생성됩니다. GitHub PR, Linear/Jira 이슈, GitLab MR을 연결하면 그쪽 정보에서 따옵니다</li>
 <li>직접 지정하려면 <code>Create Worktree</code> 대화상자의 <strong>Advanced</strong> 를 엽니다</li>
 </ul>
 <h2 id="의존성-공유-세-가지-방법">의존성 공유 — 세 가지 방법</h2>
@@ -965,19 +1050,19 @@ Orca 공식 문서의 지원 목록에는 아직 낡은 이름인 "Gemini"만 �
 <tbody>
 <tr>
 <td><code>orca worktree create --name &lt;이름&gt; --agent &lt;에이전트&gt; --prompt "&lt;지시&gt;" --json</code></td>
-<td>작업 생성 + 에이전트 실행 + 지시 투입을 한 번에</td>
+<td>작업공간 생성 + 에이전트 실행 + 지시 투입을 한 번에</td>
 </tr>
 <tr>
 <td><code>orca worktree ps --json</code></td>
-<td>활성 작업 목록</td>
+<td>활성 작업공간 목록</td>
 </tr>
 <tr>
 <td><code>orca worktree set</code></td>
-<td>작업 메타데이터 수정</td>
+<td>작업공간 메타데이터 수정</td>
 </tr>
 <tr>
 <td><code>orca worktree rm</code></td>
-<td>작업 삭제</td>
+<td>작업공간 삭제</td>
 </tr>
 <tr>
 <td><code>orca terminal list --json</code></td>
@@ -1039,7 +1124,7 @@ Orca 공식 문서의 지원 목록에는 아직 낡은 이름인 "Gemini"만 �
 </tr>
 <tr>
 <td><strong>클라우드 VM</strong></td>
-<td>작업마다 일회용 가상 장비. 저장소에 커밋한 레시피로 생성/중단/재개/파기</td>
+<td>작업공간마다 일회용 가상 장비. 저장소에 커밋한 레시피로 생성/중단/재개/파기</td>
 <td>완전 격리가 필요할 때</td>
 </tr>
 </tbody>
@@ -1058,7 +1143,8 @@ Orca 공식 문서의 지원 목록에는 아직 낡은 이름인 "Gemini"만 �
 <h2 id="확인하지-못한-사항">확인하지 못한 사항</h2>
 <ul>
 <li>실제 UI에서 <code>agy</code> 가 에이전트 드롭다운에 어떤 이름으로 표시되는지 (코드 근거로는 지원, 문서 표기는 "Gemini")</li>
-<li>동시 작업 개수의 실용적 상한 (장비별로 다르며 공식 수치가 없음)</li>
+<li>4.1~4.2절의 버튼 이름(<code>Add Project</code>, <code>New workspace</code>, <code>Create workspace for ...</code>)은 저장소 소스(<code>src/renderer/src/components/sidebar/</code>)에서 확인한 것입니다. 공식 문서는 아직 <code>Add Repo</code> 로 적고 있습니다</li>
+<li>동시 작업공간 개수의 실용적 상한 (장비별로 다르며 공식 수치가 없음)</li>
 <li>Windows에서 의존성 공유가 심링크로 동작할 때의 실제 성능</li>
 <li>시스템 최소 요구사양 (공식 문서에 명시되어 있지 않음)</li>
 </ul>
