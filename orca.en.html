@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orca — A Beginner's Guide to Running AI Agents in Parallel</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --bg-code: #f4f5f7;
+  --fg: #1f2328;
+  --fg-soft: #59636e;
+  --border: #d8dde3;
+  --accent: #b5502a;
+  --accent-soft: #fdf3ef;
+  --note-bg: #f2f7fd;
+  --note-border: #7ba7d7;
+  --warn-bg: #fdf6ec;
+  --warn-border: #d9a13b;
+  --sidebar-w: 300px;
+  --maxw: 860px;
+}
+/* 시스템 설정을 따르되, 사용자가 직접 고른 값이 있으면 그쪽이 이긴다. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #16181c;
+    --bg-soft: #1e2126;
+    --bg-code: #22262c;
+    --fg: #e3e6ea;
+    --fg-soft: #9aa3ad;
+    --border: #333941;
+    --accent: #e08b63;
+    --accent-soft: #2a211d;
+    --note-bg: #1b2530;
+    --note-border: #3f6a99;
+    --warn-bg: #2b2418;
+    --warn-border: #8a6a2b;
+  }
+}
+/* 어둡게 */
+:root[data-theme="dark"] {
+  --bg: #16181c;
+  --bg-soft: #1e2126;
+  --bg-code: #22262c;
+  --fg: #e3e6ea;
+  --fg-soft: #9aa3ad;
+  --border: #333941;
+  --accent: #e08b63;
+  --accent-soft: #2a211d;
+  --note-bg: #1b2530;
+  --note-border: #3f6a99;
+  --warn-bg: #2b2418;
+  --warn-border: #8a6a2b;
+}
+/* 편하게 보기 — 눈부심을 줄인 따뜻한 배경 */
+:root[data-theme="sepia"] {
+  --bg: #f5ecd9;
+  --bg-soft: #efe4cd;
+  --bg-code: #ece0c6;
+  --fg: #3a322a;
+  --fg-soft: #6d6252;
+  --border: #ddd0b6;
+  --accent: #a04a1f;
+  --accent-soft: #f8e9d9;
+  --note-bg: #e6ebec;
+  --note-border: #8aa2b5;
+  --warn-bg: #f6e6c8;
+  --warn-border: #c69a45;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Pretendard", "Pretendard Variable", -apple-system,
+               BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕",
+               "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: 16.5px;
+  line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* ---------- 레이아웃 ---------- */
+.layout { display: flex; align-items: flex-start; }
+
+#sidebar {
+  width: var(--sidebar-w);
+  flex: 0 0 var(--sidebar-w);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--bg-soft);
+  padding: 28px 18px 60px 24px;
+}
+#sidebar .toc-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--fg-soft);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+#sidebar ul { list-style: none; margin: 0; padding: 0; }
+#sidebar ul ul { padding-left: 13px; }
+#sidebar li { margin: 1px 0; }
+#sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.855rem;
+  line-height: 1.45;
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+#sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+#sidebar a.active {
+  color: var(--accent);
+  font-weight: 600;
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+/* 1단계 항목(부 제목)은 굵게 */
+#sidebar > .toc > ul > li > a { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.lang-switch a, .lang-switch span {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 5px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 5px;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.lang-switch span { background: var(--accent); color: #fff; }
+.lang-switch a { color: var(--fg-soft); }
+.lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
+.doc-nav {
+  margin: 0 0 14px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.doc-nav .doc-nav-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.doc-nav a, .doc-nav span {
+  display: block;
+  padding: 4px 7px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  line-height: 1.35;
+}
+.doc-nav span { background: var(--accent); color: #fff; font-weight: 600; }
+.doc-nav a { color: var(--fg-soft); }
+.doc-nav a:hover { background: var(--accent-soft); color: var(--accent); }
+.theme-switch {
+  margin: 0 0 16px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.theme-switch-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.theme-switch-row { display: flex; gap: 4px; }
+.theme-switch button {
+  flex: 1 1 0;
+  padding: 5px 2px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--fg-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.theme-switch button:hover { color: var(--accent); border-color: var(--accent); }
+.theme-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 46px 40px 120px;
+  display: flex;
+  justify-content: center;
+}
+.content { width: 100%; max-width: var(--maxw); }
+
+/* ---------- 타이포그래피 ---------- */
+h1, h2, h3, h4 { line-height: 1.35; font-weight: 700; scroll-margin-top: 20px; }
+h1 {
+  font-size: 2.05rem;
+  margin: 0 0 0.6em;
+  padding-bottom: 0.35em;
+  border-bottom: 3px solid var(--accent);
+}
+h2 {
+  font-size: 1.5rem;
+  margin: 2.6em 0 0.8em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 1.16rem; margin: 2em 0 0.6em; color: var(--accent); }
+h4 { font-size: 1.02rem; margin: 1.6em 0 0.5em; }
+p { margin: 0.85em 0; }
+a { color: var(--accent); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 3em 0;
+}
+
+ul, ol { padding-left: 1.4em; margin: 0.8em 0; }
+li { margin: 0.32em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+strong { font-weight: 700; }
+
+/* ---------- 표 ---------- */
+.table-wrap { overflow-x: auto; margin: 1.4em 0; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.93rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 9px 13px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--bg-soft); font-weight: 700; white-space: nowrap; }
+tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--bg-soft) 45%, transparent); }
+
+/* ---------- 코드 ---------- */
+code {
+  font-family: "Cascadia Mono", "Consolas", "D2Coding", "Menlo", monospace;
+  font-size: 0.88em;
+}
+p code, li code, td code, th code {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.codeblock { position: relative; margin: 1.15em 0; }
+.codeblock pre {
+  margin: 0;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 60px 14px 16px;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+.codeblock pre code { background: none; border: 0; padding: 0; font-size: 0.9rem; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg-soft);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 0.74rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s;
+  font-family: inherit;
+}
+.codeblock:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.done { color: #2f8a4d; border-color: #2f8a4d; opacity: 1; }
+
+/* ---------- 인용(참고 상자) ---------- */
+blockquote {
+  margin: 1.3em 0;
+  padding: 12px 18px;
+  background: var(--note-bg);
+  border-left: 4px solid var(--note-border);
+  border-radius: 0 8px 8px 0;
+  color: var(--fg);
+}
+blockquote p { margin: 0.4em 0; }
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ---------- 모바일 ---------- */
+#toc-toggle { display: none; }
+@media (max-width: 980px) {
+  .layout { display: block; }
+  #sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    max-height: 50vh;
+  }
+  #toc-toggle {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    color: var(--fg);
+    font: inherit;
+    font-weight: 700;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  #sidebar .toc { display: none; }
+  #sidebar.open .toc { display: block; }
+  #sidebar .toc-title { display: none; }
+  main { padding: 26px 18px 80px; }
+  body { font-size: 16px; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.3rem; }
+}
+
+/* ---------- 인쇄 ---------- */
+@media print {
+  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch { display: none !important; }
+  body { font-size: 10.5pt; color: #000; background: #fff; }
+  main { padding: 0; }
+  .content { max-width: none; }
+  h2 { page-break-after: avoid; }
+  .codeblock pre, table, blockquote { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+}
+</style>
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem('guide-theme');
+    if (saved) { document.documentElement.setAttribute('data-theme', saved); }
+  } catch (e) {}
+})();
+</script>
+</head>
+<body>
+<div class="layout">
+  <nav id="sidebar">
+    <button id="toc-toggle" type="button">Show/hide contents ▾</button>
+    <div class="lang-switch">
+      <span>English</span>
+      <a href="orca.html" hreflang="ko">한국어</a>
+    </div>
+    <div class="theme-switch">
+      <div class="theme-switch-title">Background</div>
+      <div class="theme-switch-row">
+        <button type="button" data-theme-value="light">Light</button>
+        <button type="button" data-theme-value="dark">Dark</button>
+        <button type="button" data-theme-value="sepia">Easy</button>
+      </div>
+    </div>
+    <div class="doc-nav">
+      <div class="doc-nav-title">Documents</div>
+      <a href="en.html">Terminal AI Agents</a>
+      <span>Orca Parallel Agents</span>
+    </div>
+    <div class="toc-title">Contents</div>
+    <div class="toc">
+<ul>
+<li><a href="#orca-a-beginners-guide-to-running-ai-agents-in-parallel">Orca — A Beginner's Guide to Running AI Agents in Parallel</a><ul>
+<li><a href="#how-to-read-this-document">How to read this document</a></li>
+</ul>
+</li>
+<li><a href="#part-1-what-orca-is">Part 1. What Orca is</a><ul>
+<li><a href="#11-definition">1.1 Definition</a></li>
+<li><a href="#12-what-changes">1.2 What changes</a></li>
+<li><a href="#13-basic-facts">1.3 Basic facts</a></li>
+<li><a href="#14-a-name-collision-to-watch-for">1.4 A name collision to watch for</a></li>
+</ul>
+</li>
+<li><a href="#part-2-installing-on-windows">Part 2. Installing on Windows</a><ul>
+<li><a href="#21-what-you-need-first">2.1 What you need first</a></li>
+<li><a href="#22-download-from-the-official-site">2.2 Download from the official site</a></li>
+<li><a href="#23-first-launch">2.3 First launch</a><ul>
+<li><a href="#check-your-shell">Check your shell</a></li>
+</ul>
+</li>
+<li><a href="#24-updates">2.4 Updates</a></li>
+</ul>
+</li>
+<li><a href="#part-3-connecting-your-ai-clis">Part 3. Connecting your AI CLIs</a><ul>
+<li><a href="#31-how-it-works">3.1 How it works</a></li>
+<li><a href="#32-integration-depth-differs-by-tool">3.2 Integration depth differs by tool</a></li>
+<li><a href="#33-claude-code">3.3 Claude Code</a></li>
+<li><a href="#34-codex-cli">3.4 Codex CLI</a></li>
+<li><a href="#35-antigravity-cli-agy">3.5 Antigravity CLI (agy)</a></li>
+<li><a href="#36-the-setting-you-must-change-permission-bypass-is-on-by-default">3.6 The setting you must change — permission bypass is on by default</a></li>
+</ul>
+</li>
+<li><a href="#part-4-creating-a-project-and-working-in-parallel">Part 4. Creating a project and working in parallel</a><ul>
+<li><a href="#41-add-a-project-point-it-at-a-folder">4.1 Add a project — point it at a folder</a></li>
+<li><a href="#42-create-one-task-and-launch-an-agent">4.2 Create one task and launch an agent</a></li>
+<li><a href="#43-add-a-second-and-third-task-that-is-the-parallelism">4.3 Add a second and third task — that is the parallelism</a></li>
+<li><a href="#44-split-the-window-to-watch-them-at-once">4.4 Split the window to watch them at once</a></li>
+<li><a href="#45-review-the-results-and-ship">4.5 Review the results and ship</a></li>
+<li><a href="#46-clean-up">4.6 Clean up</a></li>
+<li><a href="#47-two-ways-to-use-it">4.7 Two ways to use it</a></li>
+<li><a href="#48-do-this-once-up-front-share-dependencies">4.8 Do this once, up front — share dependencies</a></li>
+</ul>
+</li>
+<li><a href="#part-5-where-it-runs-local-desktop">Part 5. Where it runs — local desktop</a></li>
+<li><a href="#part-6-things-to-be-careful-about">Part 6. Things to be careful about</a><ul>
+<li><a href="#1-your-allowance-drains-in-parallel-too">1. Your allowance drains in parallel too</a></li>
+<li><a href="#2-the-permission-bypass-default">2. The permission bypass default</a></li>
+<li><a href="#3-only-use-it-inside-a-git-repository">3. Only use it inside a Git repository</a></li>
+<li><a href="#4-this-is-still-a-young-project">4. This is still a young project</a></li>
+<li><a href="#5-when-not-to-use-it">5. When not to use it</a></li>
+</ul>
+</li>
+<li><a href="#appendix-a-mac-and-linux-installation-and-installing-from-a-terminal">Appendix A. Mac and Linux installation, and installing from a terminal</a><ul>
+<li><a href="#windows-from-a-terminal">Windows — from a terminal</a></li>
+<li><a href="#macos">macOS</a></li>
+<li><a href="#linux">Linux</a></li>
+<li><a href="#older-and-prerelease-builds">Older and prerelease builds</a></li>
+</ul>
+</li>
+<li><a href="#appendix-b-how-task-folders-worktrees-actually-behave">Appendix B. How task folders (worktrees) actually behave</a><ul>
+<li><a href="#where-they-live-and-what-they-are">Where they live, and what they are</a></li>
+<li><a href="#base-reference-and-branch-names">Base reference and branch names</a></li>
+<li><a href="#sharing-dependencies-three-ways">Sharing dependencies — three ways</a></li>
+<li><a href="#deletion">Deletion</a></li>
+<li><a href="#how-many-at-once">How many at once</a></li>
+</ul>
+</li>
+<li><a href="#appendix-c-automating-parallel-runs-with-the-orca-command">Appendix C. Automating parallel runs with the orca command</a><ul>
+<li><a href="#registering-and-checking">Registering and checking</a></li>
+<li><a href="#main-commands">Main commands</a></li>
+<li><a href="#gotchas">Gotchas</a></li>
+<li><a href="#mcp">MCP</a></li>
+</ul>
+</li>
+<li><a href="#appendix-d-running-somewhere-other-than-your-desktop">Appendix D. Running somewhere other than your desktop</a></li>
+<li><a href="#appendix-e-limits-of-this-document-and-sources">Appendix E. Limits of this document, and sources</a><ul>
+<li><a href="#not-verified">Not verified</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+  </nav>
+  <main>
+    <article class="content">
+<h1 id="orca-a-beginners-guide-to-running-ai-agents-in-parallel">Orca — A Beginner's Guide to Running AI Agents in Parallel</h1>
+<blockquote>
+<p>Based on Windows 11. Written as the next step for people who have already used an AI CLI such as Claude Code.<br />
+If you have never used an AI CLI, read <strong><a href="en.html">Terminal AI Agents — A Complete Beginner's Guide</a></strong> first.<br />
+Estimated time: <strong>10 minutes to install + 20 minutes for your first parallel session</strong></p>
+</blockquote>
+<hr />
+<h2 id="how-to-read-this-document">How to read this document</h2>
+<ul>
+<li><strong>Parts 1–6 are all you need to start using it.</strong> Follow them in order.</li>
+<li><strong>Open the appendices only when you need them.</strong> They cover Mac/Linux installation, how git worktrees actually behave, script automation, and remote execution.</li>
+<li><strong>Text in grey boxes</strong> is a command you type into the computer.</li>
+</ul>
+<hr />
+<h1 id="part-1-what-orca-is">Part 1. What Orca is</h1>
+<h2 id="11-definition">1.1 Definition</h2>
+<p><strong>Orca is a program for running several AI coding agents at the same time.</strong></p>
+<p>It does <strong>not</strong> replace Claude Code or Codex CLI. It is a shell that launches several of them and manages them in one window. It is less like changing your car and more like building a car park.</p>
+<p>It is made by Stably AI, and it calls itself an <strong>ADE (Agent Development Environment)</strong>.</p>
+<h2 id="12-what-changes">1.2 What changes</h2>
+<p>Here is how you work today.</p>
+<pre><code>one terminal -&gt; run claude -&gt; instruct -&gt; wait -&gt; check result -&gt; instruct again
+</code></pre>
+<p>One thing at a time. While the agent works for five minutes, you wait. If you open two terminals and run two agents in the same folder, <strong>they edit the same files and tangle with each other.</strong></p>
+<p>Here is how Orca works.</p>
+<pre><code>Task A -&gt; folder copy A -&gt; Claude Code     ┐
+Task B -&gt; folder copy B -&gt; Codex           ├─ all in one window
+Task C -&gt; folder copy C -&gt; Antigravity     ┘
+</code></pre>
+<p><strong>There is one core idea: every task gets its own copy of the folder.</strong> Different copies means no shared files to fight over, so nothing collides. Those copies are made using Git's <code>worktree</code> feature (see <strong>Appendix B</strong> for how it actually behaves).</p>
+<h2 id="13-basic-facts">1.3 Basic facts</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Made by</td>
+<td>Stably AI</td>
+</tr>
+<tr>
+<td>Official site</td>
+<td>https://www.onorca.dev</td>
+</tr>
+<tr>
+<td>Licence</td>
+<td>MIT (open source)</td>
+</tr>
+<tr>
+<td>Form</td>
+<td>Desktop application (Windows, Mac, Linux)</td>
+</tr>
+<tr>
+<td>Latest version</td>
+<td>v1.4.195 (as of 2 September 2026)</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td><strong>The app is free.</strong> It uses your existing subscription (Claude Pro and so on)</td>
+</tr>
+<tr>
+<td>Traffic path</td>
+<td>Nothing goes through Orca's servers. Each CLI talks to its own provider directly</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What is included</strong></p>
+<ul>
+<li>Task tabs — one task = one folder copy</li>
+<li>Agent terminals — split the window however you like</li>
+<li>A diff view — comment directly on the changed lines and hand it back to the agent</li>
+<li>A built-in browser — point at a page element and say "fix this"</li>
+<li>GitHub, Linear and Jira integration</li>
+<li>Mobile apps (iOS/Android) — check progress while away</li>
+<li>An <code>orca</code> command — drive it from a shell as a script (<strong>Appendix C</strong>)</li>
+</ul>
+<h2 id="14-a-name-collision-to-watch-for">1.4 A name collision to watch for</h2>
+<p>There are at least three AI agent tools on GitHub called <code>orca</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>stablyai/orca</strong></td>
+<td><strong>onorca.dev. The subject of this document</strong></td>
+</tr>
+<tr>
+<td>orca-cli/orca</td>
+<td>A different project with a similar idea (a Go binary)</td>
+</tr>
+<tr>
+<td>fmfsaisai/orca</td>
+<td>A tmux-based orchestrator</td>
+</tr>
+</tbody>
+</table>
+<p>When searching, include <strong><code>orca stablyai</code></strong> or <strong><code>onorca.dev</code></strong>. Without that you will get install instructions for a different project mixed into your results.</p>
+<hr />
+<h1 id="part-2-installing-on-windows">Part 2. Installing on Windows</h1>
+<h2 id="21-what-you-need-first">2.1 What you need first</h2>
+<p>Orca <strong>does not install agents for you.</strong> The AI CLI you intend to use must already be installed and logged in.</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>How to check</th>
+<th>If missing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Git</strong></td>
+<td><code>git --version</code></td>
+<td><a href="en.html#33-install-git">Beginner's guide, section 3.3</a></td>
+</tr>
+<tr>
+<td><strong>At least one AI CLI</strong></td>
+<td><code>claude --version</code>, etc.</td>
+<td><a href="en.html#part-4-installing-an-ai-agent">Beginner's guide, Part 4</a></td>
+</tr>
+</tbody>
+</table>
+<p>Orca itself does not require Node.js.</p>
+<blockquote>
+<p><strong>Why log in beforehand?</strong><br />
+Orca reuses the credentials each CLI has already stored. You do not enter any API key into Orca. A CLI you have not logged into will simply show its login screen when Orca launches it.</p>
+</blockquote>
+<h2 id="22-download-from-the-official-site">2.2 Download from the official site</h2>
+<ol>
+<li>Go to <strong>https://www.onorca.dev</strong> in a browser.</li>
+<li>Click <strong><code>Download</code></strong>.</li>
+<li>Download the Windows installer (<code>orca-windows-setup.exe</code>).</li>
+<li>Double-click the downloaded file.</li>
+<li>When the installer opens, <strong>keep the defaults and continue</strong>.</li>
+</ol>
+<blockquote>
+<p>Windows may warn about an unrecognised publisher. Click <strong><code>More info</code> → <code>Run anyway</code></strong> to continue. Make sure the file came from <code>onorca.dev</code> or the <a href="https://github.com/stablyai/orca/releases">official GitHub Releases page</a>.</p>
+</blockquote>
+<p>If you use Mac or Linux, or prefer installing from a terminal, see <strong>Appendix A</strong>.</p>
+<h2 id="23-first-launch">2.3 First launch</h2>
+<p>The first time you open Orca it asks the following, in order.</p>
+<ol>
+<li><strong>Access to your home directory</strong> — so it can find repositories. Allow it.</li>
+<li><strong>Whether to import existing settings</strong> — it offers to import <code>~/.claude</code>, <code>~/.codex</code> and your terminal settings. <strong>Import them.</strong> Your credentials and preferences carry over, which removes most of the setup.</li>
+<li><strong>An empty screen</strong> — nothing is there until you add a repository. That is normal.</li>
+</ol>
+<h3 id="check-your-shell">Check your shell</h3>
+<p>On Windows, <code>Settings → Terminal</code> lets you choose PowerShell or CMD as the default shell. Leave it on <strong>PowerShell</strong> unless you have a reason not to.</p>
+<h2 id="24-updates">2.4 Updates</h2>
+<p><strong>It auto-updates by default</strong> on the stable channel.</p>
+<p>To check immediately, use <strong>"Check for Updates"</strong> in the app menu. The release cadence is extremely fast (effectively daily). Screens may already differ slightly from this document, so look for things by position and role rather than by exact label.</p>
+<hr />
+<h1 id="part-3-connecting-your-ai-clis">Part 3. Connecting your AI CLIs</h1>
+<h2 id="31-how-it-works">3.1 How it works</h2>
+<p><strong>Orca detects CLIs that are already installed and logged in, and launches them for you.</strong></p>
+<p>Open <code>Settings → Agents</code> to see the detected list. Turn them on or off there and pick a default agent. Over 40 come preconfigured.</p>
+<h2 id="32-integration-depth-differs-by-tool">3.2 Integration depth differs by tool</h2>
+<p>"Supported" does not mean the same thing for every tool.</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Tools</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deep integration</strong></td>
+<td><strong>Claude Code</strong>, <strong>Antigravity CLI</strong>, Cursor CLI</td>
+<td>Usage and rate-limit display, model hot-swap, hooks, account switching</td>
+</tr>
+<tr>
+<td><strong>Auto-setup + status</strong></td>
+<td>Prime Agent, Pi, OMP, Droid, Command Code</td>
+<td>Status display, hooks</td>
+</tr>
+<tr>
+<td><strong>Auto-setup only</strong></td>
+<td><strong>Codex</strong>, Grok, GitHub Copilot, Aider, Cline and 20+ others</td>
+<td>One-click launch</td>
+</tr>
+<tr>
+<td><strong>Register manually</strong></td>
+<td>Any CLI</td>
+<td>Type the command into the dropdown yourself</td>
+</tr>
+</tbody>
+</table>
+<h2 id="33-claude-code">3.3 Claude Code</h2>
+<p><strong>No extra configuration.</strong> Install Claude Code, log in once, and Orca reads <code>~/.claude</code> automatically.</p>
+<p>What you get:</p>
+<ul>
+<li><strong>Usage and rate-limit proximity in the status bar</strong> — this matters when running in parallel</li>
+<li><strong>One-click switching between multiple accounts</strong> — it prevents overlapping credential refreshes</li>
+<li>Per-repository hooks and memory files</li>
+<li>The working directory is set to that task's folder when it launches</li>
+</ul>
+<p><strong>Claude Agent Teams</strong> (an agent directing sub-agents) is <strong>off by default.</strong> Turning it on shows sub-agents as expandable child rows in the task list. Leave it off at first; it makes it hard to tell what is doing what.</p>
+<h2 id="34-codex-cli">3.4 Codex CLI</h2>
+<p>It imports <code>~/.codex</code>. One-click launch works, but there is <strong>no usage display.</strong> You have to check how much of your ChatGPT allowance you have used outside Orca.</p>
+<h2 id="35-antigravity-cli-agy">3.5 Antigravity CLI (<code>agy</code>)</h2>
+<p>Install and log into <code>agy</code> first (<a href="en.html#44-install-antigravity-cli-the-successor-to-gemini-cli">Beginner's guide, section 4.4</a>) and Orca detects it. <strong>It is at the deep-integration level, including usage display.</strong></p>
+<blockquote>
+<p><strong>Where the documentation and reality disagree</strong><br />
+Orca's official supported-agent list still shows only the old name "Gemini". The repository source, however, contains Antigravity-specific usage mirroring, hook injection and session-history parsers. The documentation appears not to have been updated.<br />
+<strong>Check the <code>Settings → Agents</code> list yourself after installing to be sure.</strong></p>
+</blockquote>
+<h2 id="36-the-setting-you-must-change-permission-bypass-is-on-by-default">3.6 The setting you must change — permission bypass is on by default</h2>
+<p><strong>Orca attaches a permission-skipping flag by default when it launches an agent.</strong> For Claude Code that is <code>--dangerously-skip-permissions</code>.</p>
+<p><code>Settings → Agents → Agent Permissions</code> offers two choices.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Yolo</code></td>
+<td>Run everything without asking (<strong>the default</strong>)</td>
+</tr>
+<tr>
+<td><code>Manual</code></td>
+<td>Ask for approval each time</td>
+</tr>
+</tbody>
+</table>
+<p>The reasoning is clear enough. A task folder is a disposable copy, so if something goes wrong you delete the whole thing.</p>
+<p><strong>But that reasoning depends on working inside a Git repository.</strong> Point it at a folder holding original data, or a cloud-sync folder, and the premise breaks. Only files Git tracks come back when you delete and start over.</p>
+<blockquote>
+<p><strong>Set it to <code>Manual</code> at first.</strong> Move to <code>Yolo</code> once you have watched what the agents actually do. Doing it the other way round means an accident before you have had the chance to learn.</p>
+</blockquote>
+<hr />
+<h1 id="part-4-creating-a-project-and-working-in-parallel">Part 4. Creating a project and working in parallel</h1>
+<p>This is the actual usage. No difficult concepts appear here.</p>
+<h2 id="41-add-a-project-point-it-at-a-folder">4.1 Add a project — point it at a folder</h2>
+<ol>
+<li>Click <strong><code>Add Repo</code></strong> in the left sidebar.</li>
+<li><strong>Choose the folder you want to work in.</strong></li>
+<li>Done. Orca reads that folder's git state and takes its default branch as the base reference.</li>
+</ol>
+<blockquote>
+<p><strong>The folder has to be a Git repository.</strong> Orca's whole approach leans on git features. If it is not one yet, open a terminal there and run <code>git init</code> once.</p>
+<p><strong>Avoid cloud-sync folders.</strong> Sync clients can corrupt a repository by syncing files inside <code>.git</code>. Use a plain local path such as <code>C:\projects\my-project</code>.</p>
+</blockquote>
+<p>To base tasks on a different branch, adjust it in the repository settings.</p>
+<h2 id="42-create-one-task-and-launch-an-agent">4.2 Create one task and launch an agent</h2>
+<ol>
+<li>Click <strong><code>+</code></strong> next to the repository name.</li>
+<li><strong>Type a task name.</strong> (Leave it blank and one is generated for you.)</li>
+<li>Choose the starting reference. <strong>Usually leave it on the default branch.</strong></li>
+<li>A launcher appears with your default agent preselected. Pick the agent you want from the terminal's <strong>dropdown</strong> — Claude Code, Codex, Antigravity CLI and so on.</li>
+<li>The agent starts. <strong>Instruct it in plain English as usual.</strong></li>
+</ol>
+<p>At this point Orca has created <strong>a dedicated folder copy for that task</strong> in the background. You never create or manage those folders yourself.</p>
+<h2 id="43-add-a-second-and-third-task-that-is-the-parallelism">4.3 Add a second and third task — that is the parallelism</h2>
+<p><strong>Just repeat 4.2.</strong></p>
+<p>Press <code>+</code> again for a second task and launch an agent. Same for the third. Each task has a different folder copy, so <strong>none of them affect each other.</strong></p>
+<p>While the first agent works you can already be instructing the second and third. The waiting disappears.</p>
+<h2 id="44-split-the-window-to-watch-them-at-once">4.4 Split the window to watch them at once</h2>
+<p><strong>Drag a task tab to the right or bottom edge of the window.</strong> The window splits so you can see several tasks side by side.</p>
+<p>To watch three, drag one to the right and another to the bottom for a three-way split.</p>
+<h2 id="45-review-the-results-and-ship">4.5 Review the results and ship</h2>
+<ol>
+<li>Open each task's <strong>diff view</strong>.</li>
+<li>If something needs changing, use <strong><code>Annotate AI Diff</code></strong> to comment on that line. The agent reads it and revises.</li>
+<li>When you are happy, <strong>commit and push directly from Orca</strong>.</li>
+</ol>
+<h2 id="46-clean-up">4.6 Clean up</h2>
+<p>Delete a task you no longer need with <strong>one click</strong>. The folder copy and the branch go together.</p>
+<p>If unmerged changes remain, Orca shows a review step first. Even on a forced delete it keeps the problematic branch for inspection.</p>
+<h2 id="47-two-ways-to-use-it">4.7 Two ways to use it</h2>
+<p><strong>Pattern A — race: the same job across several agents</strong></p>
+<p>Create three tasks and <strong>give the same instruction to three different agents</strong>. The official reasoning goes like this.</p>
+<blockquote>
+<p>Different agents make different mistakes. Running the same task in parallel is cheaper than sequential retries, and disagreement is itself a signal.</p>
+</blockquote>
+<p>If all three agree, the answer is probably right; if they diverge, that is the spot a human needs to judge. <strong>This is useful for validating analysis scripts</strong> — have three write the same processing and look at where the results fail to match.</p>
+<p><strong>Pattern B — division of labour: different jobs at once</strong></p>
+<p>Assign a different job to each task. Files are isolated, so nothing collides. This is the pattern that actually increases throughput.</p>
+<h2 id="48-do-this-once-up-front-share-dependencies">4.8 Do this once, up front — share dependencies</h2>
+<p>A new task folder is <strong>a clean copy</strong>. Anything Git does not track — <code>node_modules</code>, <code>.venv</code>, <code>.env</code> — is missing. Reinstalling every time cancels out the benefit of parallelism.</p>
+<p><strong>Fix</strong>: set the paths to share under <strong><code>Worktree Shared Paths</code></strong> in the repository settings. Do it once, and every task folder from then on shares them.</p>
+<p>Managing this through config files (<code>orca.yaml</code>, <code>.worktreeinclude</code>) is covered in <strong>Appendix B</strong>.</p>
+<hr />
+<h1 id="part-5-where-it-runs-local-desktop">Part 5. Where it runs — local desktop</h1>
+<p><strong>This is the default, and it is what most people should use.</strong></p>
+<p>Agents, terminals and the browser all run on your PC. Nothing extra to configure. Installing as in Part 2 leaves you here.</p>
+<p><strong>When it fits</strong>: iterating quickly on a machine with enough capacity. In other words, ordinary daily work.</p>
+<p><strong>Watch out for</strong>: memory. Running many tasks uses a lot of it — this is an Electron app, and each task carries its own folder copy and terminal. <strong>Start with two or three</strong> and find where your machine tops out.</p>
+<p>Running on a remote server, checking in from a phone, or spinning up a disposable cloud machine per task are covered in <strong>Appendix D</strong>. Read it when you need it.</p>
+<hr />
+<h1 id="part-6-things-to-be-careful-about">Part 6. Things to be careful about</h1>
+<h2 id="1-your-allowance-drains-in-parallel-too">1. Your allowance drains in parallel too</h2>
+<p>Running three agents at once <strong>burns your subscription allowance three times as fast.</strong> Claude Code shows rate-limit proximity in the status bar; watch it and pace yourself.</p>
+<h2 id="2-the-permission-bypass-default">2. The permission bypass default</h2>
+<p>Re-read section 3.6. Start on <code>Manual</code>.</p>
+<h2 id="3-only-use-it-inside-a-git-repository">3. Only use it inside a Git repository</h2>
+<p>Orca's safety net is "it is only a folder copy, so delete it." That holds only in a Git repository. <strong>Point it at a folder of original data or documents and you have the permission bypass switched on with no safety net underneath.</strong></p>
+<h2 id="4-this-is-still-a-young-project">4. This is still a young project</h2>
+<p>The repository was created in March 2026 and ships releases effectively every day. The official documentation and the actual behaviour already disagree in places (the Antigravity listing in section 3.5). If a screen does not match this document, the document is usually the outdated one.</p>
+<h2 id="5-when-not-to-use-it">5. When not to use it</h2>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Code or scripts in a Git repository</td>
+<td><strong>Good fit.</strong> Clear gain</td>
+</tr>
+<tr>
+<td>Cross-checking the same analysis with several agents</td>
+<td><strong>Good fit.</strong> Pattern A</td>
+</tr>
+<tr>
+<td>Tidying documents and spreadsheets in a data folder</td>
+<td><strong>Poor fit.</strong> No benefit, added risk</td>
+</tr>
+<tr>
+<td>You have not yet got comfortable with an AI CLI</td>
+<td><strong>Poor fit.</strong> Learn one CLI first</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-a-mac-and-linux-installation-and-installing-from-a-terminal">Appendix A. Mac and Linux installation, and installing from a terminal</h1>
+<h2 id="windows-from-a-terminal">Windows — from a terminal</h2>
+<pre><code>winget install --id StablyAI.Orca
+</code></pre>
+<h2 id="macos">macOS</h2>
+<p>Homebrew:</p>
+<pre><code>brew install --cask stablyai/orca/orca
+</code></pre>
+<p>Update:</p>
+<pre><code>brew upgrade --cask orca
+</code></pre>
+<p>To download directly, use <code>orca-macos-arm64.dmg</code> for Apple Silicon and <code>orca-macos-x64.dmg</code> for Intel. The builds are signed and notarised, though macOS may still ask for confirmation on first launch.</p>
+<h2 id="linux">Linux</h2>
+<p>Pick a format from the Releases page.</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AppImage</td>
+<td><code>orca-linux.AppImage</code>, <code>orca-linux-arm64.AppImage</code></td>
+</tr>
+<tr>
+<td>Debian/Ubuntu</td>
+<td><code>orca-ide_&lt;version&gt;_amd64.deb</code>, <code>_arm64.deb</code></td>
+</tr>
+<tr>
+<td>Fedora/RHEL</td>
+<td><code>orca-ide-&lt;version&gt;.x86_64.rpm</code>, <code>.aarch64.rpm</code></td>
+</tr>
+<tr>
+<td>Arch</td>
+<td>AUR package</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Linux note</strong>: use <code>orca-ide</code> in a shell. A bare <code>orca</code> may invoke a screen reader program.</p>
+</blockquote>
+<h2 id="older-and-prerelease-builds">Older and prerelease builds</h2>
+<p>They are all on <a href="https://github.com/stablyai/orca/releases">GitHub Releases</a>. To pull a release candidate, hold a modifier key while clicking "Check for Updates".</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Shift</code> + click</td>
+<td>Latest RC prerelease</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> (<code>Cmd</code> on Mac) + click</td>
+<td>Latest performance-tagged prerelease</td>
+</tr>
+<tr>
+<td><code>Option</code> + click (macOS only)</td>
+<td>Validated local builds</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-b-how-task-folders-worktrees-actually-behave">Appendix B. How task folders (worktrees) actually behave</h1>
+<p>What Part 4 calls a "folder copy" is a <strong>Git <code>worktree</code></strong>.</p>
+<h2 id="where-they-live-and-what-they-are">Where they live, and what they are</h2>
+<ul>
+<li><strong>They are real <code>git worktree</code> checkouts</strong>, created in a directory Orca manages</li>
+<li>You can <code>cd</code> into that path from a terminal and <strong>use plain <code>git</code> as normal.</strong> It is not an Orca-specific format</li>
+<li>Each task has its own file space, its own branch and its own terminal session. That is why parallel execution is safe</li>
+</ul>
+<h2 id="base-reference-and-branch-names">Base reference and branch names</h2>
+<ul>
+<li>The base ref is usually <code>origin/main</code></li>
+<li>You can also branch from a local branch, <strong>a specific commit SHA</strong>, or a remote branch</li>
+<li>Branch names are derived from the task name. Link a GitHub PR, a Linear/Jira issue or a GitLab MR and the name comes from there instead</li>
+<li>To set it yourself, open <strong>Advanced</strong> in the <code>Create Worktree</code> dialog</li>
+</ul>
+<h2 id="sharing-dependencies-three-ways">Sharing dependencies — three ways</h2>
+<p>A new worktree is a clean checkout, so anything Git does not track is absent.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Where</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Worktree Shared Paths</strong></td>
+<td>Per-repository settings (GUI)</td>
+<td>Simplest. Working alone</td>
+</tr>
+<tr>
+<td><strong><code>worktree.sharedDirectories</code></strong></td>
+<td><code>orca.yaml</code> in the repository</td>
+<td><code>node_modules</code> and similar. <strong>Commit it to share with a team</strong></td>
+</tr>
+<tr>
+<td><strong><code>.worktreeinclude</code></strong></td>
+<td>A file at the repository root</td>
+<td>Copying individual files such as <code>.env</code></td>
+</tr>
+</tbody>
+</table>
+<p>macOS uses APFS clone-copying where it can, and symlinks otherwise. Windows and Linux use the symlink route.</p>
+<h2 id="deletion">Deletion</h2>
+<ul>
+<li>Deleting removes <strong>both the directory and the branch</strong></li>
+<li>If unmerged commits exist, Orca shows a review step first</li>
+<li>Even on a forced delete, the problematic branch is preserved for inspection</li>
+</ul>
+<h2 id="how-many-at-once">How many at once</h2>
+<p>The documentation states no hard limit. The practical constraints are your machine's memory and your subscription allowance.</p>
+<hr />
+<h1 id="appendix-c-automating-parallel-runs-with-the-orca-command">Appendix C. Automating parallel runs with the <code>orca</code> command</h1>
+<p>Instead of driving the app by hand, you can script it from a shell. Use this to make repetitive parallel work unattended.</p>
+<h2 id="registering-and-checking">Registering and checking</h2>
+<p>The <code>orca</code> CLI ships with the app but <strong>must be registered under <code>Settings → General → Orca CLI</code></strong> before it works.</p>
+<pre><code>orca status --json
+</code></pre>
+<pre><code>orca worktree current --json
+</code></pre>
+<h2 id="main-commands">Main commands</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orca worktree create --name &lt;name&gt; --agent &lt;agent&gt; --prompt "&lt;instruction&gt;" --json</code></td>
+<td>Create a task, launch the agent and send the instruction in one go</td>
+</tr>
+<tr>
+<td><code>orca worktree ps --json</code></td>
+<td>List active tasks</td>
+</tr>
+<tr>
+<td><code>orca worktree set</code></td>
+<td>Edit task metadata</td>
+</tr>
+<tr>
+<td><code>orca worktree rm</code></td>
+<td>Delete a task</td>
+</tr>
+<tr>
+<td><code>orca terminal list --json</code></td>
+<td>List terminals</td>
+</tr>
+<tr>
+<td><code>orca terminal create</code> / <code>split</code></td>
+<td>Create or split a terminal</td>
+</tr>
+<tr>
+<td><code>orca terminal send</code></td>
+<td>Send input to a terminal (line break added automatically)</td>
+</tr>
+<tr>
+<td><code>orca terminal wait --for tui-idle --timeout-ms &lt;ms&gt;</code></td>
+<td>Wait until the agent goes idle</td>
+</tr>
+<tr>
+<td><code>orca terminal read --json</code></td>
+<td>Read terminal output</td>
+</tr>
+<tr>
+<td><code>orca automations ...</code></td>
+<td>Create, run and remove scheduled tasks</td>
+</tr>
+</tbody>
+</table>
+<p>Chain <code>create</code> → <code>send</code> → <code>wait</code> → <code>read</code> and a whole parallel run becomes a script.</p>
+<h2 id="gotchas">Gotchas</h2>
+<ul>
+<li><strong>Terminal handles are scoped to the running app.</strong> After an Orca restart, reacquire them with <code>terminal list</code></li>
+<li><strong>Always pass <code>--timeout-ms</code> to <code>terminal wait --for tui-idle</code>.</strong> Without it you can hang indefinitely</li>
+<li>For structured coordination between several agents, the documentation says to use Orca's orchestration feature rather than bare <code>terminal send</code></li>
+<li>The executable name varies by environment. If <code>ORCA_CLI_COMMAND</code> is set, use that value; in a dev checkout use <code>orca-dev</code>; <strong>in a Linux shell outside Orca use <code>orca-ide</code></strong>; otherwise <code>orca</code></li>
+</ul>
+<h2 id="mcp">MCP</h2>
+<p>Orca exposes an MCP server. You can let an agent drive Orca, or let Orca drive agents. Configure it under <code>Settings → Integrations</code>.</p>
+<hr />
+<h1 id="appendix-d-running-somewhere-other-than-your-desktop">Appendix D. Running somewhere other than your desktop</h1>
+<p>Besides the local desktop (Part 5) there are three more modes. You can mix them within one installation.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Structure</th>
+<th>When it fits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SSH targets</strong></td>
+<td>Agents and task folders on a remote machine; editor, diff and UI on your laptop</td>
+<td>You already have a VPS or GPU box with the repo and tools set up</td>
+</tr>
+<tr>
+<td><strong>Remote Orca servers</strong></td>
+<td>Orca runs continuously on a separate machine; laptop, browser, mobile and automation all connect to the same runtime</td>
+<td>Keeping sessions alive. Mobile access</td>
+</tr>
+<tr>
+<td><strong>Cloud VMs</strong></td>
+<td>A disposable virtual machine per task, created and destroyed by recipes committed to your repo</td>
+<td>When you need full isolation</td>
+</tr>
+</tbody>
+</table>
+<p>Where to configure:</p>
+<ul>
+<li>SSH — <code>Settings → SSH</code> (supports jump hosts and Kerberos authentication)</li>
+<li>Remote servers — <code>Settings → Remote Orca Servers</code> (pair with another machine, or advertise this one as a server)</li>
+<li>Cloud VMs — <code>Settings → Experimental</code></li>
+</ul>
+<blockquote>
+<p><strong>Cloud VM costs are yours.</strong> Orca only runs your create/suspend/resume/destroy scripts; you manage the provider and the billing.</p>
+</blockquote>
+<hr />
+<h1 id="appendix-e-limits-of-this-document-and-sources">Appendix E. Limits of this document, and sources</h1>
+<h2 id="not-verified">Not verified</h2>
+<ul>
+<li>What name <code>agy</code> actually shows under in the agent dropdown (the source code indicates support; the documentation still says "Gemini")</li>
+<li>A practical ceiling on concurrent tasks (machine-dependent, and no official figure exists)</li>
+<li>Real-world performance of dependency sharing on Windows, where it falls back to symlinks</li>
+<li>Minimum system requirements (not stated in the official documentation)</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://github.com/stablyai/orca">stablyai/orca (GitHub)</a> — repository, licence, releases, source inspection</li>
+<li><a href="https://www.onorca.dev">Orca official site</a></li>
+<li><a href="https://www.onorca.dev/docs">Orca Docs</a> / <a href="https://www.onorca.dev/docs/install">Install</a> / <a href="https://www.onorca.dev/docs/first-session">First 3-agent session</a></li>
+<li><a href="https://www.onorca.dev/docs/model/worktrees">Worktrees</a> / <a href="https://www.onorca.dev/docs/agents/supported">Supported agents</a> / <a href="https://www.onorca.dev/docs/agents/claude-code">Claude Code in Orca</a></li>
+<li><a href="https://www.onorca.dev/docs/recipes/parallel-agents">Recipe: parallel agents</a> / <a href="https://www.onorca.dev/docs/cli/overview">Orca CLI overview</a> / <a href="https://www.onorca.dev/docs/ways-to-run">Ways to run</a> / <a href="https://www.onorca.dev/docs/settings">Settings</a></li>
+<li><a href="https://github.com/stablyai/orca/blob/main/skill-guides/orca-cli.md">orca-cli skill guide</a></li>
+</ul>
+<hr />
+<p><em>Verified as of 2 September 2026. Orca's release cadence is extremely fast. If the screens differ, this document is the outdated one.</em></p>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  // 배경 테마 전환: 고른 값을 브라우저에 저장해 다음 방문에도 유지한다.
+  var root = document.documentElement;
+  var buttons = Array.prototype.slice.call(
+    document.querySelectorAll('.theme-switch button[data-theme-value]'));
+  if (!buttons.length) { return; }
+
+  var read = function () {
+    try { return localStorage.getItem('guide-theme'); } catch (e) { return null; }
+  };
+  var systemTheme = function () {
+    return (window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  };
+  var mark = function (value) {
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed',
+        b.getAttribute('data-theme-value') === value ? 'true' : 'false');
+    });
+  };
+
+  mark(read() || systemTheme());
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var value = b.getAttribute('data-theme-value');
+      root.setAttribute('data-theme', value);
+      try { localStorage.setItem('guide-theme', value); } catch (e) {}
+      mark(value);
+    });
+  });
+})();
+
+(function () {
+  // 표를 가로 스크롤 가능한 래퍼로 감싼다 (좁은 화면 대응)
+  document.querySelectorAll('table').forEach(function (t) {
+    if (t.parentElement.classList.contains('table-wrap')) return;
+    var w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+
+  // 코드 블록에 복사 버튼 달기
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var box = document.createElement('div');
+    box.className = 'codeblock';
+    pre.parentNode.insertBefore(box, pre);
+    box.appendChild(pre);
+
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function () {
+      var text = pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.classList.remove('done');
+        }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+    box.appendChild(btn);
+  });
+
+  // 모바일 목차 토글
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('toc-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', function () { sidebar.classList.toggle('open'); });
+    sidebar.querySelectorAll('.toc a').forEach(function (a) {
+      a.addEventListener('click', function () { sidebar.classList.remove('open'); });
+    });
+  }
+
+  // 스크롤 위치에 따라 현재 항목 강조
+  var links = Array.prototype.slice.call(document.querySelectorAll('#sidebar .toc a'));
+  var map = {};
+  links.forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href') || '').replace(/^#/, '');
+    var el = id ? document.getElementById(id) : null;
+    if (el) map[id] = a;
+  });
+  var targets = Object.keys(map).map(function (id) { return document.getElementById(id); });
+  if ('IntersectionObserver' in window && targets.length) {
+    var current = null;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var a = map[e.target.id];
+        if (!a || a === current) return;
+        if (current) current.classList.remove('active');
+        a.classList.add('active');
+        current = a;
+      });
+    }, { rootMargin: '0px 0px -75% 0px', threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>

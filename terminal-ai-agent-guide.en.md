@@ -724,6 +724,26 @@ irm https://antigravity.google/cli/install.ps1 | iex
 
 # Part 5. Your first session — actually giving it work
 
+## Pick one of two paths
+
+The road forks here. **Either one is a fine place to start.** There is no required order, and doing one does not stop you doing the other.
+
+| | **1. Practise in the terminal** | **2. Go straight to Orca** |
+|---|---|---|
+| What you do | Talk to the AI directly in a black window | Run several AIs at once in a windowed app |
+| Screen | One terminal | Several task tabs, driven with a mouse |
+| What you need | Nothing beyond Part 4 | Part 4 plus installing Orca (10 min) |
+| What you learn | What an AI agent does, and how | How to keep several jobs running at once |
+| Where to go next | **Continue at section 5.1 below** | **[Orca beginner's guide](orca.en.html)** |
+
+**1. Practise in the terminal** — just carry on reading from section 5.1. This is the better route for seeing what the tool actually does and what an approval screen looks like. It is also where you develop a sense of how to find the cause when something breaks.
+
+**2. Go straight to Orca** — if the black window puts you off, or you want several jobs running from the start, take this route. Go to the **[Orca beginner's guide](orca.en.html)**. Orca reuses the AI CLI you installed in Part 4, so if you finished Part 4 you are already set up.
+
+> **The order I would suggest**: spend thirty minutes on option 1, then move to option 2. Orca is ultimately a shell that launches several of the Part 4 tools, so it makes much more sense once you know what those tools are. That is a suggestion only — starting with option 2 causes no problems.
+
+---
+
 ## 5.1 Prepare a working folder
 
 **An AI agent only handles files inside the folder you launched it from.** That is a safety feature as much as anything.

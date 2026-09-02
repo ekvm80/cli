@@ -21,8 +21,9 @@
   --sidebar-w: 300px;
   --maxw: 860px;
 }
+/* 시스템 설정을 따르되, 사용자가 직접 고른 값이 있으면 그쪽이 이긴다. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #16181c;
     --bg-soft: #1e2126;
     --bg-code: #22262c;
@@ -36,6 +37,36 @@
     --warn-bg: #2b2418;
     --warn-border: #8a6a2b;
   }
+}
+/* 어둡게 */
+:root[data-theme="dark"] {
+  --bg: #16181c;
+  --bg-soft: #1e2126;
+  --bg-code: #22262c;
+  --fg: #e3e6ea;
+  --fg-soft: #9aa3ad;
+  --border: #333941;
+  --accent: #e08b63;
+  --accent-soft: #2a211d;
+  --note-bg: #1b2530;
+  --note-border: #3f6a99;
+  --warn-bg: #2b2418;
+  --warn-border: #8a6a2b;
+}
+/* 편하게 보기 — 눈부심을 줄인 따뜻한 배경 */
+:root[data-theme="sepia"] {
+  --bg: #f5ecd9;
+  --bg-soft: #efe4cd;
+  --bg-code: #ece0c6;
+  --fg: #3a322a;
+  --fg-soft: #6d6252;
+  --border: #ddd0b6;
+  --accent: #a04a1f;
+  --accent-soft: #f8e9d9;
+  --note-bg: #e6ebec;
+  --note-border: #8aa2b5;
+  --warn-bg: #f6e6c8;
+  --warn-border: #c69a45;
 }
 
 * { box-sizing: border-box; }
@@ -122,6 +153,67 @@ body {
 .lang-switch span { background: var(--accent); color: #fff; }
 .lang-switch a { color: var(--fg-soft); }
 .lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
+.doc-nav {
+  margin: 0 0 14px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.doc-nav .doc-nav-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.doc-nav a, .doc-nav span {
+  display: block;
+  padding: 4px 7px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  line-height: 1.35;
+}
+.doc-nav span { background: var(--accent); color: #fff; font-weight: 600; }
+.doc-nav a { color: var(--fg-soft); }
+.doc-nav a:hover { background: var(--accent-soft); color: var(--accent); }
+.theme-switch {
+  margin: 0 0 16px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.theme-switch-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.theme-switch-row { display: flex; gap: 4px; }
+.theme-switch button {
+  flex: 1 1 0;
+  padding: 5px 2px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--fg-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.theme-switch button:hover { color: var(--accent); border-color: var(--accent); }
+.theme-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 
 main {
   flex: 1 1 auto;
@@ -269,7 +361,7 @@ blockquote p:last-child { margin-bottom: 0; }
 
 /* ---------- 인쇄 ---------- */
 @media print {
-  #sidebar, .copy-btn, .lang-switch { display: none !important; }
+  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch { display: none !important; }
   body { font-size: 10.5pt; color: #000; background: #fff; }
   main { padding: 0; }
   .content { max-width: none; }
@@ -278,6 +370,14 @@ blockquote p:last-child { margin-bottom: 0; }
   a { color: #000; text-decoration: none; }
 }
 </style>
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem('guide-theme');
+    if (saved) { document.documentElement.setAttribute('data-theme', saved); }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 <div class="layout">
@@ -286,6 +386,19 @@ blockquote p:last-child { margin-bottom: 0; }
     <div class="lang-switch">
       <span>한국어</span>
       <a href="en.html" hreflang="en">English</a>
+    </div>
+    <div class="theme-switch">
+      <div class="theme-switch-title">배경</div>
+      <div class="theme-switch-row">
+        <button type="button" data-theme-value="light">밝게</button>
+        <button type="button" data-theme-value="dark">어둡게</button>
+        <button type="button" data-theme-value="sepia">편하게</button>
+      </div>
+    </div>
+    <div class="doc-nav">
+      <div class="doc-nav-title">문서</div>
+      <span>터미널 AI 에이전트 입문</span>
+      <a href="orca.html">Orca 병렬 에이전트</a>
     </div>
     <div class="toc-title">목차</div>
     <div class="toc">
@@ -375,6 +488,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#5부-첫-사용-실제로-시켜보기">5부. 첫 사용 — 실제로 시켜보기</a><ul>
+<li><a href="#두-갈래-중-하나를-고르세요">두 갈래 중 하나를 고르세요</a></li>
 <li><a href="#51-작업-폴더-준비하기">5.1 작업 폴더 준비하기</a></li>
 <li><a href="#52-연습용-파일-만들기">5.2 연습용 파일 만들기</a></li>
 <li><a href="#53-ai-실행하고-대화하기">5.3 AI 실행하고 대화하기</a></li>
@@ -1145,6 +1259,50 @@ Google의 <code>gemini</code> 명령(Gemini CLI)은 <strong>2026년 6월 18일�
 </code></pre>
 <hr />
 <h1 id="5부-첫-사용-실제로-시켜보기">5부. 첫 사용 — 실제로 시켜보기</h1>
+<h2 id="두-갈래-중-하나를-고르세요">두 갈래 중 하나를 고르세요</h2>
+<p>여기서부터는 길이 둘로 갈립니다. <strong>어느 쪽을 먼저 해도 괜찮습니다.</strong> 순서가 정해져 있지 않고, 한쪽을 했다고 다른 쪽을 못 하는 것도 아닙니다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>① 터미널에서 연습하기</strong></th>
+<th><strong>② Orca로 바로 써보기</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>하는 일</td>
+<td>검은 화면에서 AI와 직접 대화</td>
+<td>창이 있는 프로그램에서 여러 AI를 동시에</td>
+</tr>
+<tr>
+<td>화면</td>
+<td>터미널 하나</td>
+<td>작업 탭 여러 개, 마우스로 조작</td>
+</tr>
+<tr>
+<td>준비물</td>
+<td>4부까지 마쳤으면 끝</td>
+<td>4부 + Orca 설치(10분)</td>
+</tr>
+<tr>
+<td>배우는 것</td>
+<td>AI 에이전트가 무엇을 어떻게 하는지</td>
+<td>여러 작업을 동시에 굴리는 방법</td>
+</tr>
+<tr>
+<td>이어서 볼 곳</td>
+<td><strong>아래 5.1절부터 계속</strong></td>
+<td><strong><a href="orca.html">Orca 입문 가이드</a></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>① 터미널에서 연습하기</strong> — 아래 5.1절부터 그대로 읽으면 됩니다. 도구가 실제로 무엇을 하는지, 승인 화면이 어떻게 생겼는지 눈으로 익히기에는 이쪽이 낫습니다. 문제가 생겼을 때 원인을 찾는 감각도 여기서 생깁니다.</p>
+<p><strong>② Orca로 바로 써보기</strong> — 검은 화면이 부담스럽거나, 처음부터 여러 작업을 동시에 돌려보고 싶다면 이쪽입니다. <strong><a href="orca.html">Orca 입문 가이드</a></strong> 로 넘어가세요. Orca는 4부에서 설치한 AI CLI를 그대로 가져다 쓰므로, 4부까지 마쳤다면 준비는 이미 끝났습니다.</p>
+<blockquote>
+<p><strong>권하는 순서</strong>: ①을 30분 해보고 ②로 넘어가는 것입니다. Orca는 결국 4부의 도구들을 여러 개 띄우는 껍데기라서, 그 도구가 무엇인지 알고 나면 훨씬 쉽게 이해됩니다. 다만 이건 권유일 뿐이고, ②부터 시작해도 아무 문제 없습니다.</p>
+</blockquote>
+<hr />
 <h2 id="51-작업-폴더-준비하기">5.1 작업 폴더 준비하기</h2>
 <p><strong>AI 에이전트는 "실행한 폴더" 안의 파일만 다룹니다.</strong> 이게 안전장치이기도 합니다.</p>
 <p>바탕화면이나 <code>C:\Users\내이름</code> 같은 곳에서 실행하지 마세요. 그러면 AI가 컴퓨터의 모든 파일을 뒤질 수 있게 됩니다.</p>
@@ -1717,6 +1875,39 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 </div>
 
 <script>
+(function () {
+  // 배경 테마 전환: 고른 값을 브라우저에 저장해 다음 방문에도 유지한다.
+  var root = document.documentElement;
+  var buttons = Array.prototype.slice.call(
+    document.querySelectorAll('.theme-switch button[data-theme-value]'));
+  if (!buttons.length) { return; }
+
+  var read = function () {
+    try { return localStorage.getItem('guide-theme'); } catch (e) { return null; }
+  };
+  var systemTheme = function () {
+    return (window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  };
+  var mark = function (value) {
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed',
+        b.getAttribute('data-theme-value') === value ? 'true' : 'false');
+    });
+  };
+
+  mark(read() || systemTheme());
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var value = b.getAttribute('data-theme-value');
+      root.setAttribute('data-theme', value);
+      try { localStorage.setItem('guide-theme', value); } catch (e) {}
+      mark(value);
+    });
+  });
+})();
+
 (function () {
   // 표를 가로 스크롤 가능한 래퍼로 감싼다 (좁은 화면 대응)
   document.querySelectorAll('table').forEach(function (t) {

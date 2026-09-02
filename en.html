@@ -21,8 +21,9 @@
   --sidebar-w: 300px;
   --maxw: 860px;
 }
+/* 시스템 설정을 따르되, 사용자가 직접 고른 값이 있으면 그쪽이 이긴다. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #16181c;
     --bg-soft: #1e2126;
     --bg-code: #22262c;
@@ -36,6 +37,36 @@
     --warn-bg: #2b2418;
     --warn-border: #8a6a2b;
   }
+}
+/* 어둡게 */
+:root[data-theme="dark"] {
+  --bg: #16181c;
+  --bg-soft: #1e2126;
+  --bg-code: #22262c;
+  --fg: #e3e6ea;
+  --fg-soft: #9aa3ad;
+  --border: #333941;
+  --accent: #e08b63;
+  --accent-soft: #2a211d;
+  --note-bg: #1b2530;
+  --note-border: #3f6a99;
+  --warn-bg: #2b2418;
+  --warn-border: #8a6a2b;
+}
+/* 편하게 보기 — 눈부심을 줄인 따뜻한 배경 */
+:root[data-theme="sepia"] {
+  --bg: #f5ecd9;
+  --bg-soft: #efe4cd;
+  --bg-code: #ece0c6;
+  --fg: #3a322a;
+  --fg-soft: #6d6252;
+  --border: #ddd0b6;
+  --accent: #a04a1f;
+  --accent-soft: #f8e9d9;
+  --note-bg: #e6ebec;
+  --note-border: #8aa2b5;
+  --warn-bg: #f6e6c8;
+  --warn-border: #c69a45;
 }
 
 * { box-sizing: border-box; }
@@ -122,6 +153,67 @@ body {
 .lang-switch span { background: var(--accent); color: #fff; }
 .lang-switch a { color: var(--fg-soft); }
 .lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
+.doc-nav {
+  margin: 0 0 14px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.doc-nav .doc-nav-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.doc-nav a, .doc-nav span {
+  display: block;
+  padding: 4px 7px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  line-height: 1.35;
+}
+.doc-nav span { background: var(--accent); color: #fff; font-weight: 600; }
+.doc-nav a { color: var(--fg-soft); }
+.doc-nav a:hover { background: var(--accent-soft); color: var(--accent); }
+.theme-switch {
+  margin: 0 0 16px;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+.theme-switch-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 5px;
+}
+.theme-switch-row { display: flex; gap: 4px; }
+.theme-switch button {
+  flex: 1 1 0;
+  padding: 5px 2px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--fg-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.theme-switch button:hover { color: var(--accent); border-color: var(--accent); }
+.theme-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 
 main {
   flex: 1 1 auto;
@@ -269,7 +361,7 @@ blockquote p:last-child { margin-bottom: 0; }
 
 /* ---------- 인쇄 ---------- */
 @media print {
-  #sidebar, .copy-btn, .lang-switch { display: none !important; }
+  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch { display: none !important; }
   body { font-size: 10.5pt; color: #000; background: #fff; }
   main { padding: 0; }
   .content { max-width: none; }
@@ -278,6 +370,14 @@ blockquote p:last-child { margin-bottom: 0; }
   a { color: #000; text-decoration: none; }
 }
 </style>
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem('guide-theme');
+    if (saved) { document.documentElement.setAttribute('data-theme', saved); }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 <div class="layout">
@@ -286,6 +386,19 @@ blockquote p:last-child { margin-bottom: 0; }
     <div class="lang-switch">
       <span>English</span>
       <a href="index.html" hreflang="ko">한국어</a>
+    </div>
+    <div class="theme-switch">
+      <div class="theme-switch-title">Background</div>
+      <div class="theme-switch-row">
+        <button type="button" data-theme-value="light">Light</button>
+        <button type="button" data-theme-value="dark">Dark</button>
+        <button type="button" data-theme-value="sepia">Easy</button>
+      </div>
+    </div>
+    <div class="doc-nav">
+      <div class="doc-nav-title">Documents</div>
+      <span>Terminal AI Agents</span>
+      <a href="orca.en.html">Orca Parallel Agents</a>
     </div>
     <div class="toc-title">Contents</div>
     <div class="toc">
@@ -375,6 +488,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</a><ul>
+<li><a href="#pick-one-of-two-paths">Pick one of two paths</a></li>
 <li><a href="#51-prepare-a-working-folder">5.1 Prepare a working folder</a></li>
 <li><a href="#52-make-a-practice-file">5.2 Make a practice file</a></li>
 <li><a href="#53-run-the-ai-and-talk-to-it">5.3 Run the AI and talk to it</a></li>
@@ -1139,6 +1253,50 @@ Do not use <code>sudo npm install -g</code>. It creates permission problems.</p>
 </code></pre>
 <hr />
 <h1 id="part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</h1>
+<h2 id="pick-one-of-two-paths">Pick one of two paths</h2>
+<p>The road forks here. <strong>Either one is a fine place to start.</strong> There is no required order, and doing one does not stop you doing the other.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>1. Practise in the terminal</strong></th>
+<th><strong>2. Go straight to Orca</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What you do</td>
+<td>Talk to the AI directly in a black window</td>
+<td>Run several AIs at once in a windowed app</td>
+</tr>
+<tr>
+<td>Screen</td>
+<td>One terminal</td>
+<td>Several task tabs, driven with a mouse</td>
+</tr>
+<tr>
+<td>What you need</td>
+<td>Nothing beyond Part 4</td>
+<td>Part 4 plus installing Orca (10 min)</td>
+</tr>
+<tr>
+<td>What you learn</td>
+<td>What an AI agent does, and how</td>
+<td>How to keep several jobs running at once</td>
+</tr>
+<tr>
+<td>Where to go next</td>
+<td><strong>Continue at section 5.1 below</strong></td>
+<td><strong><a href="orca.en.html">Orca beginner's guide</a></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>1. Practise in the terminal</strong> — just carry on reading from section 5.1. This is the better route for seeing what the tool actually does and what an approval screen looks like. It is also where you develop a sense of how to find the cause when something breaks.</p>
+<p><strong>2. Go straight to Orca</strong> — if the black window puts you off, or you want several jobs running from the start, take this route. Go to the <strong><a href="orca.en.html">Orca beginner's guide</a></strong>. Orca reuses the AI CLI you installed in Part 4, so if you finished Part 4 you are already set up.</p>
+<blockquote>
+<p><strong>The order I would suggest</strong>: spend thirty minutes on option 1, then move to option 2. Orca is ultimately a shell that launches several of the Part 4 tools, so it makes much more sense once you know what those tools are. That is a suggestion only — starting with option 2 causes no problems.</p>
+</blockquote>
+<hr />
 <h2 id="51-prepare-a-working-folder">5.1 Prepare a working folder</h2>
 <p><strong>An AI agent only handles files inside the folder you launched it from.</strong> That is a safety feature as much as anything.</p>
 <p>Do not launch it on your Desktop or in <code>C:\Users\yourname</code>. That would let the AI rummage through every file on the machine.</p>
@@ -1711,6 +1869,39 @@ Content: (describe the situation here)
 </div>
 
 <script>
+(function () {
+  // 배경 테마 전환: 고른 값을 브라우저에 저장해 다음 방문에도 유지한다.
+  var root = document.documentElement;
+  var buttons = Array.prototype.slice.call(
+    document.querySelectorAll('.theme-switch button[data-theme-value]'));
+  if (!buttons.length) { return; }
+
+  var read = function () {
+    try { return localStorage.getItem('guide-theme'); } catch (e) { return null; }
+  };
+  var systemTheme = function () {
+    return (window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  };
+  var mark = function (value) {
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed',
+        b.getAttribute('data-theme-value') === value ? 'true' : 'false');
+    });
+  };
+
+  mark(read() || systemTheme());
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var value = b.getAttribute('data-theme-value');
+      root.setAttribute('data-theme', value);
+      try { localStorage.setItem('guide-theme', value); } catch (e) {}
+      mark(value);
+    });
+  });
+})();
+
 (function () {
   // 표를 가로 스크롤 가능한 래퍼로 감싼다 (좁은 화면 대응)
   document.querySelectorAll('table').forEach(function (t) {
