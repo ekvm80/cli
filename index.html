@@ -8,65 +8,94 @@
 :root {
   --bg: #ffffff;
   --bg-soft: #f6f7f9;
-  --bg-code: #f4f5f7;
-  --fg: #1f2328;
+  --bg-sunk: #eef0f4;
+  --bg-code: #f2f4f7;
+  --fg: #1b1f24;
   --fg-soft: #59636e;
-  --border: #d8dde3;
+  --fg-faint: #8b959f;
+  --border: #dde2e8;
+  --border-soft: #e9edf1;
   --accent: #b5502a;
+  --accent-strong: #96401f;
   --accent-soft: #fdf3ef;
   --note-bg: #f2f7fd;
   --note-border: #7ba7d7;
   --warn-bg: #fdf6ec;
   --warn-border: #d9a13b;
-  --sidebar-w: 300px;
-  --maxw: 860px;
+  --ok: #2f8a4d;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 4px 14px rgba(16, 24, 40, 0.07);
+  --radius: 10px;
+  --sidebar-w: 306px;
+  --maxw: 830px;
 }
 /* 시스템 설정을 따르되, 사용자가 직접 고른 값이 있으면 그쪽이 이긴다. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg: #16181c;
-    --bg-soft: #1e2126;
-    --bg-code: #22262c;
-    --fg: #e3e6ea;
+    --bg: #15171b;
+    --bg-soft: #1c1f24;
+    --bg-sunk: #23272e;
+    --bg-code: #20242a;
+    --fg: #e4e7eb;
     --fg-soft: #9aa3ad;
+    --fg-faint: #737d87;
     --border: #333941;
-    --accent: #e08b63;
-    --accent-soft: #2a211d;
-    --note-bg: #1b2530;
+    --border-soft: #282d34;
+    --accent: #e59570;
+    --accent-strong: #f0a884;
+    --accent-soft: #2b211c;
+    --note-bg: #1a2530;
     --note-border: #3f6a99;
     --warn-bg: #2b2418;
     --warn-border: #8a6a2b;
+    --ok: #62b981;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
 }
 /* 어둡게 */
 :root[data-theme="dark"] {
-  --bg: #16181c;
-  --bg-soft: #1e2126;
-  --bg-code: #22262c;
-  --fg: #e3e6ea;
+  --bg: #15171b;
+  --bg-soft: #1c1f24;
+  --bg-sunk: #23272e;
+  --bg-code: #20242a;
+  --fg: #e4e7eb;
   --fg-soft: #9aa3ad;
+  --fg-faint: #737d87;
   --border: #333941;
-  --accent: #e08b63;
-  --accent-soft: #2a211d;
-  --note-bg: #1b2530;
+  --border-soft: #282d34;
+  --accent: #e59570;
+  --accent-strong: #f0a884;
+  --accent-soft: #2b211c;
+  --note-bg: #1a2530;
   --note-border: #3f6a99;
   --warn-bg: #2b2418;
   --warn-border: #8a6a2b;
+  --ok: #62b981;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 /* 편하게 보기 — 눈부심을 줄인 따뜻한 배경 */
 :root[data-theme="sepia"] {
-  --bg: #f5ecd9;
-  --bg-soft: #efe4cd;
-  --bg-code: #ece0c6;
-  --fg: #3a322a;
+  --bg: #f6eeda;
+  --bg-soft: #efe5cf;
+  --bg-sunk: #e7dbc0;
+  --bg-code: #ece1c8;
+  --fg: #38302a;
   --fg-soft: #6d6252;
+  --fg-faint: #948872;
   --border: #ddd0b6;
+  --border-soft: #e7dcc5;
   --accent: #a04a1f;
-  --accent-soft: #f8e9d9;
+  --accent-strong: #883d17;
+  --accent-soft: #f9ebda;
   --note-bg: #e6ebec;
   --note-border: #8aa2b5;
   --warn-bg: #f6e6c8;
   --warn-border: #c69a45;
+  --ok: #2f7a48;
+  --shadow-sm: 0 1px 2px rgba(80, 60, 30, 0.08);
+  --shadow-md: 0 4px 14px rgba(80, 60, 30, 0.1);
 }
 
 * { box-sizing: border-box; }
@@ -81,10 +110,30 @@ body {
                BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕",
                "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   font-size: 16.5px;
-  line-height: 1.75;
+  line-height: 1.78;
+  letter-spacing: -0.003em;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
   word-break: keep-all;
   overflow-wrap: break-word;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- 읽은 분량 표시 ---------- */
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--accent);
+  z-index: 60;
+  transition: width .08s linear;
 }
 
 /* ---------- 레이아웃 ---------- */
@@ -97,48 +146,67 @@ body {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
   border-right: 1px solid var(--border);
   background: var(--bg-soft);
-  padding: 28px 18px 60px 24px;
+  padding: 24px 16px 60px 22px;
+}
+#sidebar::-webkit-scrollbar { width: 8px; }
+#sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
 }
 #sidebar .toc-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--fg-soft);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--fg-faint);
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin: 4px 0 10px 8px;
 }
 #sidebar ul { list-style: none; margin: 0; padding: 0; }
-#sidebar ul ul { padding-left: 13px; }
+#sidebar ul ul {
+  padding-left: 10px;
+  margin-left: 6px;
+  border-left: 1px solid var(--border-soft);
+}
 #sidebar li { margin: 1px 0; }
 #sidebar a {
   display: block;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.855rem;
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-size: 0.85rem;
   line-height: 1.45;
   color: var(--fg-soft);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  transition: background .12s, color .12s;
 }
-#sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+#sidebar a:hover { background: var(--accent-soft); color: var(--accent-strong); }
 #sidebar a.active {
-  color: var(--accent);
+  color: #fff;
   font-weight: 600;
-  border-left-color: var(--accent);
-  background: var(--accent-soft);
+  background: var(--accent);
 }
 /* 1단계 항목(부 제목)은 굵게 */
-#sidebar > .toc > ul > li > a { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+#sidebar > .toc > ul > li { margin-top: 9px; }
+#sidebar > .toc > ul > li > a {
+  font-weight: 700;
+  color: var(--fg);
+  font-size: 0.895rem;
+}
+#sidebar > .toc > ul > li > a.active { color: #fff; }
+
+/* ---------- 사이드바 위쪽 전환기 ---------- */
 .lang-switch {
   display: flex;
   gap: 4px;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   padding: 3px;
   border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
+  border-radius: 9px;
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
 }
 .lang-switch a, .lang-switch span {
   flex: 1 1 0;
@@ -146,54 +214,41 @@ body {
   padding: 5px 0;
   font-size: 0.8rem;
   font-weight: 600;
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
   line-height: 1.2;
 }
 .lang-switch span { background: var(--accent); color: #fff; }
 .lang-switch a { color: var(--fg-soft); }
-.lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
-.doc-nav {
-  margin: 0 0 14px;
+.lang-switch a:hover { background: var(--accent-soft); color: var(--accent-strong); }
+.doc-nav, .theme-switch {
+  margin: 0 0 10px;
   padding: 8px 9px 9px;
   border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
+  border-radius: 9px;
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
 }
-.doc-nav .doc-nav-title {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.theme-switch { margin-bottom: 16px; }
+.doc-nav .doc-nav-title, .theme-switch-title {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--fg-soft);
-  margin-bottom: 5px;
+  color: var(--fg-faint);
+  margin: 0 0 6px 3px;
 }
 .doc-nav a, .doc-nav span {
   display: block;
-  padding: 4px 7px;
+  padding: 4px 8px;
   font-size: 0.8rem;
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
   line-height: 1.35;
 }
 .doc-nav span { background: var(--accent); color: #fff; font-weight: 600; }
 .doc-nav a { color: var(--fg-soft); }
-.doc-nav a:hover { background: var(--accent-soft); color: var(--accent); }
-.theme-switch {
-  margin: 0 0 16px;
-  padding: 8px 9px 9px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
-}
-.theme-switch-title {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fg-soft);
-  margin-bottom: 5px;
-}
+.doc-nav a:hover { background: var(--accent-soft); color: var(--accent-strong); }
 .theme-switch-row { display: flex; gap: 4px; }
 .theme-switch button {
   flex: 1 1 0;
@@ -203,12 +258,13 @@ body {
   font-weight: 600;
   line-height: 1.2;
   color: var(--fg-soft);
-  background: var(--bg);
+  background: var(--bg-soft);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
 }
-.theme-switch button:hover { color: var(--accent); border-color: var(--accent); }
+.theme-switch button:hover { color: var(--accent-strong); border-color: var(--accent); }
 .theme-switch button[aria-pressed="true"] {
   background: var(--accent);
   border-color: var(--accent);
@@ -218,81 +274,190 @@ body {
 main {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 46px 40px 120px;
+  padding: 52px 44px 140px;
   display: flex;
   justify-content: center;
 }
 .content { width: 100%; max-width: var(--maxw); }
 
 /* ---------- 타이포그래피 ---------- */
-h1, h2, h3, h4 { line-height: 1.35; font-weight: 700; scroll-margin-top: 20px; }
-h1 {
-  font-size: 2.05rem;
-  margin: 0 0 0.6em;
-  padding-bottom: 0.35em;
-  border-bottom: 3px solid var(--accent);
+h1, h2, h3, h4 {
+  line-height: 1.38;
+  font-weight: 700;
+  scroll-margin-top: 24px;
+  position: relative;
 }
+
+/* 부(部) 제목 — 큰 구획을 한눈에 갈라 준다. */
+h1 {
+  font-size: 1.86rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.1em;
+  padding: 15px 22px 16px;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  border-left: 6px solid var(--accent);
+  border-radius: 4px 12px 12px 4px;
+}
+h1 + p, h1 + blockquote { margin-top: 0; }
+/* 문서 안의 두 번째 이후 h1(=각 부)은 위쪽 여백을 크게 둔다. */
+.content h1 ~ h1 { margin-top: 3.4em; }
+
+/* 절 제목 */
 h2 {
-  font-size: 1.5rem;
-  margin: 2.6em 0 0.8em;
-  padding-bottom: 0.3em;
+  font-size: 1.4rem;
+  letter-spacing: -0.015em;
+  margin: 3em 0 0.85em;
+  padding-bottom: 0.34em;
   border-bottom: 1px solid var(--border);
 }
-h3 { font-size: 1.16rem; margin: 2em 0 0.6em; color: var(--accent); }
-h4 { font-size: 1.02rem; margin: 1.6em 0 0.5em; }
-p { margin: 0.85em 0; }
-a { color: var(--accent); }
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 54px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* 소절 제목 */
+h3 {
+  font-size: 1.13rem;
+  margin: 2.2em 0 0.55em;
+  padding-left: 12px;
+  color: var(--accent-strong);
+  border-left: 3px solid var(--accent);
+}
+
+/* 항목 제목 — 목록·질문 묶음을 시각적으로 끊어 준다. */
+h4 {
+  font-size: 1rem;
+  margin: 1.9em 0 0.6em;
+  padding: 7px 14px;
+  color: var(--fg);
+  background: var(--bg-sunk);
+  border-left: 3px solid var(--accent);
+  border-radius: 3px 8px 8px 3px;
+}
+h4 + p, h4 + ul, h4 + ol, h4 + .table-wrap, h4 + .codeblock { margin-top: 0.5em; }
+
+p { margin: 0.9em 0; }
+
+/* 굵은 글씨만으로 된 줄은 작은 머리글처럼 보이게 한다. */
+p.lead-label {
+  margin: 1.7em 0 0.4em;
+  color: var(--fg);
+  font-weight: 700;
+}
+p.lead-label > strong { font-weight: 700; }
+p.lead-label::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 8px 3px 0;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: middle;
+}
+p.lead-label + ul, p.lead-label + ol { margin-top: 0.2em; }
+
+a { color: var(--accent-strong); text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+
+/* 제목 옆 고정 링크 */
+.anchor {
+  position: absolute;
+  right: 100%;
+  margin-right: 8px;
+  padding: 0 4px;
+  color: var(--fg-faint);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .12s;
+}
+h2:hover .anchor, h3:hover .anchor, .anchor:focus { opacity: 1; }
+h4 .anchor { display: none; }
 
 hr {
   border: 0;
   border-top: 1px solid var(--border);
-  margin: 3em 0;
+  margin: 3.2em 0;
 }
 
-ul, ol { padding-left: 1.4em; margin: 0.8em 0; }
-li { margin: 0.32em 0; }
+ul, ol { padding-left: 1.35em; margin: 0.85em 0; }
+li { margin: 0.34em 0; }
+li::marker { color: var(--accent); }
+ol li::marker { font-weight: 700; }
 li > ul, li > ol { margin: 0.3em 0; }
 
 strong { font-weight: 700; }
 
 /* ---------- 표 ---------- */
-.table-wrap { overflow-x: auto; margin: 1.4em 0; }
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg);
+}
 table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.93rem;
+  font-size: 0.925rem;
 }
 th, td {
-  border: 1px solid var(--border);
-  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 10px 14px;
   text-align: left;
   vertical-align: top;
 }
-th { background: var(--bg-soft); font-weight: 700; white-space: nowrap; }
-tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--bg-soft) 45%, transparent); }
+th + th, td + td { border-left: 1px solid var(--border-soft); }
+th {
+  background: var(--bg-sunk);
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--bg-soft); }
 
 /* ---------- 코드 ---------- */
 code {
   font-family: "Cascadia Mono", "Consolas", "D2Coding", "Menlo", monospace;
-  font-size: 0.88em;
+  font-size: 0.875em;
 }
-p code, li code, td code, th code {
+p code, li code, td code, th code, h4 code {
   background: var(--bg-code);
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 1px 5px;
+  color: var(--accent-strong);
+  white-space: nowrap;
 }
-.codeblock { position: relative; margin: 1.15em 0; }
+.codeblock { position: relative; margin: 1.2em 0; }
 .codeblock pre {
   margin: 0;
   background: var(--bg-code);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 60px 14px 16px;
+  border-radius: var(--radius);
+  padding: 14px 62px 14px 16px;
   overflow-x: auto;
-  line-height: 1.6;
+  line-height: 1.62;
+  box-shadow: var(--shadow-sm);
 }
-.codeblock pre code { background: none; border: 0; padding: 0; font-size: 0.9rem; }
+.codeblock pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-size: 0.895rem;
+  white-space: pre;
+}
 .copy-btn {
   position: absolute;
   top: 8px;
@@ -300,43 +465,79 @@ p code, li code, td code, th code {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg-soft);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 0.74rem;
+  border-radius: 7px;
+  padding: 3px 10px;
+  font-size: 0.73rem;
+  font-weight: 600;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity .15s;
+  opacity: 0.45;
+  transition: opacity .15s, color .15s, border-color .15s;
   font-family: inherit;
 }
 .codeblock:hover .copy-btn, .copy-btn:focus { opacity: 1; }
-.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
-.copy-btn.done { color: #2f8a4d; border-color: #2f8a4d; opacity: 1; }
+.copy-btn:hover { color: var(--accent-strong); border-color: var(--accent); }
+.copy-btn.done { color: var(--ok); border-color: var(--ok); opacity: 1; }
 
 /* ---------- 인용(참고 상자) ---------- */
 blockquote {
-  margin: 1.3em 0;
-  padding: 12px 18px;
+  margin: 1.4em 0;
+  padding: 13px 18px;
   background: var(--note-bg);
+  border: 1px solid var(--border-soft);
   border-left: 4px solid var(--note-border);
-  border-radius: 0 8px 8px 0;
+  border-radius: 3px 10px 10px 3px;
   color: var(--fg);
+  font-size: 0.965rem;
 }
-blockquote p { margin: 0.4em 0; }
+blockquote p { margin: 0.45em 0; }
 blockquote p:first-child { margin-top: 0; }
 blockquote p:last-child { margin-bottom: 0; }
+/* 상자 첫 줄이 굵은 글씨면 제목처럼 떼어 놓는다. */
+blockquote > p:first-child > strong:first-child {
+  display: block;
+  margin-bottom: 2px;
+}
+blockquote .codeblock { margin: 0.7em 0; }
+blockquote .codeblock pre { background: var(--bg); }
+
+/* ---------- 위로 가기 ---------- */
+#to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s, color .15s, border-color .15s;
+}
+#to-top.show { opacity: 1; pointer-events: auto; }
+#to-top:hover { color: var(--accent-strong); border-color: var(--accent); }
 
 /* ---------- 모바일 ---------- */
 #toc-toggle { display: none; }
 @media (max-width: 980px) {
   .layout { display: block; }
   #sidebar {
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 40;
     width: auto;
     height: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
-    padding: 14px 18px;
-    max-height: 50vh;
+    padding: 10px 16px;
+    max-height: 78vh;
   }
   #toc-toggle {
     display: block;
@@ -347,26 +548,41 @@ blockquote p:last-child { margin-bottom: 0; }
     color: var(--fg);
     font: inherit;
     font-weight: 700;
-    padding: 6px 0;
+    padding: 6px 2px;
     cursor: pointer;
   }
-  #sidebar .toc { display: none; }
-  #sidebar.open .toc { display: block; }
+  #sidebar .toc, #sidebar .lang-switch,
+  #sidebar .doc-nav, #sidebar .theme-switch { display: none; }
+  #sidebar.open .toc, #sidebar.open .doc-nav,
+  #sidebar.open .theme-switch { display: block; }
+  #sidebar.open .lang-switch { display: flex; }
   #sidebar .toc-title { display: none; }
-  main { padding: 26px 18px 80px; }
+  main { padding: 26px 17px 90px; }
   body { font-size: 16px; }
-  h1 { font-size: 1.6rem; }
-  h2 { font-size: 1.3rem; }
+  h1 { font-size: 1.5rem; padding: 12px 16px 13px; }
+  h2 { font-size: 1.24rem; margin-top: 2.4em; }
+  h3 { font-size: 1.08rem; }
+  .anchor { display: none; }
+  #to-top { right: 14px; bottom: 14px; }
+}
+
+/* ---------- 움직임을 줄이는 설정 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
 }
 
 /* ---------- 인쇄 ---------- */
 @media print {
-  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch { display: none !important; }
+  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch,
+  #to-top, #progress, .anchor { display: none !important; }
   body { font-size: 10.5pt; color: #000; background: #fff; }
   main { padding: 0; }
   .content { max-width: none; }
-  h2 { page-break-after: avoid; }
-  .codeblock pre, table, blockquote { page-break-inside: avoid; }
+  h1 { color: #000; background: none; border-left: 4px solid #000; }
+  h2, h3, h4 { page-break-after: avoid; color: #000; background: none; }
+  .codeblock pre, table, blockquote { page-break-inside: avoid; box-shadow: none; }
+  .table-wrap { box-shadow: none; }
   a { color: #000; text-decoration: none; }
 }
 </style>
@@ -380,6 +596,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </script>
 </head>
 <body>
+<div id="progress"></div>
 <div class="layout">
   <nav id="sidebar">
     <button id="toc-toggle" type="button">목차 열기/닫기 ▾</button>
@@ -438,7 +655,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </li>
 </ul>
 </li>
-<li><a href="#3부-설치-준비-기반-프로그램-4가지">3부. 설치 준비 — 기반 프로그램 4가지</a><ul>
+<li><a href="#3부-설치-준비-기반-프로그램-3가지">3부. 설치 준비 — 기반 프로그램 3가지</a><ul>
 <li><a href="#30-무엇을-왜-설치하는가">3.0 무엇을 왜 설치하는가</a></li>
 <li><a href="#31-windows-terminal-설치">3.1 Windows Terminal 설치</a></li>
 <li><a href="#32-nodejs-설치-권장">3.2 Node.js 설치 (권장)</a><ul>
@@ -452,9 +669,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#확인하기">확인하기</a></li>
 </ul>
 </li>
-<li><a href="#34-실행-권한-설정-안-하면-오류가-납니다">3.4 실행 권한 설정 (안 하면 오류가 납니다)</a></li>
-<li><a href="#35-한글-깨짐-방지-설정">3.5 한글 깨짐 방지 설정</a></li>
-<li><a href="#36-3부-마무리-점검">3.6 3부 마무리 점검</a></li>
+<li><a href="#34-3부-마무리-점검">3.4 3부 마무리 점검</a></li>
 </ul>
 </li>
 <li><a href="#4부-ai-에이전트-설치하기">4부. AI 에이전트 설치하기</a><ul>
@@ -488,6 +703,10 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#5부-첫-사용-실제로-시켜보기">5부. 첫 사용 — 실제로 시켜보기</a><ul>
+<li><a href="#50-먼저-외울-것-필수-명령어-5개">5.0 먼저 외울 것 — 필수 명령어 5개</a><ul>
+<li><a href="#사용량은-일정-기간-단위로-회복됩니다">사용량은 "일정 기간" 단위로 회복됩니다</a></li>
+</ul>
+</li>
 <li><a href="#두-갈래-중-하나를-고르세요">두 갈래 중 하나를 고르세요</a></li>
 <li><a href="#51-작업-폴더-준비하기">5.1 작업 폴더 준비하기</a></li>
 <li><a href="#52-연습용-파일-만들기">5.2 연습용 파일 만들기</a></li>
@@ -530,6 +749,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#설치-한-번만">설치 (한 번만)</a></li>
 <li><a href="#확인">확인</a></li>
 <li><a href="#매일-쓰는-흐름">매일 쓰는 흐름</a></li>
+<li><a href="#대화창-안에서-쓰는-필수-명령-5개">대화창 안에서 쓰는 필수 명령 5개</a></li>
 <li><a href="#키보드-단축키">키보드 단축키</a></li>
 </ul>
 </li>
@@ -538,6 +758,11 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#그냥-windows를-쓰는-게-나은-이유">그냥 Windows를 쓰는 게 나은 이유</a></li>
 <li><a href="#대신-이것만-하세요">대신 이것만 하세요</a></li>
 <li><a href="#wsl이-나은-경우">WSL이 나은 경우</a></li>
+</ul>
+</li>
+<li><a href="#부록-e-선택-설정-실행-권한-한글-깨짐">부록 E. 선택 설정 — 실행 권한 · 한글 깨짐</a><ul>
+<li><a href="#e1-실행-권한-설정">E.1 실행 권한 설정</a></li>
+<li><a href="#e2-한글-깨짐-방지-설정">E.2 한글 깨짐 방지 설정</a></li>
 </ul>
 </li>
 <li><a href="#마무리-다음-단계">마무리 — 다음 단계</a><ul>
@@ -563,6 +788,7 @@ Windows 11 기준이며, 처음부터 끝까지 순서대로 따라 하면 됩�
 <li><strong>터미널을 이미 써 봤다면</strong>: 2부를 건너뛰고 3부부터 보세요.</li>
 <li><strong>회색 상자 안의 글자</strong>는 컴퓨터에 입력하는 명령어입니다. 그대로 복사해서 붙여넣으면 됩니다.</li>
 <li>각 단계마다 <strong>"제대로 됐는지 확인하기"</strong> 항목이 있습니다. 반드시 확인하고 다음으로 넘어가세요.</li>
+<li><strong>부록 E</strong>는 문제가 생겼을 때만 보는 선택 설정입니다. 처음에는 건너뛰세요.</li>
 </ul>
 <hr />
 <h1 id="1부-왜-터미널에서-ai를-쓰는가">1부. 왜 터미널에서 AI를 쓰는가</h1>
@@ -616,39 +842,49 @@ AI: (폴더를 직접 열어봄 → 파일을 직접 읽음 → 직접 수정함
 </tbody>
 </table>
 <h2 id="12-실제로-무엇을-할-수-있나">1.2 실제로 무엇을 할 수 있나</h2>
-<p>프로그래머가 아니어도 쓸 수 있는 일들입니다.</p>
-<p><strong>문서·자료 정리</strong><br />
-- 폴더에 흩어진 PDF 100개의 제목과 요약을 표로 만들기<br />
-- 파일 이름을 일정한 규칙으로 한꺼번에 바꾸기<br />
-- 여러 워드 파일에서 특정 내용만 뽑아서 하나로 합치기</p>
-<p><strong>데이터 작업</strong><br />
-- 엑셀/CSV 파일의 오류 찾아 고치기<br />
-- 여러 개의 표를 하나로 합치고 통계 내기<br />
-- 데이터를 그래프로 그려서 이미지 파일로 저장하기</p>
-<p><strong>연구·학술</strong><br />
-- 논문 초안의 문장을 학술적 톤으로 다듬기<br />
-- 참고문헌 형식을 저널 규정에 맞게 통일하기<br />
-- 실험 데이터를 처리하는 스크립트를 만들고 실행하기</p>
-<p><strong>일상 업무</strong><br />
-- 반복되는 보고서 양식을 자동으로 채우기<br />
-- 웹에서 자료를 모아 정리하기<br />
-- 이메일 초안을 여러 건 한꺼번에 만들기</p>
-<p><strong>프로그래밍</strong> (관심 있다면)<br />
-- 프로그램을 처음부터 만들기<br />
-- 남이 만든 코드를 이해하고 고치기</p>
+<p>프로그래머가 아니어도 쓸 수 있는 일들을 분야별로 묶었습니다.</p>
+<h4 id="문서자료-정리">문서·자료 정리</h4>
+<ul>
+<li>폴더에 흩어진 PDF 100개의 제목과 요약을 표로 만들기</li>
+<li>파일 이름을 일정한 규칙으로 한꺼번에 바꾸기</li>
+<li>여러 워드 파일에서 특정 내용만 뽑아서 하나로 합치기</li>
+</ul>
+<h4 id="데이터-작업">데이터 작업</h4>
+<ul>
+<li>엑셀/CSV 파일의 오류 찾아 고치기</li>
+<li>여러 개의 표를 하나로 합치고 통계 내기</li>
+<li>데이터를 그래프로 그려서 이미지 파일로 저장하기</li>
+</ul>
+<h4 id="연구학술">연구·학술</h4>
+<ul>
+<li>논문 초안의 문장을 학술적 톤으로 다듬기</li>
+<li>참고문헌 형식을 저널 규정에 맞게 통일하기</li>
+<li>실험 데이터를 처리하는 스크립트를 만들고 실행하기</li>
+</ul>
+<h4 id="일상-업무">일상 업무</h4>
+<ul>
+<li>반복되는 보고서 양식을 자동으로 채우기</li>
+<li>웹에서 자료를 모아 정리하기</li>
+<li>이메일 초안을 여러 건 한꺼번에 만들기</li>
+</ul>
+<h4 id="프로그래밍-관심-있다면">프로그래밍 (관심 있다면)</h4>
+<ul>
+<li>프로그램을 처음부터 만들기</li>
+<li>남이 만든 코드를 이해하고 고치기</li>
+</ul>
 <h2 id="13-자주-하는-걱정에-대한-답">1.3 자주 하는 걱정에 대한 답</h2>
-<p><strong>"프로그래밍을 몰라도 되나요?"</strong><br />
-됩니다. 한국어로 "이거 해줘"라고 말하면 됩니다. 다만 터미널 창을 여는 법과 명령어 몇 개는 알아야 하는데, 그건 2부에서 다룹니다. 30분이면 익힙니다.</p>
-<p><strong>"내 파일을 망가뜨리면 어쩌죠?"</strong><br />
-AI 에이전트는 파일을 수정하기 전에 <strong>"이렇게 바꿔도 될까요?"라고 매번 물어봅니다.</strong> 사용자가 승인해야만 실행합니다. 게다가 7부에서 안내하는 안전 수칙(백업, 폴더 분리)을 지키면 위험은 거의 없습니다.</p>
-<p><strong>"내 파일이 외부로 새어 나가나요?"</strong><br />
-AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니다. 이건 웹 챗봇에 파일을 업로드하는 것과 같습니다. <strong>개인정보, 미공개 연구 데이터, 회사 기밀은 작업 폴더에 두지 마세요.</strong> 자세한 내용은 7부에 있습니다.</p>
-<p><strong>"돈이 드나요?"</strong><br />
-기본적으로 유료 구독이 필요합니다. 이미 ChatGPT Plus나 Claude Pro를 쓰고 있다면 추가 비용 없이 그 구독으로 이용할 수 있습니다. Google의 Antigravity CLI는 Google 계정으로 로그인하면 일정량을 무료로 쓸 수 있습니다(정확한 한도는 공식 문서를 확인하세요). 4.1절에 정리해 두었습니다.</p>
-<p><strong>"리눅스를 깔아야 하나요? WSL이 필요한가요?"</strong><br />
-아닙니다. <strong>Windows에서 그대로 쓰면 됩니다.</strong> 예전에는 일부 도구가 Windows를 지원하지 않아 WSL(리눅스 환경)이 필요했고 그 시절 자료가 아직 많이 남아 있지만, 지금은 세 도구 모두 Windows 전용 설치본을 제공합니다. 자세한 판단 기준은 <strong>부록 D</strong>에 있습니다.</p>
-<p><strong>"검은 화면이 무서워요."</strong><br />
-가장 흔한 반응입니다. 하지만 실제로 쓰는 명령어는 5개 정도이고, 나머지는 전부 한국어로 대화하는 것입니다. 검은 화면은 그냥 AI와 대화하는 창이라고 생각하면 됩니다.</p>
+<h4 id="프로그래밍을-몰라도-되나요">"프로그래밍을 몰라도 되나요?"</h4>
+<p>됩니다. 한국어로 "이거 해줘"라고 말하면 됩니다. 다만 터미널 창을 여는 법과 명령어 몇 개는 알아야 하는데, 그건 2부에서 다룹니다. 30분이면 익힙니다.</p>
+<h4 id="내-파일을-망가뜨리면-어쩌죠">"내 파일을 망가뜨리면 어쩌죠?"</h4>
+<p>AI 에이전트는 파일을 수정하기 전에 <strong>"이렇게 바꿔도 될까요?"라고 매번 물어봅니다.</strong> 사용자가 승인해야만 실행합니다. 게다가 7부에서 안내하는 안전 수칙(백업, 폴더 분리)을 지키면 위험은 거의 없습니다.</p>
+<h4 id="내-파일이-외부로-새어-나가나요">"내 파일이 외부로 새어 나가나요?"</h4>
+<p>AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니다. 이건 웹 챗봇에 파일을 업로드하는 것과 같습니다. <strong>개인정보, 미공개 연구 데이터, 회사 기밀은 작업 폴더에 두지 마세요.</strong> 자세한 내용은 7부에 있습니다.</p>
+<h4 id="돈이-드나요">"돈이 드나요?"</h4>
+<p>기본적으로 유료 구독이 필요합니다. 이미 ChatGPT Plus나 Claude Pro를 쓰고 있다면 추가 비용 없이 그 구독으로 이용할 수 있습니다. Google의 Antigravity CLI는 Google 계정으로 로그인하면 일정량을 무료로 쓸 수 있습니다(정확한 한도는 공식 문서를 확인하세요). 4.1절에 정리해 두었습니다.</p>
+<h4 id="리눅스를-깔아야-하나요-wsl이-필요한가요">"리눅스를 깔아야 하나요? WSL이 필요한가요?"</h4>
+<p>아닙니다. <strong>Windows에서 그대로 쓰면 됩니다.</strong> 예전에는 일부 도구가 Windows를 지원하지 않아 WSL(리눅스 환경)이 필요했고 그 시절 자료가 아직 많이 남아 있지만, 지금은 세 도구 모두 Windows 전용 설치본을 제공합니다. 자세한 판단 기준은 <strong>부록 D</strong>에 있습니다.</p>
+<h4 id="검은-화면이-무서워요">"검은 화면이 무서워요."</h4>
+<p>가장 흔한 반응입니다. 하지만 실제로 쓰는 명령어는 5개 정도이고, 나머지는 전부 한국어로 대화하는 것입니다. 검은 화면은 그냥 AI와 대화하는 창이라고 생각하면 됩니다.</p>
 <hr />
 <h1 id="2부-터미널-기초-30분이면-충분합니다">2부. 터미널 기초 — 30분이면 충분합니다</h1>
 <p>프로그래머가 되려는 게 아닙니다. AI에게 일을 시킬 수 있을 정도만 배웁니다.</p>
@@ -718,6 +954,10 @@ AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니�
 </blockquote>
 <h2 id="24-꼭-알아야-할-명령어-5개">2.4 꼭 알아야 할 명령어 5개</h2>
 <p>이것만 알면 됩니다.</p>
+<blockquote>
+<p><strong>PowerShell에서 실행하세요.</strong><br />
+아래 명령은 <strong>PowerShell</strong>(2.1절에서 연 <code>터미널</code> 앱의 기본값)에서 동작합니다. 옛 <code>명령 프롬프트(cmd)</code>에서는 <code>ls</code>, <code>pwd</code> 가 없어 오류가 납니다. 프롬프트가 <code>PS C:\...&gt;</code> 로 시작하면 PowerShell, <code>C:\...&gt;</code> 로만 시작하면 명령 프롬프트입니다. 후자라면 창을 닫고 <code>터미널</code> 앱을 새로 여세요.</p>
+</blockquote>
 <h3 id="①-cd-폴더-이동하기">① <code>cd</code> — 폴더 이동하기</h3>
 <pre><code>cd Documents
 </code></pre>
@@ -837,7 +1077,7 @@ AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니�
 </table>
 <p><strong>어떤 오류가 나도 컴퓨터는 고장 나지 않습니다.</strong> 마음 편히 여러 번 해보세요.</p>
 <hr />
-<h1 id="3부-설치-준비-기반-프로그램-4가지">3부. 설치 준비 — 기반 프로그램 4가지</h1>
+<h1 id="3부-설치-준비-기반-프로그램-3가지">3부. 설치 준비 — 기반 프로그램 3가지</h1>
 <p>AI 에이전트를 설치하기 전에, 그것이 돌아가는 데 필요한 프로그램들을 먼저 깝니다.</p>
 <h2 id="30-무엇을-왜-설치하는가">3.0 무엇을 왜 설치하는가</h2>
 <table>
@@ -872,17 +1112,12 @@ AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니�
 <td>권장</td>
 <td>5분</td>
 </tr>
-<tr>
-<td>4</td>
-<td>실행 정책 · 한글 설정</td>
-<td>안 하면 나중에 오류가 납니다</td>
-<td>필수</td>
-<td>3분</td>
-</tr>
 </tbody>
 </table>
 <p><strong>모두 무료이고 안전한 공식 프로그램입니다.</strong></p>
 <blockquote>
+<p><strong>실행 정책·한글 깨짐 설정은 지금 하지 않습니다.</strong><br />
+예전에는 설치 전에 미리 해 두라고 안내했지만, 요즘 설치본은 대부분 이 설정 없이도 그대로 설치됩니다. 필요 없는 설정을 미리 건드릴 이유가 없으므로 <strong><a href="#부록-e-선택-설정-실행-권한-한글-깨짐">부록 E</a></strong> 로 옮겼습니다. 설치나 실행 중에 <code>스크립트를 실행할 수 없으므로</code> 또는 한글이 <code>???</code> 로 깨지는 문제가 생기면 그때 부록 E를 보고 처리하세요.</p>
 <p><strong>Node.js가 "권장"인 이유</strong><br />
 예전에는 AI 에이전트가 전부 <code>npm</code>(Node.js에 포함된 설치 도구)으로만 설치됐습니다. 지금은 Claude Code·Antigravity CLI·Codex CLI 모두 <strong>Node.js 없이 바로 설치되는 전용 설치본</strong>을 제공합니다. 그래도 Node.js를 깔아두길 권합니다. 설치 문제가 생겼을 때 대안 경로가 되고, AI가 만드는 도구 중 상당수가 Node.js를 씁니다. <strong>시간을 아끼고 싶다면 3.2절을 건너뛰고 4부로 가도 됩니다.</strong></p>
 </blockquote>
@@ -944,32 +1179,7 @@ AI가 읽은 파일 내용은 답변을 만들기 위해 서버로 전송됩니�
 <pre><code>git version 2.52.0.windows.1
 </code></pre>
 <p>이런 결과가 나오면 됩니다.</p>
-<h2 id="34-실행-권한-설정-안-하면-오류가-납니다">3.4 실행 권한 설정 (안 하면 오류가 납니다)</h2>
-<p>Windows는 보안상 외부 스크립트 실행을 기본으로 막아둡니다. 이걸 풀어야 AI 에이전트가 실행됩니다.</p>
-<p>터미널에 입력합니다.</p>
-<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-</code></pre>
-<p><code>실행 정책을 변경하시겠습니까?</code> 라고 물으면 <strong><code>Y</code></strong> 를 입력하고 Enter.</p>
-<blockquote>
-<p><strong>위험하지 않나요?</strong><br />
-<code>RemoteSigned</code>는 "내가 만든 스크립트는 실행하고, 인터넷에서 받은 것은 서명된 것만 실행한다"는 중간 단계 설정입니다. 개발자들이 표준으로 쓰는 설정이며, 보안을 완전히 푸는 게 아닙니다. <code>-Scope CurrentUser</code> 때문에 내 계정에만 적용되고 컴퓨터 전체에는 영향이 없습니다.</p>
-</blockquote>
-<h2 id="35-한글-깨짐-방지-설정">3.5 한글 깨짐 방지 설정</h2>
-<p>한글 파일명이나 한글 답변이 <code>???</code> 나 <code>占쏙옙</code> 처럼 깨져 보이는 걸 막습니다.</p>
-<p>터미널에 아래를 <strong>한 줄씩</strong> 입력합니다.</p>
-<pre><code>notepad $PROFILE
-</code></pre>
-<p>메모장이 열립니다. <strong>"파일을 찾을 수 없습니다. 새로 만드시겠습니까?"</strong> 라고 물으면 <strong>"예"</strong> 를 누릅니다.</p>
-<p>메모장에 아래 3줄을 복사해서 붙여넣습니다.</p>
-<pre><code class="language-powershell">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
-</code></pre>
-<p><code>Ctrl + S</code> 로 저장하고 메모장을 닫습니다. <strong>터미널도 닫았다가 새로 엽니다.</strong></p>
-<blockquote>
-<p>이 파일(<code>$PROFILE</code>)은 터미널을 켤 때마다 자동으로 실행되는 설정 파일입니다. 여기 적어두면 매번 손댈 필요가 없습니다.</p>
-</blockquote>
-<h2 id="36-3부-마무리-점검">3.6 3부 마무리 점검</h2>
+<h2 id="34-3부-마무리-점검">3.4 3부 마무리 점검</h2>
 <p>새 터미널을 열고 아래를 하나씩 입력해 전부 버전이 나오는지 확인합니다.</p>
 <pre><code>node --version
 </code></pre>
@@ -1259,6 +1469,92 @@ Google의 <code>gemini</code> 명령(Gemini CLI)은 <strong>2026년 6월 18일�
 </code></pre>
 <hr />
 <h1 id="5부-첫-사용-실제로-시켜보기">5부. 첫 사용 — 실제로 시켜보기</h1>
+<h2 id="50-먼저-외울-것-필수-명령어-5개">5.0 먼저 외울 것 — 필수 명령어 5개</h2>
+<p>대화창 안에서 쓰는 것은 사실상 이 다섯 개입니다. <strong>이것만 알면 막히지 않습니다.</strong></p>
+<table>
+<thead>
+<tr>
+<th>하려는 것</th>
+<th>입력</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>터미널로 돌아가기</strong></td>
+<td><code>Ctrl + C</code> 를 두 번</td>
+<td>한 번은 진행 중인 작업 중단, 두 번은 대화창 종료. 뭔가 잘못 돌아갈 때 가장 먼저 누릅니다</td>
+</tr>
+<tr>
+<td><strong>모델 선택</strong></td>
+<td><code>/model</code></td>
+<td>쓸 모델을 고릅니다. 가벼운 모델은 빠르고 사용량을 덜 먹고, 무거운 모델은 어려운 일에 강합니다</td>
+</tr>
+<tr>
+<td><strong>모드 선택</strong></td>
+<td><code>Shift + Tab</code></td>
+<td>승인 방식을 순환 전환합니다(매번 묻기 ↔ 읽기는 자동 ↔ 전부 자동). <strong>처음에는 매번 묻기로 두세요</strong></td>
+</tr>
+<tr>
+<td><strong>끝까지 실행하기</strong></td>
+<td><code>/goal</code></td>
+<td>목표를 정해 주면 중간에 되묻지 않고 끝까지 진행합니다. 여러 단계짜리 작업에 씁니다</td>
+</tr>
+<tr>
+<td><strong>사용량 확인</strong></td>
+<td><code>/usage</code></td>
+<td>남은 사용량과 한도가 언제 회복되는지 봅니다</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>도구마다 명령이 조금씩 다릅니다.</strong><br />
+위 다섯 개는 Claude Code 기준입니다. Codex CLI·Antigravity CLI 는 이름이 다르거나 없는 것도 있습니다. 대화창에서 <strong><code>/help</code></strong> 를 입력하면 그 도구가 실제로 가진 명령과 단축키가 전부 나옵니다. 막히면 <code>/help</code> 부터 보세요.</p>
+</blockquote>
+<h3 id="사용량은-일정-기간-단위로-회복됩니다">사용량은 "일정 기간" 단위로 회복됩니다</h3>
+<p>구독료를 냈다고 무한히 쓸 수 있는 게 아닙니다. AI 회사들은 <strong>정해진 기간 안에 쓸 수 있는 양(토큰)</strong> 을 배정하고, 그 기간이 지나면 다시 채워 줍니다. 그래서 한도에 걸려도 기다리면 풀립니다.</p>
+<table>
+<thead>
+<tr>
+<th>도구</th>
+<th>짧은 주기</th>
+<th>긴 주기</th>
+<th>남은 양 확인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td>5시간 단위</td>
+<td>주(7일) 단위 한도가 추가로 있음</td>
+<td><code>/usage</code></td>
+</tr>
+<tr>
+<td>Codex CLI</td>
+<td>5시간 단위</td>
+<td>주(7일) 단위 한도가 추가로 있음</td>
+<td><code>/status</code></td>
+</tr>
+<tr>
+<td>Antigravity CLI</td>
+<td>5시간 단위</td>
+<td>요금제에 따라 다름</td>
+<td><code>/usage</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>읽는 방법</strong> — "5시간 단위"는 처음 지시를 보낸 시점부터 5시간이 한 묶음이라는 뜻입니다. 그 안에서 배정량을 다 쓰면 다음 묶음이 시작될 때까지 기다려야 합니다. 여기에 주 단위 한도가 겹쳐 있어서, 며칠 몰아서 많이 쓰면 5시간 한도가 남아 있어도 주 한도에 먼저 걸릴 수 있습니다.</p>
+<blockquote>
+<p><strong>정확한 수치는 여기 적지 않습니다.</strong><br />
+배정량은 요금제(Pro·Max·Plus 등)와 시점에 따라 자주 바뀝니다. 숫자를 외우는 대신 <strong><code>/usage</code> 로 그때그때 확인하는 습관</strong>을 들이세요.</p>
+</blockquote>
+<p><strong>사용량을 아끼는 방법 3가지</strong></p>
+<ul>
+<li><strong>주제가 바뀌면 <code>/clear</code></strong> — 대화가 길어지면 이전 내용을 매번 다시 읽어 들여 사용량을 많이 먹습니다. 새 주제를 시작할 때는 대화를 비우세요.</li>
+<li><strong>쉬운 일은 가벼운 모델로</strong> — <code>/model</code> 로 바꿉니다. 파일 정리나 단순 변환에 무거운 모델을 쓸 이유가 없습니다.</li>
+<li><strong>작업 폴더를 작게 유지</strong> — AI가 훑어야 할 파일이 적을수록 덜 먹습니다. 7부의 "전용 작업 폴더" 원칙이 사용량 측면에서도 유리합니다.</li>
+</ul>
+<hr />
 <h2 id="두-갈래-중-하나를-고르세요">두 갈래 중 하나를 고르세요</h2>
 <p>여기서부터는 길이 둘로 갈립니다. <strong>어느 쪽을 먼저 해도 괜찮습니다.</strong> 순서가 정해져 있지 않고, 한쪽을 했다고 다른 쪽을 못 하는 것도 아닙니다.</p>
 <table>
@@ -1474,7 +1770,7 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 <li>터미널을 새로 열고 다시 시도</li>
 </ul>
 <h2 id="82-이-시스템에서-스크립트를-실행할-수-없으므로">8.2 "이 시스템에서 스크립트를 실행할 수 없으므로"</h2>
-<p>3.4절의 실행 정책 설정을 하지 않은 것입니다.</p>
+<p>Windows가 스크립트 실행을 막고 있는 것입니다. <strong><a href="#부록-e-선택-설정-실행-권한-한글-깨짐">부록 E</a></strong> 의 실행 권한 설정을 하면 해결됩니다. 아래 한 줄을 터미널에 입력하면 됩니다.</p>
 <pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 </code></pre>
 <p><code>Y</code> 를 입력하고 Enter.</p>
@@ -1482,7 +1778,7 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 <p>임시 해결:</p>
 <pre><code>chcp 65001
 </code></pre>
-<p>영구 해결: 3.5절의 프로필 설정을 하세요.</p>
+<p>영구 해결: <strong><a href="#부록-e-선택-설정-실행-권한-한글-깨짐">부록 E</a></strong> 의 프로필 설정을 하세요.</p>
 <p>그래도 안 되면 Windows 설정을 바꿉니다.<br />
 - <code>Windows 키</code> → <code>국가 또는 지역</code> 검색 → <strong>"날짜, 시간 및 지역 형식"</strong> → <strong>"추가 날짜, 시간 및 국가별 설정"</strong> → <strong>"국가 또는 지역"</strong> → <strong>"관리자" 탭</strong> → <strong>"시스템 로캘 변경"</strong><br />
 - <strong>"Beta: 세계 언어 지원을 위해 Unicode UTF-8 사용"</strong> 체크 → 재부팅</p>
@@ -1636,6 +1932,7 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 <hr />
 <h1 id="부록-b-명령어-한-장-요약">부록 B. 명령어 한 장 요약</h1>
 <h2 id="터미널-기본">터미널 기본</h2>
+<p>PowerShell 기준입니다. 옛 <code>명령 프롬프트(cmd)</code>에서는 <code>ls</code> <code>pwd</code> 가 동작하지 않습니다(2.4절).</p>
 <table>
 <thead>
 <tr>
@@ -1679,8 +1976,6 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 </code></pre>
 <pre><code>winget install --id Git.Git -e
 </code></pre>
-<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-</code></pre>
 <p>AI 에이전트는 <strong>셋 중 필요한 것만</strong> 설치합니다.</p>
 <pre><code>irm https://claude.ai/install.ps1 | iex
 </code></pre>
@@ -1706,6 +2001,38 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 <li>승인 화면 읽고 선택</li>
 <li><code>exit</code> 로 종료</li>
 </ol>
+<h2 id="대화창-안에서-쓰는-필수-명령-5개">대화창 안에서 쓰는 필수 명령 5개</h2>
+<table>
+<thead>
+<tr>
+<th>하려는 것</th>
+<th>입력</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>터미널로 돌아가기</td>
+<td><code>Ctrl + C</code> 두 번</td>
+</tr>
+<tr>
+<td>모델 선택</td>
+<td><code>/model</code></td>
+</tr>
+<tr>
+<td>모드 선택 (승인 방식)</td>
+<td><code>Shift + Tab</code></td>
+</tr>
+<tr>
+<td>끝까지 실행하기</td>
+<td><code>/goal</code></td>
+</tr>
+<tr>
+<td>사용량 확인</td>
+<td><code>/usage</code></td>
+</tr>
+</tbody>
+</table>
+<p>자세한 설명과 사용량 한도는 <strong>5.0절</strong>에 있습니다.</p>
 <h2 id="키보드-단축키">키보드 단축키</h2>
 <table>
 <thead>
@@ -1846,6 +2173,63 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
 <p>WSL을 쓰기로 했다면, 작업 파일도 WSL 안쪽(<code>~/projects/...</code>)에 두세요. Windows 드라이브를 오가는 방식이 가장 느리고 문제도 많습니다.</p>
 </blockquote>
 <hr />
+<h1 id="부록-e-선택-설정-실행-권한-한글-깨짐">부록 E. 선택 설정 — 실행 권한 · 한글 깨짐</h1>
+<p><strong>이 두 설정은 미리 하지 않아도 됩니다.</strong> 문제가 생겼을 때만 하면 되는 선택 사항입니다. 요즘 설치본은 대부분 이 설정 없이 그대로 동작합니다.</p>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>할 설정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>이 시스템에서 스크립트를 실행할 수 없으므로...</code> 오류</td>
+<td>아래 <strong>E.1 실행 권한</strong></td>
+</tr>
+<tr>
+<td>한글 파일명이나 한글 답변이 <code>???</code> <code>占쏙옙</code> 로 깨짐</td>
+<td>아래 <strong>E.2 한글 깨짐 방지</strong></td>
+</tr>
+<tr>
+<td>아무 문제 없음</td>
+<td><strong>아무것도 하지 않아도 됩니다</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="e1-실행-권한-설정">E.1 실행 권한 설정</h2>
+<p>Windows는 보안상 외부 스크립트 실행을 기본으로 막아둡니다. 설치나 실행이 이 때문에 막힐 때 풀어 줍니다.</p>
+<p>터미널에 입력합니다.</p>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+</code></pre>
+<p><code>실행 정책을 변경하시겠습니까?</code> 라고 물으면 <strong><code>Y</code></strong> 를 입력하고 Enter.</p>
+<blockquote>
+<p><strong>위험하지 않나요?</strong><br />
+<code>RemoteSigned</code>는 "내가 만든 스크립트는 실행하고, 인터넷에서 받은 것은 서명된 것만 실행한다"는 중간 단계 설정입니다. 개발자들이 표준으로 쓰는 설정이며, 보안을 완전히 푸는 게 아닙니다. <code>-Scope CurrentUser</code> 때문에 내 계정에만 적용되고 컴퓨터 전체에는 영향이 없습니다.</p>
+</blockquote>
+<p>지금 설정을 확인만 하고 싶으면 이렇게 입력합니다.</p>
+<pre><code>Get-ExecutionPolicy -Scope CurrentUser
+</code></pre>
+<h2 id="e2-한글-깨짐-방지-설정">E.2 한글 깨짐 방지 설정</h2>
+<p>한글 파일명이나 한글 답변이 <code>???</code> 나 <code>占쏙옙</code> 처럼 깨져 보일 때만 하면 됩니다.</p>
+<p><strong>임시로 넘기려면</strong> 터미널에 한 줄 입력합니다. 창을 닫으면 원래대로 돌아갑니다.</p>
+<pre><code>chcp 65001
+</code></pre>
+<p><strong>매번 자동으로 적용하려면</strong> 프로필 파일에 적어 둡니다. 터미널에 아래를 입력합니다.</p>
+<pre><code>notepad $PROFILE
+</code></pre>
+<p>메모장이 열립니다. <strong>"파일을 찾을 수 없습니다. 새로 만드시겠습니까?"</strong> 라고 물으면 <strong>"예"</strong> 를 누릅니다.</p>
+<p>메모장에 아래 3줄을 복사해서 붙여넣습니다.</p>
+<pre><code class="language-powershell">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+</code></pre>
+<p><code>Ctrl + S</code> 로 저장하고 메모장을 닫습니다. <strong>터미널도 닫았다가 새로 엽니다.</strong></p>
+<blockquote>
+<p>이 파일(<code>$PROFILE</code>)은 터미널을 켤 때마다 자동으로 실행되는 설정 파일입니다. 여기 적어두면 매번 손댈 필요가 없습니다.</p>
+</blockquote>
+<p>그래도 안 되면 8.3절의 Windows 시스템 로캘 변경까지 검토하세요.</p>
+<hr />
 <h1 id="마무리-다음-단계">마무리 — 다음 단계</h1>
 <p>여기까지 왔다면 기본기는 끝났습니다. 익숙해진 뒤 이런 것들을 시도해 보세요.</p>
 <ol>
@@ -1873,6 +2257,7 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
     </article>
   </main>
 </div>
+<button id="to-top" type="button" title="맨 위로" aria-label="맨 위로">&#8593;</button>
 
 <script>
 (function () {
@@ -1962,6 +2347,49 @@ PNG 이미지로 저장해줘. 제목과 축 이름은 한글로 넣어줘.
     toggle.addEventListener('click', function () { sidebar.classList.toggle('open'); });
     sidebar.querySelectorAll('.toc a').forEach(function (a) {
       a.addEventListener('click', function () { sidebar.classList.remove('open'); });
+    });
+  }
+
+  // 굵은 글씨 한 줄로만 된 문단은 작은 머리글처럼 표시한다.
+  document.querySelectorAll('.content > p').forEach(function (p) {
+    var kids = Array.prototype.filter.call(p.childNodes, function (n) {
+      return !(n.nodeType === 3 && !n.nodeValue.trim());
+    });
+    // 문장이 아니라 '묶음 이름'일 때만 머리글 취급한다.
+    // (짧고, 마침표로 끝나지 않는 줄)
+    var label = p.textContent.trim();
+    if (kids.length === 1 && kids[0].nodeName === 'STRONG' &&
+        label.length <= 40 && !/[.!?]$/.test(label)) {
+      p.classList.add('lead-label');
+    }
+  });
+
+  // 절 제목에 고정 링크(#) 달기
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function (h) {
+    var a = document.createElement('a');
+    a.className = 'anchor';
+    a.href = '#' + h.id;
+    a.textContent = '#';
+    a.setAttribute('aria-label', '이 절의 주소');
+    h.insertBefore(a, h.firstChild);
+  });
+
+  // 읽은 분량 표시줄 + 위로가기 버튼
+  var bar = document.getElementById('progress');
+  var top = document.getElementById('to-top');
+  var onScroll = function () {
+    var doc = document.documentElement;
+    var max = (doc.scrollHeight - doc.clientHeight) || 1;
+    var ratio = Math.min(1, Math.max(0, doc.scrollTop / max));
+    if (bar) { bar.style.width = (ratio * 100).toFixed(2) + '%'; }
+    if (top) { top.classList.toggle('show', doc.scrollTop > 600); }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+  if (top) {
+    top.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 

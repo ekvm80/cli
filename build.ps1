@@ -10,3 +10,6 @@ py md_to_html.py "터미널_AI_에이전트_입문_가이드.md"  "index.html"  
 py md_to_html.py "terminal-ai-agent-guide.en.md"      "en.html"      --lang en --alt "index.html"   --nav $navEn --nav-current "Terminal AI Agents"
 py md_to_html.py "Orca_병렬_AI에이전트_입문_가이드.md" "orca.html"    --lang ko --alt "orca.en.html" --nav $navKo --nav-current "Orca 병렬 에이전트"
 py md_to_html.py "orca-parallel-agents-guide.en.md"   "orca.en.html" --lang en --alt "orca.html"    --nav $navEn --nav-current "Orca Parallel Agents"
+
+# index.html 을 한글 파일명으로도 복사해 둔다 (로컬에서 직접 열어 보는 용도).
+Copy-Item "index.html" "터미널_AI_에이전트_입문_가이드.html" -Force

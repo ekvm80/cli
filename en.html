@@ -8,65 +8,94 @@
 :root {
   --bg: #ffffff;
   --bg-soft: #f6f7f9;
-  --bg-code: #f4f5f7;
-  --fg: #1f2328;
+  --bg-sunk: #eef0f4;
+  --bg-code: #f2f4f7;
+  --fg: #1b1f24;
   --fg-soft: #59636e;
-  --border: #d8dde3;
+  --fg-faint: #8b959f;
+  --border: #dde2e8;
+  --border-soft: #e9edf1;
   --accent: #b5502a;
+  --accent-strong: #96401f;
   --accent-soft: #fdf3ef;
   --note-bg: #f2f7fd;
   --note-border: #7ba7d7;
   --warn-bg: #fdf6ec;
   --warn-border: #d9a13b;
-  --sidebar-w: 300px;
-  --maxw: 860px;
+  --ok: #2f8a4d;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 4px 14px rgba(16, 24, 40, 0.07);
+  --radius: 10px;
+  --sidebar-w: 306px;
+  --maxw: 830px;
 }
 /* 시스템 설정을 따르되, 사용자가 직접 고른 값이 있으면 그쪽이 이긴다. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg: #16181c;
-    --bg-soft: #1e2126;
-    --bg-code: #22262c;
-    --fg: #e3e6ea;
+    --bg: #15171b;
+    --bg-soft: #1c1f24;
+    --bg-sunk: #23272e;
+    --bg-code: #20242a;
+    --fg: #e4e7eb;
     --fg-soft: #9aa3ad;
+    --fg-faint: #737d87;
     --border: #333941;
-    --accent: #e08b63;
-    --accent-soft: #2a211d;
-    --note-bg: #1b2530;
+    --border-soft: #282d34;
+    --accent: #e59570;
+    --accent-strong: #f0a884;
+    --accent-soft: #2b211c;
+    --note-bg: #1a2530;
     --note-border: #3f6a99;
     --warn-bg: #2b2418;
     --warn-border: #8a6a2b;
+    --ok: #62b981;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
 }
 /* 어둡게 */
 :root[data-theme="dark"] {
-  --bg: #16181c;
-  --bg-soft: #1e2126;
-  --bg-code: #22262c;
-  --fg: #e3e6ea;
+  --bg: #15171b;
+  --bg-soft: #1c1f24;
+  --bg-sunk: #23272e;
+  --bg-code: #20242a;
+  --fg: #e4e7eb;
   --fg-soft: #9aa3ad;
+  --fg-faint: #737d87;
   --border: #333941;
-  --accent: #e08b63;
-  --accent-soft: #2a211d;
-  --note-bg: #1b2530;
+  --border-soft: #282d34;
+  --accent: #e59570;
+  --accent-strong: #f0a884;
+  --accent-soft: #2b211c;
+  --note-bg: #1a2530;
   --note-border: #3f6a99;
   --warn-bg: #2b2418;
   --warn-border: #8a6a2b;
+  --ok: #62b981;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 /* 편하게 보기 — 눈부심을 줄인 따뜻한 배경 */
 :root[data-theme="sepia"] {
-  --bg: #f5ecd9;
-  --bg-soft: #efe4cd;
-  --bg-code: #ece0c6;
-  --fg: #3a322a;
+  --bg: #f6eeda;
+  --bg-soft: #efe5cf;
+  --bg-sunk: #e7dbc0;
+  --bg-code: #ece1c8;
+  --fg: #38302a;
   --fg-soft: #6d6252;
+  --fg-faint: #948872;
   --border: #ddd0b6;
+  --border-soft: #e7dcc5;
   --accent: #a04a1f;
-  --accent-soft: #f8e9d9;
+  --accent-strong: #883d17;
+  --accent-soft: #f9ebda;
   --note-bg: #e6ebec;
   --note-border: #8aa2b5;
   --warn-bg: #f6e6c8;
   --warn-border: #c69a45;
+  --ok: #2f7a48;
+  --shadow-sm: 0 1px 2px rgba(80, 60, 30, 0.08);
+  --shadow-md: 0 4px 14px rgba(80, 60, 30, 0.1);
 }
 
 * { box-sizing: border-box; }
@@ -81,10 +110,30 @@ body {
                BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕",
                "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   font-size: 16.5px;
-  line-height: 1.75;
+  line-height: 1.78;
+  letter-spacing: -0.003em;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
   word-break: keep-all;
   overflow-wrap: break-word;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- 읽은 분량 표시 ---------- */
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--accent);
+  z-index: 60;
+  transition: width .08s linear;
 }
 
 /* ---------- 레이아웃 ---------- */
@@ -97,48 +146,67 @@ body {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
   border-right: 1px solid var(--border);
   background: var(--bg-soft);
-  padding: 28px 18px 60px 24px;
+  padding: 24px 16px 60px 22px;
+}
+#sidebar::-webkit-scrollbar { width: 8px; }
+#sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
 }
 #sidebar .toc-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--fg-soft);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--fg-faint);
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin: 4px 0 10px 8px;
 }
 #sidebar ul { list-style: none; margin: 0; padding: 0; }
-#sidebar ul ul { padding-left: 13px; }
+#sidebar ul ul {
+  padding-left: 10px;
+  margin-left: 6px;
+  border-left: 1px solid var(--border-soft);
+}
 #sidebar li { margin: 1px 0; }
 #sidebar a {
   display: block;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.855rem;
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-size: 0.85rem;
   line-height: 1.45;
   color: var(--fg-soft);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  transition: background .12s, color .12s;
 }
-#sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+#sidebar a:hover { background: var(--accent-soft); color: var(--accent-strong); }
 #sidebar a.active {
-  color: var(--accent);
+  color: #fff;
   font-weight: 600;
-  border-left-color: var(--accent);
-  background: var(--accent-soft);
+  background: var(--accent);
 }
 /* 1단계 항목(부 제목)은 굵게 */
-#sidebar > .toc > ul > li > a { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+#sidebar > .toc > ul > li { margin-top: 9px; }
+#sidebar > .toc > ul > li > a {
+  font-weight: 700;
+  color: var(--fg);
+  font-size: 0.895rem;
+}
+#sidebar > .toc > ul > li > a.active { color: #fff; }
+
+/* ---------- 사이드바 위쪽 전환기 ---------- */
 .lang-switch {
   display: flex;
   gap: 4px;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   padding: 3px;
   border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
+  border-radius: 9px;
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
 }
 .lang-switch a, .lang-switch span {
   flex: 1 1 0;
@@ -146,54 +214,41 @@ body {
   padding: 5px 0;
   font-size: 0.8rem;
   font-weight: 600;
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
   line-height: 1.2;
 }
 .lang-switch span { background: var(--accent); color: #fff; }
 .lang-switch a { color: var(--fg-soft); }
-.lang-switch a:hover { background: var(--accent-soft); color: var(--accent); }
-.doc-nav {
-  margin: 0 0 14px;
+.lang-switch a:hover { background: var(--accent-soft); color: var(--accent-strong); }
+.doc-nav, .theme-switch {
+  margin: 0 0 10px;
   padding: 8px 9px 9px;
   border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
+  border-radius: 9px;
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
 }
-.doc-nav .doc-nav-title {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.theme-switch { margin-bottom: 16px; }
+.doc-nav .doc-nav-title, .theme-switch-title {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--fg-soft);
-  margin-bottom: 5px;
+  color: var(--fg-faint);
+  margin: 0 0 6px 3px;
 }
 .doc-nav a, .doc-nav span {
   display: block;
-  padding: 4px 7px;
+  padding: 4px 8px;
   font-size: 0.8rem;
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
   line-height: 1.35;
 }
 .doc-nav span { background: var(--accent); color: #fff; font-weight: 600; }
 .doc-nav a { color: var(--fg-soft); }
-.doc-nav a:hover { background: var(--accent-soft); color: var(--accent); }
-.theme-switch {
-  margin: 0 0 16px;
-  padding: 8px 9px 9px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-soft);
-}
-.theme-switch-title {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fg-soft);
-  margin-bottom: 5px;
-}
+.doc-nav a:hover { background: var(--accent-soft); color: var(--accent-strong); }
 .theme-switch-row { display: flex; gap: 4px; }
 .theme-switch button {
   flex: 1 1 0;
@@ -203,12 +258,13 @@ body {
   font-weight: 600;
   line-height: 1.2;
   color: var(--fg-soft);
-  background: var(--bg);
+  background: var(--bg-soft);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
 }
-.theme-switch button:hover { color: var(--accent); border-color: var(--accent); }
+.theme-switch button:hover { color: var(--accent-strong); border-color: var(--accent); }
 .theme-switch button[aria-pressed="true"] {
   background: var(--accent);
   border-color: var(--accent);
@@ -218,81 +274,190 @@ body {
 main {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 46px 40px 120px;
+  padding: 52px 44px 140px;
   display: flex;
   justify-content: center;
 }
 .content { width: 100%; max-width: var(--maxw); }
 
 /* ---------- 타이포그래피 ---------- */
-h1, h2, h3, h4 { line-height: 1.35; font-weight: 700; scroll-margin-top: 20px; }
-h1 {
-  font-size: 2.05rem;
-  margin: 0 0 0.6em;
-  padding-bottom: 0.35em;
-  border-bottom: 3px solid var(--accent);
+h1, h2, h3, h4 {
+  line-height: 1.38;
+  font-weight: 700;
+  scroll-margin-top: 24px;
+  position: relative;
 }
+
+/* 부(部) 제목 — 큰 구획을 한눈에 갈라 준다. */
+h1 {
+  font-size: 1.86rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.1em;
+  padding: 15px 22px 16px;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  border-left: 6px solid var(--accent);
+  border-radius: 4px 12px 12px 4px;
+}
+h1 + p, h1 + blockquote { margin-top: 0; }
+/* 문서 안의 두 번째 이후 h1(=각 부)은 위쪽 여백을 크게 둔다. */
+.content h1 ~ h1 { margin-top: 3.4em; }
+
+/* 절 제목 */
 h2 {
-  font-size: 1.5rem;
-  margin: 2.6em 0 0.8em;
-  padding-bottom: 0.3em;
+  font-size: 1.4rem;
+  letter-spacing: -0.015em;
+  margin: 3em 0 0.85em;
+  padding-bottom: 0.34em;
   border-bottom: 1px solid var(--border);
 }
-h3 { font-size: 1.16rem; margin: 2em 0 0.6em; color: var(--accent); }
-h4 { font-size: 1.02rem; margin: 1.6em 0 0.5em; }
-p { margin: 0.85em 0; }
-a { color: var(--accent); }
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 54px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* 소절 제목 */
+h3 {
+  font-size: 1.13rem;
+  margin: 2.2em 0 0.55em;
+  padding-left: 12px;
+  color: var(--accent-strong);
+  border-left: 3px solid var(--accent);
+}
+
+/* 항목 제목 — 목록·질문 묶음을 시각적으로 끊어 준다. */
+h4 {
+  font-size: 1rem;
+  margin: 1.9em 0 0.6em;
+  padding: 7px 14px;
+  color: var(--fg);
+  background: var(--bg-sunk);
+  border-left: 3px solid var(--accent);
+  border-radius: 3px 8px 8px 3px;
+}
+h4 + p, h4 + ul, h4 + ol, h4 + .table-wrap, h4 + .codeblock { margin-top: 0.5em; }
+
+p { margin: 0.9em 0; }
+
+/* 굵은 글씨만으로 된 줄은 작은 머리글처럼 보이게 한다. */
+p.lead-label {
+  margin: 1.7em 0 0.4em;
+  color: var(--fg);
+  font-weight: 700;
+}
+p.lead-label > strong { font-weight: 700; }
+p.lead-label::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 8px 3px 0;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: middle;
+}
+p.lead-label + ul, p.lead-label + ol { margin-top: 0.2em; }
+
+a { color: var(--accent-strong); text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+
+/* 제목 옆 고정 링크 */
+.anchor {
+  position: absolute;
+  right: 100%;
+  margin-right: 8px;
+  padding: 0 4px;
+  color: var(--fg-faint);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .12s;
+}
+h2:hover .anchor, h3:hover .anchor, .anchor:focus { opacity: 1; }
+h4 .anchor { display: none; }
 
 hr {
   border: 0;
   border-top: 1px solid var(--border);
-  margin: 3em 0;
+  margin: 3.2em 0;
 }
 
-ul, ol { padding-left: 1.4em; margin: 0.8em 0; }
-li { margin: 0.32em 0; }
+ul, ol { padding-left: 1.35em; margin: 0.85em 0; }
+li { margin: 0.34em 0; }
+li::marker { color: var(--accent); }
+ol li::marker { font-weight: 700; }
 li > ul, li > ol { margin: 0.3em 0; }
 
 strong { font-weight: 700; }
 
 /* ---------- 표 ---------- */
-.table-wrap { overflow-x: auto; margin: 1.4em 0; }
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg);
+}
 table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.93rem;
+  font-size: 0.925rem;
 }
 th, td {
-  border: 1px solid var(--border);
-  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 10px 14px;
   text-align: left;
   vertical-align: top;
 }
-th { background: var(--bg-soft); font-weight: 700; white-space: nowrap; }
-tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--bg-soft) 45%, transparent); }
+th + th, td + td { border-left: 1px solid var(--border-soft); }
+th {
+  background: var(--bg-sunk);
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--bg-soft); }
 
 /* ---------- 코드 ---------- */
 code {
   font-family: "Cascadia Mono", "Consolas", "D2Coding", "Menlo", monospace;
-  font-size: 0.88em;
+  font-size: 0.875em;
 }
-p code, li code, td code, th code {
+p code, li code, td code, th code, h4 code {
   background: var(--bg-code);
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 1px 5px;
+  color: var(--accent-strong);
+  white-space: nowrap;
 }
-.codeblock { position: relative; margin: 1.15em 0; }
+.codeblock { position: relative; margin: 1.2em 0; }
 .codeblock pre {
   margin: 0;
   background: var(--bg-code);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 60px 14px 16px;
+  border-radius: var(--radius);
+  padding: 14px 62px 14px 16px;
   overflow-x: auto;
-  line-height: 1.6;
+  line-height: 1.62;
+  box-shadow: var(--shadow-sm);
 }
-.codeblock pre code { background: none; border: 0; padding: 0; font-size: 0.9rem; }
+.codeblock pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-size: 0.895rem;
+  white-space: pre;
+}
 .copy-btn {
   position: absolute;
   top: 8px;
@@ -300,43 +465,79 @@ p code, li code, td code, th code {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg-soft);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 0.74rem;
+  border-radius: 7px;
+  padding: 3px 10px;
+  font-size: 0.73rem;
+  font-weight: 600;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity .15s;
+  opacity: 0.45;
+  transition: opacity .15s, color .15s, border-color .15s;
   font-family: inherit;
 }
 .codeblock:hover .copy-btn, .copy-btn:focus { opacity: 1; }
-.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
-.copy-btn.done { color: #2f8a4d; border-color: #2f8a4d; opacity: 1; }
+.copy-btn:hover { color: var(--accent-strong); border-color: var(--accent); }
+.copy-btn.done { color: var(--ok); border-color: var(--ok); opacity: 1; }
 
 /* ---------- 인용(참고 상자) ---------- */
 blockquote {
-  margin: 1.3em 0;
-  padding: 12px 18px;
+  margin: 1.4em 0;
+  padding: 13px 18px;
   background: var(--note-bg);
+  border: 1px solid var(--border-soft);
   border-left: 4px solid var(--note-border);
-  border-radius: 0 8px 8px 0;
+  border-radius: 3px 10px 10px 3px;
   color: var(--fg);
+  font-size: 0.965rem;
 }
-blockquote p { margin: 0.4em 0; }
+blockquote p { margin: 0.45em 0; }
 blockquote p:first-child { margin-top: 0; }
 blockquote p:last-child { margin-bottom: 0; }
+/* 상자 첫 줄이 굵은 글씨면 제목처럼 떼어 놓는다. */
+blockquote > p:first-child > strong:first-child {
+  display: block;
+  margin-bottom: 2px;
+}
+blockquote .codeblock { margin: 0.7em 0; }
+blockquote .codeblock pre { background: var(--bg); }
+
+/* ---------- 위로 가기 ---------- */
+#to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s, color .15s, border-color .15s;
+}
+#to-top.show { opacity: 1; pointer-events: auto; }
+#to-top:hover { color: var(--accent-strong); border-color: var(--accent); }
 
 /* ---------- 모바일 ---------- */
 #toc-toggle { display: none; }
 @media (max-width: 980px) {
   .layout { display: block; }
   #sidebar {
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 40;
     width: auto;
     height: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
-    padding: 14px 18px;
-    max-height: 50vh;
+    padding: 10px 16px;
+    max-height: 78vh;
   }
   #toc-toggle {
     display: block;
@@ -347,26 +548,41 @@ blockquote p:last-child { margin-bottom: 0; }
     color: var(--fg);
     font: inherit;
     font-weight: 700;
-    padding: 6px 0;
+    padding: 6px 2px;
     cursor: pointer;
   }
-  #sidebar .toc { display: none; }
-  #sidebar.open .toc { display: block; }
+  #sidebar .toc, #sidebar .lang-switch,
+  #sidebar .doc-nav, #sidebar .theme-switch { display: none; }
+  #sidebar.open .toc, #sidebar.open .doc-nav,
+  #sidebar.open .theme-switch { display: block; }
+  #sidebar.open .lang-switch { display: flex; }
   #sidebar .toc-title { display: none; }
-  main { padding: 26px 18px 80px; }
+  main { padding: 26px 17px 90px; }
   body { font-size: 16px; }
-  h1 { font-size: 1.6rem; }
-  h2 { font-size: 1.3rem; }
+  h1 { font-size: 1.5rem; padding: 12px 16px 13px; }
+  h2 { font-size: 1.24rem; margin-top: 2.4em; }
+  h3 { font-size: 1.08rem; }
+  .anchor { display: none; }
+  #to-top { right: 14px; bottom: 14px; }
+}
+
+/* ---------- 움직임을 줄이는 설정 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
 }
 
 /* ---------- 인쇄 ---------- */
 @media print {
-  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch { display: none !important; }
+  #sidebar, .copy-btn, .lang-switch, .doc-nav, .theme-switch,
+  #to-top, #progress, .anchor { display: none !important; }
   body { font-size: 10.5pt; color: #000; background: #fff; }
   main { padding: 0; }
   .content { max-width: none; }
-  h2 { page-break-after: avoid; }
-  .codeblock pre, table, blockquote { page-break-inside: avoid; }
+  h1 { color: #000; background: none; border-left: 4px solid #000; }
+  h2, h3, h4 { page-break-after: avoid; color: #000; background: none; }
+  .codeblock pre, table, blockquote { page-break-inside: avoid; box-shadow: none; }
+  .table-wrap { box-shadow: none; }
   a { color: #000; text-decoration: none; }
 }
 </style>
@@ -380,6 +596,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </script>
 </head>
 <body>
+<div id="progress"></div>
 <div class="layout">
   <nav id="sidebar">
     <button id="toc-toggle" type="button">Show/hide contents ▾</button>
@@ -438,7 +655,7 @@ blockquote p:last-child { margin-bottom: 0; }
 </li>
 </ul>
 </li>
-<li><a href="#part-3-preparation-four-supporting-programs">Part 3. Preparation — four supporting programs</a><ul>
+<li><a href="#part-3-preparation-three-supporting-programs">Part 3. Preparation — three supporting programs</a><ul>
 <li><a href="#30-what-you-are-installing-and-why">3.0 What you are installing and why</a></li>
 <li><a href="#31-install-windows-terminal">3.1 Install Windows Terminal</a></li>
 <li><a href="#32-install-nodejs-recommended">3.2 Install Node.js (recommended)</a><ul>
@@ -452,9 +669,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#check">Check</a></li>
 </ul>
 </li>
-<li><a href="#34-allow-scripts-to-run-skip-it-and-you-get-errors">3.4 Allow scripts to run (skip it and you get errors)</a></li>
-<li><a href="#35-text-encoding-for-non-english-users">3.5 Text encoding (for non-English users)</a></li>
-<li><a href="#36-part-3-final-check">3.6 Part 3 final check</a></li>
+<li><a href="#34-part-3-final-check">3.4 Part 3 final check</a></li>
 </ul>
 </li>
 <li><a href="#part-4-installing-an-ai-agent">Part 4. Installing an AI agent</a><ul>
@@ -488,6 +703,10 @@ blockquote p:last-child { margin-bottom: 0; }
 </ul>
 </li>
 <li><a href="#part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</a><ul>
+<li><a href="#50-learn-these-first-the-five-essential-commands">5.0 Learn these first — the five essential commands</a><ul>
+<li><a href="#your-allowance-resets-on-a-fixed-cycle">Your allowance resets on a fixed cycle</a></li>
+</ul>
+</li>
 <li><a href="#pick-one-of-two-paths">Pick one of two paths</a></li>
 <li><a href="#51-prepare-a-working-folder">5.1 Prepare a working folder</a></li>
 <li><a href="#52-make-a-practice-file">5.2 Make a practice file</a></li>
@@ -530,6 +749,7 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#installation-once">Installation (once)</a></li>
 <li><a href="#verification">Verification</a></li>
 <li><a href="#the-everyday-flow">The everyday flow</a></li>
+<li><a href="#the-five-essential-in-chat-commands">The five essential in-chat commands</a></li>
 <li><a href="#keyboard-shortcuts">Keyboard shortcuts</a></li>
 </ul>
 </li>
@@ -538,6 +758,11 @@ blockquote p:last-child { margin-bottom: 0; }
 <li><a href="#why-plain-windows-is-the-better-choice">Why plain Windows is the better choice</a></li>
 <li><a href="#do-this-instead">Do this instead</a></li>
 <li><a href="#when-wsl-is-the-better-option">When WSL is the better option</a></li>
+</ul>
+</li>
+<li><a href="#appendix-e-optional-settings-script-permission-and-text-encoding">Appendix E. Optional settings — script permission and text encoding</a><ul>
+<li><a href="#e1-script-permission">E.1 Script permission</a></li>
+<li><a href="#e2-text-encoding">E.2 Text encoding</a></li>
 </ul>
 </li>
 <li><a href="#wrapping-up-what-comes-next">Wrapping up — what comes next</a><ul>
@@ -563,6 +788,7 @@ Estimated time: <strong>30 minutes to install + 20 minutes for your first sessio
 <li><strong>Already used a terminal?</strong> Skip Part 2 and start at Part 3.</li>
 <li><strong>Text in grey boxes</strong> is a command you type into the computer. Copy and paste it as is.</li>
 <li>Every step has a <strong>"Check that it worked"</strong> item. Confirm it before moving on.</li>
+<li><strong>Appendix E</strong> holds optional settings you only need if something breaks. Skip it on a first pass.</li>
 </ul>
 <hr />
 <h1 id="part-1-why-run-ai-in-a-terminal">Part 1. Why run AI in a terminal</h1>
@@ -616,39 +842,49 @@ You: (just review it)
 </tbody>
 </table>
 <h2 id="12-what-you-can-actually-do-with-it">1.2 What you can actually do with it</h2>
-<p>These are things you can do without being a programmer.</p>
-<p><strong>Documents and reference material</strong><br />
-- Turn 100 scattered PDFs into a table of titles and summaries<br />
-- Rename files in bulk to a consistent convention<br />
-- Pull one specific section out of many Word files and merge them into one</p>
-<p><strong>Data work</strong><br />
-- Find and fix errors in Excel/CSV files<br />
-- Merge several tables into one and compute statistics<br />
-- Plot data as a chart and save it as an image file</p>
-<p><strong>Research and academic work</strong><br />
-- Rewrite a draft's sentences in an academic register<br />
-- Normalise references to a journal's required style<br />
-- Write and run a script that processes experimental data</p>
-<p><strong>Everyday office work</strong><br />
-- Fill in a recurring report template automatically<br />
-- Gather material from the web and organise it<br />
-- Draft many emails at once</p>
-<p><strong>Programming</strong> (if you are interested)<br />
-- Build a program from scratch<br />
-- Understand and modify code someone else wrote</p>
+<p>Things you can do without being a programmer, grouped by area.</p>
+<h4 id="documents-and-reference-material">Documents and reference material</h4>
+<ul>
+<li>Turn 100 scattered PDFs into a table of titles and summaries</li>
+<li>Rename files in bulk to a consistent convention</li>
+<li>Pull one specific section out of many Word files and merge them into one</li>
+</ul>
+<h4 id="data-work">Data work</h4>
+<ul>
+<li>Find and fix errors in Excel/CSV files</li>
+<li>Merge several tables into one and compute statistics</li>
+<li>Plot data as a chart and save it as an image file</li>
+</ul>
+<h4 id="research-and-academic-work">Research and academic work</h4>
+<ul>
+<li>Rewrite a draft's sentences in an academic register</li>
+<li>Normalise references to a journal's required style</li>
+<li>Write and run a script that processes experimental data</li>
+</ul>
+<h4 id="everyday-office-work">Everyday office work</h4>
+<ul>
+<li>Fill in a recurring report template automatically</li>
+<li>Gather material from the web and organise it</li>
+<li>Draft many emails at once</li>
+</ul>
+<h4 id="programming-if-you-are-interested">Programming (if you are interested)</h4>
+<ul>
+<li>Build a program from scratch</li>
+<li>Understand and modify code someone else wrote</li>
+</ul>
 <h2 id="13-answers-to-the-usual-worries">1.3 Answers to the usual worries</h2>
-<p><strong>"Do I need to know how to program?"</strong><br />
-No. You say "do this for me" in plain English. You do need to know how to open a terminal and a handful of commands, which Part 2 covers. Thirty minutes is enough.</p>
-<p><strong>"What if it wrecks my files?"</strong><br />
-An AI agent <strong>asks "may I make this change?" every single time</strong> before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 7 (backups, a dedicated folder), the risk is close to zero.</p>
-<p><strong>"Will my files leak?"</strong><br />
-File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. <strong>Do not put personal data, unpublished research data, or company confidential material in your working folder.</strong> Details in Part 7.</p>
-<p><strong>"Does it cost money?"</strong><br />
-A paid subscription is generally required. If you already pay for ChatGPT Plus or Claude Pro, you can use it through that subscription at no extra cost. Google's Antigravity CLI gives you a free allowance when you sign in with a Google account (check the official documentation for the exact limits). Section 4.1 lays this out.</p>
-<p><strong>"Do I need Linux? Do I need WSL?"</strong><br />
-No. <strong>Use it on Windows as is.</strong> Some tools did not support Windows in the past and required WSL (a Linux environment), and a lot of material from that era is still circulating. All three tools now ship a Windows-native installer. See <strong>Appendix D</strong> for how to decide.</p>
-<p><strong>"The black screen scares me."</strong><br />
-That is the most common reaction. In practice you use about five commands; everything else is a plain-English conversation. Think of the black screen as just a window for talking to the AI.</p>
+<h4 id="do-i-need-to-know-how-to-program">"Do I need to know how to program?"</h4>
+<p>No. You say "do this for me" in plain English. You do need to know how to open a terminal and a handful of commands, which Part 2 covers. Thirty minutes is enough.</p>
+<h4 id="what-if-it-wrecks-my-files">"What if it wrecks my files?"</h4>
+<p>An AI agent <strong>asks "may I make this change?" every single time</strong> before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 7 (backups, a dedicated folder), the risk is close to zero.</p>
+<h4 id="will-my-files-leak">"Will my files leak?"</h4>
+<p>File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. <strong>Do not put personal data, unpublished research data, or company confidential material in your working folder.</strong> Details in Part 7.</p>
+<h4 id="does-it-cost-money">"Does it cost money?"</h4>
+<p>A paid subscription is generally required. If you already pay for ChatGPT Plus or Claude Pro, you can use it through that subscription at no extra cost. Google's Antigravity CLI gives you a free allowance when you sign in with a Google account (check the official documentation for the exact limits). Section 4.1 lays this out.</p>
+<h4 id="do-i-need-linux-do-i-need-wsl">"Do I need Linux? Do I need WSL?"</h4>
+<p>No. <strong>Use it on Windows as is.</strong> Some tools did not support Windows in the past and required WSL (a Linux environment), and a lot of material from that era is still circulating. All three tools now ship a Windows-native installer. See <strong>Appendix D</strong> for how to decide.</p>
+<h4 id="the-black-screen-scares-me">"The black screen scares me."</h4>
+<p>That is the most common reaction. In practice you use about five commands; everything else is a plain-English conversation. Think of the black screen as just a window for talking to the AI.</p>
 <hr />
 <h1 id="part-2-terminal-basics-30-minutes-is-enough">Part 2. Terminal basics — 30 minutes is enough</h1>
 <p>You are not trying to become a programmer. You learn just enough to give the AI work.</p>
@@ -718,6 +954,10 @@ Right: <code>cd "C:\My Documents\Research Data"</code></p>
 </blockquote>
 <h2 id="24-the-five-commands-you-must-know">2.4 The five commands you must know</h2>
 <p>This is all you need.</p>
+<blockquote>
+<p><strong>Run these in PowerShell.</strong><br />
+The commands below work in <strong>PowerShell</strong>, which is what the <code>Terminal</code> app you opened in section 2.1 uses by default. In the old <code>Command Prompt (cmd)</code> there is no <code>ls</code> or <code>pwd</code>, so they fail. If your prompt starts with <code>PS C:\...&gt;</code> you are in PowerShell; if it starts with just <code>C:\...&gt;</code> you are in Command Prompt — close it and open the <code>Terminal</code> app instead.</p>
+</blockquote>
 <h3 id="1-cd-move-into-a-folder">1. <code>cd</code> — move into a folder</h3>
 <pre><code>cd Documents
 </code></pre>
@@ -837,7 +1077,7 @@ Right: <code>cd "C:\My Documents\Research Data"</code></p>
 </table>
 <p><strong>No error will break your computer.</strong> Try things freely.</p>
 <hr />
-<h1 id="part-3-preparation-four-supporting-programs">Part 3. Preparation — four supporting programs</h1>
+<h1 id="part-3-preparation-three-supporting-programs">Part 3. Preparation — three supporting programs</h1>
 <p>Before installing an AI agent, install the programs it runs on.</p>
 <h2 id="30-what-you-are-installing-and-why">3.0 What you are installing and why</h2>
 <table>
@@ -872,17 +1112,12 @@ Right: <code>cd "C:\My Documents\Research Data"</code></p>
 <td>Recommended</td>
 <td>5 min</td>
 </tr>
-<tr>
-<td>4</td>
-<td>Execution policy, encoding</td>
-<td>Skip it and you get errors later</td>
-<td>Required</td>
-<td>3 min</td>
-</tr>
 </tbody>
 </table>
 <p><strong>All of these are free, safe, official programs.</strong></p>
 <blockquote>
+<p><strong>The execution-policy and encoding settings are not done here.</strong><br />
+Earlier versions of this guide told you to set them up in advance. Today's installers almost always work without them, and there is no reason to change settings you do not need, so they now live in <strong><a href="#appendix-e-optional-settings-script-permission-and-text-encoding">Appendix E</a></strong>. If an install or a run fails with <code>running scripts is disabled</code>, or non-English text shows as <code>???</code>, go to Appendix E at that point.</p>
 <p><strong>Why Node.js is only "recommended"</strong><br />
 AI agents used to be installable only through <code>npm</code> (the installer that ships with Node.js). Today Claude Code, Antigravity CLI and Codex CLI all provide <strong>dedicated installers that work without Node.js</strong>. It is still worth having: it gives you a fallback route when an install goes wrong, and a good share of the tools the AI writes for you will use it. <strong>If you are short on time, skip section 3.2 and go to Part 4.</strong></p>
 </blockquote>
@@ -944,32 +1179,7 @@ AI agents used to be installable only through <code>npm</code> (the installer th
 <pre><code>git version 2.52.0.windows.1
 </code></pre>
 <p>Output like that means you are set.</p>
-<h2 id="34-allow-scripts-to-run-skip-it-and-you-get-errors">3.4 Allow scripts to run (skip it and you get errors)</h2>
-<p>For security, Windows blocks external scripts by default. You have to lift that for AI agents to run.</p>
-<p>Type this into the terminal.</p>
-<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-</code></pre>
-<p>When it asks whether you want to change the execution policy, type <strong><code>Y</code></strong> and press Enter.</p>
-<blockquote>
-<p><strong>Is that dangerous?</strong><br />
-<code>RemoteSigned</code> is the middle setting: "run scripts I wrote myself, and run downloaded ones only if they are signed." It is the standard developers use, and it does not disable security. Because of <code>-Scope CurrentUser</code> it applies to your account only, not the whole machine.</p>
-</blockquote>
-<h2 id="35-text-encoding-for-non-english-users">3.5 Text encoding (for non-English users)</h2>
-<p>If you work with file names or output in a language other than English, the console can show them as <code>???</code> or as garbled characters. This setting prevents that. <strong>If you only ever handle English text, you can skip it.</strong></p>
-<p>Type this into the terminal.</p>
-<pre><code>notepad $PROFILE
-</code></pre>
-<p>Notepad opens. If it asks <strong>"Cannot find the file. Do you want to create a new file?"</strong>, choose <strong>Yes</strong>.</p>
-<p>Paste these three lines into Notepad.</p>
-<pre><code class="language-powershell">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
-</code></pre>
-<p>Save with <code>Ctrl + S</code> and close Notepad. <strong>Close the terminal and open a new one.</strong></p>
-<blockquote>
-<p>This file (<code>$PROFILE</code>) runs automatically every time you start the terminal. Put it here once and you never touch it again.</p>
-</blockquote>
-<h2 id="36-part-3-final-check">3.6 Part 3 final check</h2>
+<h2 id="34-part-3-final-check">3.4 Part 3 final check</h2>
 <p>Open a new terminal and type each of these, confirming that a version number comes back.</p>
 <pre><code>node --version
 </code></pre>
@@ -1253,6 +1463,92 @@ Do not use <code>sudo npm install -g</code>. It creates permission problems.</p>
 </code></pre>
 <hr />
 <h1 id="part-5-your-first-session-actually-giving-it-work">Part 5. Your first session — actually giving it work</h1>
+<h2 id="50-learn-these-first-the-five-essential-commands">5.0 Learn these first — the five essential commands</h2>
+<p>Inside the chat window these five are effectively all you use. <strong>Know them and you will never be stuck.</strong></p>
+<table>
+<thead>
+<tr>
+<th>What you want</th>
+<th>Input</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Get back to the terminal</strong></td>
+<td><code>Ctrl + C</code> twice</td>
+<td>Once stops the running job, twice quits the chat window. This is the first thing to press when something goes wrong</td>
+</tr>
+<tr>
+<td><strong>Choose a model</strong></td>
+<td><code>/model</code></td>
+<td>Picks the model to use. A lighter model is faster and consumes less of your allowance; a heavier one is better at hard problems</td>
+</tr>
+<tr>
+<td><strong>Choose a mode</strong></td>
+<td><code>Shift + Tab</code></td>
+<td>Cycles the approval mode (ask every time ↔ auto-accept reads ↔ accept everything). <strong>Leave it on ask-every-time at first</strong></td>
+</tr>
+<tr>
+<td><strong>Run to completion</strong></td>
+<td><code>/goal</code></td>
+<td>Give it a goal and it works through to the end instead of stopping to ask. Use it for multi-step jobs</td>
+</tr>
+<tr>
+<td><strong>Check your usage</strong></td>
+<td><code>/usage</code></td>
+<td>Shows how much allowance is left and when the limit resets</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Commands differ slightly between tools.</strong><br />
+The five above are Claude Code's. Codex CLI and Antigravity CLI name some of them differently, and a few do not exist at all. Type <strong><code>/help</code></strong> in the chat window and you get the full list of commands and shortcuts that tool actually has. When in doubt, start with <code>/help</code>.</p>
+</blockquote>
+<h3 id="your-allowance-resets-on-a-fixed-cycle">Your allowance resets on a fixed cycle</h3>
+<p>Paying a subscription does not buy unlimited use. The AI companies allocate an amount of usage (tokens) <strong>per fixed window</strong>, and refill it when that window rolls over. So hitting a limit is a wait, not a wall.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Short cycle</th>
+<th>Longer cycle</th>
+<th>Check what is left</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td>Per 5 hours</td>
+<td>An additional weekly (7-day) limit</td>
+<td><code>/usage</code></td>
+</tr>
+<tr>
+<td>Codex CLI</td>
+<td>Per 5 hours</td>
+<td>An additional weekly (7-day) limit</td>
+<td><code>/status</code></td>
+</tr>
+<tr>
+<td>Antigravity CLI</td>
+<td>Per 5 hours</td>
+<td>Depends on the plan</td>
+<td><code>/usage</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>How to read this</strong> — "per 5 hours" means the window starts when you send your first instruction and covers the next five hours. Use up the allocation inside it and you wait for the next window to open. A weekly limit sits on top of that, so several heavy days in a row can hit the weekly cap even while your 5-hour allowance still has room.</p>
+<blockquote>
+<p><strong>No exact numbers here.</strong><br />
+Allocations change often, and they differ by plan (Pro, Max, Plus and so on). Rather than memorising figures, get into the habit of <strong>checking with <code>/usage</code></strong>.</p>
+</blockquote>
+<p><strong>Three ways to spend less of it</strong></p>
+<ul>
+<li><strong><code>/clear</code> when the topic changes</strong> — a long conversation is re-read on every turn, which burns allowance fast. Clear it before starting a new subject.</li>
+<li><strong>Use a lighter model for easy work</strong> — switch with <code>/model</code>. There is no reason to spend a heavy model on file tidying or simple conversions.</li>
+<li><strong>Keep the working folder small</strong> — the fewer files the AI has to scan, the less it consumes. The "dedicated working folder" rule in Part 7 pays off here too.</li>
+</ul>
+<hr />
 <h2 id="pick-one-of-two-paths">Pick one of two paths</h2>
 <p>The road forks here. <strong>Either one is a fine place to start.</strong> There is no required order, and doing one does not stop you doing the other.</p>
 <table>
@@ -1468,7 +1764,7 @@ Content: (describe the situation here)
 <li>Open a new terminal and try again</li>
 </ul>
 <h2 id="82-cannot-be-loaded-because-running-scripts-is-disabled">8.2 "...cannot be loaded because running scripts is disabled"</h2>
-<p>You skipped the execution policy step in section 3.4.</p>
+<p>Windows is blocking script execution. The script-permission setting in <strong><a href="#appendix-e-optional-settings-script-permission-and-text-encoding">Appendix E</a></strong> fixes it. One line into the terminal:</p>
 <pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 </code></pre>
 <p>Type <code>Y</code> and press Enter.</p>
@@ -1476,7 +1772,7 @@ Content: (describe the situation here)
 <p>Temporary fix:</p>
 <pre><code>chcp 65001
 </code></pre>
-<p>Permanent fix: do the profile setup in section 3.5.</p>
+<p>Permanent fix: do the profile setup in <strong><a href="#appendix-e-optional-settings-script-permission-and-text-encoding">Appendix E</a></strong>.</p>
 <p>If that still fails, change a Windows setting.<br />
 - <code>Windows key</code> -&gt; search <code>region</code> -&gt; <strong>"Date, time &amp; regional formatting"</strong> -&gt; <strong>"Additional date, time &amp; regional settings"</strong> -&gt; <strong>"Region"</strong> -&gt; <strong>"Administrative"</strong> tab -&gt; <strong>"Change system locale"</strong><br />
 - Tick <strong>"Beta: Use Unicode UTF-8 for worldwide language support"</strong> -&gt; reboot</p>
@@ -1630,6 +1926,7 @@ Content: (describe the situation here)
 <hr />
 <h1 id="appendix-b-one-page-command-summary">Appendix B. One-page command summary</h1>
 <h2 id="terminal-basics">Terminal basics</h2>
+<p>PowerShell is assumed. In the old <code>Command Prompt (cmd)</code>, <code>ls</code> and <code>pwd</code> do not work (section 2.4).</p>
 <table>
 <thead>
 <tr>
@@ -1673,8 +1970,6 @@ Content: (describe the situation here)
 </code></pre>
 <pre><code>winget install --id Git.Git -e
 </code></pre>
-<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-</code></pre>
 <p>For AI agents, install <strong>only the one you need</strong> of the three.</p>
 <pre><code>irm https://claude.ai/install.ps1 | iex
 </code></pre>
@@ -1700,6 +1995,38 @@ Content: (describe the situation here)
 <li>Read the approval screen and choose</li>
 <li><code>exit</code> to quit</li>
 </ol>
+<h2 id="the-five-essential-in-chat-commands">The five essential in-chat commands</h2>
+<table>
+<thead>
+<tr>
+<th>What you want</th>
+<th>Input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get back to the terminal</td>
+<td><code>Ctrl + C</code> twice</td>
+</tr>
+<tr>
+<td>Choose a model</td>
+<td><code>/model</code></td>
+</tr>
+<tr>
+<td>Choose a mode (approval)</td>
+<td><code>Shift + Tab</code></td>
+</tr>
+<tr>
+<td>Run to completion</td>
+<td><code>/goal</code></td>
+</tr>
+<tr>
+<td>Check your usage</td>
+<td><code>/usage</code></td>
+</tr>
+</tbody>
+</table>
+<p>Section 5.0 explains these, and the usage limits, in full.</p>
 <h2 id="keyboard-shortcuts">Keyboard shortcuts</h2>
 <table>
 <thead>
@@ -1840,6 +2167,63 @@ Content: (describe the situation here)
 <p>If you do go with WSL, keep your working files inside WSL (<code>~/projects/...</code>). Crossing back and forth to Windows drives is the slowest and most trouble-prone arrangement.</p>
 </blockquote>
 <hr />
+<h1 id="appendix-e-optional-settings-script-permission-and-text-encoding">Appendix E. Optional settings — script permission and text encoding</h1>
+<p><strong>You do not need either of these up front.</strong> They are optional, for when something actually breaks. Today's installers usually work without them.</p>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>...cannot be loaded because running scripts is disabled</code></td>
+<td><strong>E.1 Script permission</strong> below</td>
+</tr>
+<tr>
+<td>File names or output show as <code>???</code> or garbled characters</td>
+<td><strong>E.2 Text encoding</strong> below</td>
+</tr>
+<tr>
+<td>Nothing is wrong</td>
+<td><strong>Do nothing</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="e1-script-permission">E.1 Script permission</h2>
+<p>For security, Windows blocks external scripts by default. Lift that when an install or a run is blocked by it.</p>
+<p>Type this into the terminal.</p>
+<pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+</code></pre>
+<p>When it asks whether you want to change the execution policy, type <strong><code>Y</code></strong> and press Enter.</p>
+<blockquote>
+<p><strong>Is that dangerous?</strong><br />
+<code>RemoteSigned</code> is the middle setting: "run scripts I wrote myself, and run downloaded ones only if they are signed." It is the standard developers use, and it does not disable security. Because of <code>-Scope CurrentUser</code> it applies to your account only, not the whole machine.</p>
+</blockquote>
+<p>To check the current setting without changing anything:</p>
+<pre><code>Get-ExecutionPolicy -Scope CurrentUser
+</code></pre>
+<h2 id="e2-text-encoding">E.2 Text encoding</h2>
+<p>Only needed if file names or output in a language other than English show as <code>???</code> or as garbled characters.</p>
+<p><strong>For a one-off fix</strong>, type one line into the terminal. It reverts when you close the window.</p>
+<pre><code>chcp 65001
+</code></pre>
+<p><strong>To apply it automatically every time</strong>, put it in your profile file. Type this into the terminal.</p>
+<pre><code>notepad $PROFILE
+</code></pre>
+<p>Notepad opens. If it asks <strong>"Cannot find the file. Do you want to create a new file?"</strong>, choose <strong>Yes</strong>.</p>
+<p>Paste these three lines into Notepad.</p>
+<pre><code class="language-powershell">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+</code></pre>
+<p>Save with <code>Ctrl + S</code> and close Notepad. <strong>Close the terminal and open a new one.</strong></p>
+<blockquote>
+<p>This file (<code>$PROFILE</code>) runs automatically every time you start the terminal. Put it here once and you never touch it again.</p>
+</blockquote>
+<p>If that still fails, consider the Windows system-locale change in section 8.3.</p>
+<hr />
 <h1 id="wrapping-up-what-comes-next">Wrapping up — what comes next</h1>
 <p>If you got this far, you have the fundamentals. Once you are comfortable, try these.</p>
 <ol>
@@ -1867,6 +2251,7 @@ Content: (describe the situation here)
     </article>
   </main>
 </div>
+<button id="to-top" type="button" title="Back to top" aria-label="Back to top">&#8593;</button>
 
 <script>
 (function () {
@@ -1956,6 +2341,49 @@ Content: (describe the situation here)
     toggle.addEventListener('click', function () { sidebar.classList.toggle('open'); });
     sidebar.querySelectorAll('.toc a').forEach(function (a) {
       a.addEventListener('click', function () { sidebar.classList.remove('open'); });
+    });
+  }
+
+  // 굵은 글씨 한 줄로만 된 문단은 작은 머리글처럼 표시한다.
+  document.querySelectorAll('.content > p').forEach(function (p) {
+    var kids = Array.prototype.filter.call(p.childNodes, function (n) {
+      return !(n.nodeType === 3 && !n.nodeValue.trim());
+    });
+    // 문장이 아니라 '묶음 이름'일 때만 머리글 취급한다.
+    // (짧고, 마침표로 끝나지 않는 줄)
+    var label = p.textContent.trim();
+    if (kids.length === 1 && kids[0].nodeName === 'STRONG' &&
+        label.length <= 40 && !/[.!?]$/.test(label)) {
+      p.classList.add('lead-label');
+    }
+  });
+
+  // 절 제목에 고정 링크(#) 달기
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function (h) {
+    var a = document.createElement('a');
+    a.className = 'anchor';
+    a.href = '#' + h.id;
+    a.textContent = '#';
+    a.setAttribute('aria-label', 'Link to this section');
+    h.insertBefore(a, h.firstChild);
+  });
+
+  // 읽은 분량 표시줄 + 위로가기 버튼
+  var bar = document.getElementById('progress');
+  var top = document.getElementById('to-top');
+  var onScroll = function () {
+    var doc = document.documentElement;
+    var max = (doc.scrollHeight - doc.clientHeight) || 1;
+    var ratio = Math.min(1, Math.max(0, doc.scrollTop / max));
+    if (bar) { bar.style.width = (ratio * 100).toFixed(2) + '%'; }
+    if (top) { top.classList.toggle('show', doc.scrollTop > 600); }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+  if (top) {
+    top.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 

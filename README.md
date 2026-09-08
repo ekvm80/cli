@@ -30,13 +30,13 @@ If terminals are new to you, start with **Terminal AI Agents**. After Part 4 you
 
 1. 왜 터미널에서 AI를 쓰는가 — Why run AI in a terminal
 2. 터미널 기초 (30분) — Terminal basics
-3. 설치 준비 (Node.js, Git, 실행 정책) — Preparation
+3. 설치 준비 (Node.js, Git) — Preparation
 4. AI 에이전트 설치 — Installing an agent
-5. 첫 사용 — Your first session
+5. 첫 사용 (필수 명령어 5개 · 사용량 한도) — Your first session (five essential commands, usage limits)
 6. 실제로 시켜볼 만한 일들 — Things worth trying
 7. 안전하게 쓰기 — Using it safely
 8. 문제 해결 — Troubleshooting
-9. 부록 A~D (용어, 명령어 요약, Mac, WSL) — Appendices A–D
+9. 부록 A~E (용어, 명령어 요약, Mac, WSL, 선택 설정) — Appendices A–E
 
 **Orca 병렬 에이전트 입문 / Orca Parallel Agents**
 
@@ -57,6 +57,7 @@ Orca_병렬_AI에이전트_입문_가이드.md   한국어 원본
 orca-parallel-agents-guide.en.md      영어 원본
 
 index.html      한국어 · 터미널 입문 (생성물)
+터미널_AI_에이전트_입문_가이드.html   index.html 과 같은 내용 (로컬 배포용 복사본)
 en.html         영어  · 터미널 입문
 orca.html       한국어 · Orca
 orca.en.html    영어  · Orca
@@ -103,6 +104,12 @@ Facts verified as of September 2026. Key points:
   `npm update -g` does not reach the latest release; use `npm install -g <package>@latest`.
 - **Orca는 권한 확인을 건너뛰는 옵션이 기본으로 켜져 있습니다.** 처음에는 `Manual` 로 바꾸세요.
   **Orca ships with permission bypass on by default.** Switch it to `Manual` at first.
+- 2.4절의 터미널 명령(`ls`, `pwd`)은 **PowerShell 기준**입니다. 옛 `명령 프롬프트(cmd)`에서는 동작하지 않습니다.
+  The terminal commands in section 2.4 (`ls`, `pwd`) assume **PowerShell**; they do not work in the old `Command Prompt (cmd)`.
+- 실행 정책·한글 깨짐 설정은 **선택 사항**이므로 부록 E로 옮겼습니다. 문제가 생겼을 때만 하면 됩니다.
+  The execution-policy and encoding settings are **optional** and now live in Appendix E — do them only if something breaks.
+- 사용량은 회사별로 **5시간·주(7일) 단위 한도**로 관리됩니다. 정확한 수치는 요금제마다 다르므로 `/usage` 로 확인하세요.
+  Usage is metered per **5-hour and weekly (7-day) windows**; exact allocations vary by plan, so check with `/usage`.
 
 도구 쪽 사정이 자주 바뀝니다. 어긋나는 부분을 발견하면 이슈로 알려주세요.
 These tools change often. Please open an issue if something no longer matches.

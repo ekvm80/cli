@@ -12,6 +12,7 @@
 - **Already used a terminal?** Skip Part 2 and start at Part 3.
 - **Text in grey boxes** is a command you type into the computer. Copy and paste it as is.
 - Every step has a **"Check that it worked"** item. Confirm it before moving on.
+- **Appendix E** holds optional settings you only need if something breaks. Skip it on a first pass.
 
 ---
 
@@ -49,50 +50,61 @@ You: (just review it)
 
 ## 1.2 What you can actually do with it
 
-These are things you can do without being a programmer.
+Things you can do without being a programmer, grouped by area.
 
-**Documents and reference material**
+#### Documents and reference material
+
 - Turn 100 scattered PDFs into a table of titles and summaries
 - Rename files in bulk to a consistent convention
 - Pull one specific section out of many Word files and merge them into one
 
-**Data work**
+#### Data work
+
 - Find and fix errors in Excel/CSV files
 - Merge several tables into one and compute statistics
 - Plot data as a chart and save it as an image file
 
-**Research and academic work**
+#### Research and academic work
+
 - Rewrite a draft's sentences in an academic register
 - Normalise references to a journal's required style
 - Write and run a script that processes experimental data
 
-**Everyday office work**
+#### Everyday office work
+
 - Fill in a recurring report template automatically
 - Gather material from the web and organise it
 - Draft many emails at once
 
-**Programming** (if you are interested)
+#### Programming (if you are interested)
+
 - Build a program from scratch
 - Understand and modify code someone else wrote
 
 ## 1.3 Answers to the usual worries
 
-**"Do I need to know how to program?"**
+#### "Do I need to know how to program?"
+
 No. You say "do this for me" in plain English. You do need to know how to open a terminal and a handful of commands, which Part 2 covers. Thirty minutes is enough.
 
-**"What if it wrecks my files?"**
+#### "What if it wrecks my files?"
+
 An AI agent **asks "may I make this change?" every single time** before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 7 (backups, a dedicated folder), the risk is close to zero.
 
-**"Will my files leak?"**
+#### "Will my files leak?"
+
 File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. **Do not put personal data, unpublished research data, or company confidential material in your working folder.** Details in Part 7.
 
-**"Does it cost money?"**
+#### "Does it cost money?"
+
 A paid subscription is generally required. If you already pay for ChatGPT Plus or Claude Pro, you can use it through that subscription at no extra cost. Google's Antigravity CLI gives you a free allowance when you sign in with a Google account (check the official documentation for the exact limits). Section 4.1 lays this out.
 
-**"Do I need Linux? Do I need WSL?"**
+#### "Do I need Linux? Do I need WSL?"
+
 No. **Use it on Windows as is.** Some tools did not support Windows in the past and required WSL (a Linux environment), and a lot of material from that era is still circulating. All three tools now ship a Windows-native installer. See **Appendix D** for how to decide.
 
-**"The black screen scares me."**
+#### "The black screen scares me."
+
 That is the most common reaction. In practice you use about five commands; everything else is a plain-English conversation. Think of the black screen as just a window for talking to the AI.
 
 ---
@@ -193,6 +205,9 @@ The terminal opens already at that folder. **This is the method you will use mos
 ## 2.4 The five commands you must know
 
 This is all you need.
+
+> **Run these in PowerShell.**
+> The commands below work in **PowerShell**, which is what the `Terminal` app you opened in section 2.1 uses by default. In the old `Command Prompt (cmd)` there is no `ls` or `pwd`, so they fail. If your prompt starts with `PS C:\...>` you are in PowerShell; if it starts with just `C:\...>` you are in Command Prompt — close it and open the `Terminal` app instead.
 
 ### 1. `cd` — move into a folder
 
@@ -313,7 +328,7 @@ cd ..
 
 ---
 
-# Part 3. Preparation — four supporting programs
+# Part 3. Preparation — three supporting programs
 
 Before installing an AI agent, install the programs it runs on.
 
@@ -324,9 +339,11 @@ Before installing an AI agent, install the programs it runs on.
 | 1 | Windows Terminal | The window you talk to the AI in. The old console mangles non-English text | Required | 2 min |
 | 2 | Node.js | The engine needed if you install via `npm` | Recommended | 5 min |
 | 3 | Git | Used internally by the AI. With it, Claude Code uses Git Bash as its shell | Recommended | 5 min |
-| 4 | Execution policy, encoding | Skip it and you get errors later | Required | 3 min |
 
 **All of these are free, safe, official programs.**
+
+> **The execution-policy and encoding settings are not done here.**
+> Earlier versions of this guide told you to set them up in advance. Today's installers almost always work without them, and there is no reason to change settings you do not need, so they now live in **[Appendix E](#appendix-e-optional-settings-script-permission-and-text-encoding)**. If an install or a run fails with `running scripts is disabled`, or non-English text shows as `???`, go to Appendix E at that point.
 
 > **Why Node.js is only "recommended"**
 > AI agents used to be installable only through `npm` (the installer that ships with Node.js). Today Claude Code, Antigravity CLI and Codex CLI all provide **dedicated installers that work without Node.js**. It is still worth having: it gives you a fallback route when an install goes wrong, and a good share of the tools the AI writes for you will use it. **If you are short on time, skip section 3.2 and go to Part 4.**
@@ -427,46 +444,7 @@ git version 2.52.0.windows.1
 
 Output like that means you are set.
 
-## 3.4 Allow scripts to run (skip it and you get errors)
-
-For security, Windows blocks external scripts by default. You have to lift that for AI agents to run.
-
-Type this into the terminal.
-
-```
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
-
-When it asks whether you want to change the execution policy, type **`Y`** and press Enter.
-
-> **Is that dangerous?**
-> `RemoteSigned` is the middle setting: "run scripts I wrote myself, and run downloaded ones only if they are signed." It is the standard developers use, and it does not disable security. Because of `-Scope CurrentUser` it applies to your account only, not the whole machine.
-
-## 3.5 Text encoding (for non-English users)
-
-If you work with file names or output in a language other than English, the console can show them as `???` or as garbled characters. This setting prevents that. **If you only ever handle English text, you can skip it.**
-
-Type this into the terminal.
-
-```
-notepad $PROFILE
-```
-
-Notepad opens. If it asks **"Cannot find the file. Do you want to create a new file?"**, choose **Yes**.
-
-Paste these three lines into Notepad.
-
-```powershell
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
-```
-
-Save with `Ctrl + S` and close Notepad. **Close the terminal and open a new one.**
-
-> This file (`$PROFILE`) runs automatically every time you start the terminal. Put it here once and you never touch it again.
-
-## 3.6 Part 3 final check
+## 3.4 Part 3 final check
 
 Open a new terminal and type each of these, confirming that a version number comes back.
 
@@ -723,6 +701,44 @@ irm https://antigravity.google/cli/install.ps1 | iex
 ---
 
 # Part 5. Your first session — actually giving it work
+
+## 5.0 Learn these first — the five essential commands
+
+Inside the chat window these five are effectively all you use. **Know them and you will never be stuck.**
+
+| What you want | Input | What it does |
+|---|---|---|
+| **Get back to the terminal** | `Ctrl + C` twice | Once stops the running job, twice quits the chat window. This is the first thing to press when something goes wrong |
+| **Choose a model** | `/model` | Picks the model to use. A lighter model is faster and consumes less of your allowance; a heavier one is better at hard problems |
+| **Choose a mode** | `Shift + Tab` | Cycles the approval mode (ask every time ↔ auto-accept reads ↔ accept everything). **Leave it on ask-every-time at first** |
+| **Run to completion** | `/goal` | Give it a goal and it works through to the end instead of stopping to ask. Use it for multi-step jobs |
+| **Check your usage** | `/usage` | Shows how much allowance is left and when the limit resets |
+
+> **Commands differ slightly between tools.**
+> The five above are Claude Code's. Codex CLI and Antigravity CLI name some of them differently, and a few do not exist at all. Type **`/help`** in the chat window and you get the full list of commands and shortcuts that tool actually has. When in doubt, start with `/help`.
+
+### Your allowance resets on a fixed cycle
+
+Paying a subscription does not buy unlimited use. The AI companies allocate an amount of usage (tokens) **per fixed window**, and refill it when that window rolls over. So hitting a limit is a wait, not a wall.
+
+| Tool | Short cycle | Longer cycle | Check what is left |
+|---|---|---|---|
+| Claude Code | Per 5 hours | An additional weekly (7-day) limit | `/usage` |
+| Codex CLI | Per 5 hours | An additional weekly (7-day) limit | `/status` |
+| Antigravity CLI | Per 5 hours | Depends on the plan | `/usage` |
+
+**How to read this** — "per 5 hours" means the window starts when you send your first instruction and covers the next five hours. Use up the allocation inside it and you wait for the next window to open. A weekly limit sits on top of that, so several heavy days in a row can hit the weekly cap even while your 5-hour allowance still has room.
+
+> **No exact numbers here.**
+> Allocations change often, and they differ by plan (Pro, Max, Plus and so on). Rather than memorising figures, get into the habit of **checking with `/usage`**.
+
+**Three ways to spend less of it**
+
+- **`/clear` when the topic changes** — a long conversation is re-read on every turn, which burns allowance fast. Clear it before starting a new subject.
+- **Use a lighter model for easy work** — switch with `/model`. There is no reason to spend a heavy model on file tidying or simple conversions.
+- **Keep the working folder small** — the fewer files the AI has to scan, the less it consumes. The "dedicated working folder" rule in Part 7 pays off here too.
+
+---
 
 ## Pick one of two paths
 
@@ -983,7 +999,7 @@ You get a path like `C:\Users\yourname\AppData\Roaming\npm`. Register it with Wi
 
 ## 8.2 "...cannot be loaded because running scripts is disabled"
 
-You skipped the execution policy step in section 3.4.
+Windows is blocking script execution. The script-permission setting in **[Appendix E](#appendix-e-optional-settings-script-permission-and-text-encoding)** fixes it. One line into the terminal:
 
 ```
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
@@ -999,7 +1015,7 @@ Temporary fix:
 chcp 65001
 ```
 
-Permanent fix: do the profile setup in section 3.5.
+Permanent fix: do the profile setup in **[Appendix E](#appendix-e-optional-settings-script-permission-and-text-encoding)**.
 
 If that still fails, change a Windows setting.
 - `Windows key` -> search `region` -> **"Date, time & regional formatting"** -> **"Additional date, time & regional settings"** -> **"Region"** -> **"Administrative"** tab -> **"Change system locale"**
@@ -1102,6 +1118,8 @@ npm uninstall -g @google/gemini-cli
 
 ## Terminal basics
 
+PowerShell is assumed. In the old `Command Prompt (cmd)`, `ls` and `pwd` do not work (section 2.4).
+
 | Command | What it does |
 |---|---|
 | `pwd` | Show where you are |
@@ -1120,10 +1138,6 @@ winget install --id OpenJS.NodeJS.LTS -e
 ```
 winget install --id Git.Git -e
 ```
-```
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
-
 For AI agents, install **only the one you need** of the three.
 
 ```
@@ -1159,6 +1173,18 @@ claude --version
 4. Give instructions in plain English
 5. Read the approval screen and choose
 6. `exit` to quit
+
+## The five essential in-chat commands
+
+| What you want | Input |
+|---|---|
+| Get back to the terminal | `Ctrl + C` twice |
+| Choose a model | `/model` |
+| Choose a mode (approval) | `Shift + Tab` |
+| Run to completion | `/goal` |
+| Check your usage | `/usage` |
+
+Section 5.0 explains these, and the usage limits, in full.
 
 ## Keyboard shortcuts
 
@@ -1237,6 +1263,71 @@ Consider WSL if one of these applies to you. Most readers of this guide will not
 - You want to give the AI risky work while keeping it isolated from Windows itself
 
 > If you do go with WSL, keep your working files inside WSL (`~/projects/...`). Crossing back and forth to Windows drives is the slowest and most trouble-prone arrangement.
+
+---
+
+# Appendix E. Optional settings — script permission and text encoding
+
+**You do not need either of these up front.** They are optional, for when something actually breaks. Today's installers usually work without them.
+
+| Symptom | What to do |
+|---|---|
+| `...cannot be loaded because running scripts is disabled` | **E.1 Script permission** below |
+| File names or output show as `???` or garbled characters | **E.2 Text encoding** below |
+| Nothing is wrong | **Do nothing** |
+
+## E.1 Script permission
+
+For security, Windows blocks external scripts by default. Lift that when an install or a run is blocked by it.
+
+Type this into the terminal.
+
+```
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+When it asks whether you want to change the execution policy, type **`Y`** and press Enter.
+
+> **Is that dangerous?**
+> `RemoteSigned` is the middle setting: "run scripts I wrote myself, and run downloaded ones only if they are signed." It is the standard developers use, and it does not disable security. Because of `-Scope CurrentUser` it applies to your account only, not the whole machine.
+
+To check the current setting without changing anything:
+
+```
+Get-ExecutionPolicy -Scope CurrentUser
+```
+
+## E.2 Text encoding
+
+Only needed if file names or output in a language other than English show as `???` or as garbled characters.
+
+**For a one-off fix**, type one line into the terminal. It reverts when you close the window.
+
+```
+chcp 65001
+```
+
+**To apply it automatically every time**, put it in your profile file. Type this into the terminal.
+
+```
+notepad $PROFILE
+```
+
+Notepad opens. If it asks **"Cannot find the file. Do you want to create a new file?"**, choose **Yes**.
+
+Paste these three lines into Notepad.
+
+```powershell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+```
+
+Save with `Ctrl + S` and close Notepad. **Close the terminal and open a new one.**
+
+> This file (`$PROFILE`) runs automatically every time you start the terminal. Put it here once and you never touch it again.
+
+If that still fails, consider the Windows system-locale change in section 8.3.
 
 ---
 
