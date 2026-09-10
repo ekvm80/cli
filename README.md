@@ -28,6 +28,7 @@ If terminals are new to you, start with **Terminal AI Agents**. After Part 4 you
 
 **터미널 AI 에이전트 입문 / Terminal AI Agents**
 
+0. 가장 간단 — 최단 경로 요약 — The short version: the fastest path through
 1. 왜 터미널에서 AI를 쓰는가 — Why run AI in a terminal
 2. 터미널 기초 (30분) — Terminal basics
 3. 설치 준비 (Node.js, Git) — Preparation

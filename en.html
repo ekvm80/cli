@@ -624,6 +624,16 @@ blockquote .codeblock pre { background: var(--bg); }
 <li><a href="#how-to-read-this-document">How to read this document</a></li>
 </ul>
 </li>
+<li><a href="#the-short-version-the-fastest-path-through">The short version — the fastest path through</a><ul>
+<li><a href="#1-open-a-terminal">1. Open a terminal</a></li>
+<li><a href="#2-install-nodejs">2. Install Node.js</a></li>
+<li><a href="#3-install-git">3. Install Git</a></li>
+<li><a href="#4-install-an-ai-agent">4. Install an AI agent</a></li>
+<li><a href="#5-log-in-and-start">5. Log in and start</a></li>
+<li><a href="#6-run-several-agents-at-once-with-orca-optional">6. Run several agents at once with Orca (optional)</a></li>
+<li><a href="#7-the-five-essential-commands">7. The five essential commands</a></li>
+</ul>
+</li>
 <li><a href="#part-1-why-run-ai-in-a-terminal">Part 1. Why run AI in a terminal</a><ul>
 <li><a href="#11-how-this-differs-from-the-ai-chatbot-you-already-use">1.1 How this differs from the AI chatbot you already use</a></li>
 <li><a href="#12-what-you-can-actually-do-with-it">1.2 What you can actually do with it</a></li>
@@ -784,12 +794,147 @@ Estimated time: <strong>30 minutes to install + 20 minutes for your first sessio
 <hr />
 <h2 id="how-to-read-this-document">How to read this document</h2>
 <ul>
+<li><strong>Want to start right now?</strong> Follow <strong>The short version — the fastest path through</strong> below. Open the relevant section only when you get stuck.</li>
 <li><strong>First time?</strong> Start at Part 1 and read in order. Do not skip.</li>
 <li><strong>Already used a terminal?</strong> Skip Part 2 and start at Part 3.</li>
 <li><strong>Text in grey boxes</strong> is a command you type into the computer. Copy and paste it as is.</li>
 <li>Every step has a <strong>"Check that it worked"</strong> item. Confirm it before moving on.</li>
 <li><strong>Appendix E</strong> holds optional settings you only need if something breaks. Skip it on a first pass.</li>
 </ul>
+<hr />
+<h1 id="the-short-version-the-fastest-path-through">The short version — the fastest path through</h1>
+<p><strong>If you have no time to read the whole thing, just follow this sequence.</strong> The section number at the end of each step is where the full explanation and troubleshooting live.</p>
+<h2 id="1-open-a-terminal">1. Open a terminal</h2>
+<ol>
+<li>Press the <strong><code>Windows key</code></strong> on your keyboard (the one with the window icon, usually next to the left Ctrl).</li>
+<li>Type <strong><code>terminal</code></strong> into the search box that appears.</li>
+<li>When the app named <strong><code>Terminal</code></strong> shows up, press <strong>Enter</strong>.</li>
+</ol>
+<p>A black (or blue) window opens. If you see text like this, it worked.</p>
+<pre><code>PS C:\Users\Jane&gt;
+</code></pre>
+<p>→ In full: <strong>section 2.1</strong></p>
+<h2 id="2-install-nodejs">2. Install Node.js</h2>
+<p>Type this into the terminal and press Enter.</p>
+<pre><code>winget install --id OpenJS.NodeJS.LTS -e
+</code></pre>
+<p><strong>Check</strong> — close the terminal, open a new one, and type this.</p>
+<pre><code>node --version
+</code></pre>
+<p>Output like this means it worked. The numbers will differ.</p>
+<pre><code>v24.9.0
+</code></pre>
+<p>→ In full: <strong>section 3.2</strong></p>
+<h2 id="3-install-git">3. Install Git</h2>
+<p>Type this into the terminal and press Enter.</p>
+<pre><code>winget install --id Git.Git -e
+</code></pre>
+<p><strong>Check</strong> — open a new terminal and type this.</p>
+<pre><code>git --version
+</code></pre>
+<pre><code>git version 2.52.0.windows.1
+</code></pre>
+<p>Output like that means you are set. If nothing comes back, open a fresh terminal and install again.</p>
+<p>→ In full: <strong>section 3.3</strong></p>
+<h2 id="4-install-an-ai-agent">4. Install an AI agent</h2>
+<p>Install <strong>only the one you subscribe to</strong>.</p>
+<h4 id="a-claude-code-claude-subscribers">a. Claude Code (Claude subscribers)</h4>
+<p>Type this into the terminal.</p>
+<pre><code>irm https://claude.ai/install.ps1 | iex
+</code></pre>
+<p>If that fails, type this instead.</p>
+<pre><code>npm install -g @anthropic-ai/claude-code
+</code></pre>
+<p><strong>Check</strong> — close the terminal completely, open a new one, and type this.</p>
+<pre><code>claude --version
+</code></pre>
+<h4 id="b-codex-cli-chatgpt-subscribers">b. Codex CLI (ChatGPT subscribers)</h4>
+<p>Type this into the terminal.</p>
+<pre><code>irm https://chatgpt.com/codex/install.ps1 | iex
+</code></pre>
+<p>If that fails,</p>
+<pre><code>npm install -g @openai/codex
+</code></pre>
+<p>If that fails too,</p>
+<pre><code>winget install --id OpenAI.Codex -e
+</code></pre>
+<p><strong>Check</strong> — close the terminal completely, open a new one, and type this.</p>
+<pre><code>codex --version
+</code></pre>
+<p>→ In full: <strong>section 4.2</strong> (Claude Code) and <strong>section 4.3</strong> (Codex CLI)</p>
+<h2 id="5-log-in-and-start">5. Log in and start</h2>
+<p>First make a working folder and move into it. <strong>Do not launch it on your Desktop or in <code>C:\Users\yourname</code>.</strong></p>
+<pre><code>mkdir C:\ai-practice
+</code></pre>
+<pre><code>cd C:\ai-practice
+</code></pre>
+<p>From there, type whichever one you installed and press Enter.</p>
+<pre><code>claude
+</code></pre>
+<pre><code>codex
+</code></pre>
+<p>The first time, a login prompt appears. Sign in with your subscription account in the browser and come back to the terminal. After that it starts straight away.</p>
+<p>→ In full: <strong>sections 5.1 to 5.3</strong></p>
+<h2 id="6-run-several-agents-at-once-with-orca-optional">6. Run several agents at once with Orca (optional)</h2>
+<p>Orca is an app for running several AI coding agents at the same time. <strong>If you finished step 4, you are already set up.</strong></p>
+<h4 id="a-install">a. Install</h4>
+<ol>
+<li>Go to <strong>https://www.onorca.dev</strong> in a web browser.</li>
+<li>Press the <strong>Download</strong> button.</li>
+<li>Download the Windows installer (<code>orca-windows-setup.exe</code>).</li>
+<li>Double-click the downloaded file.</li>
+<li>When the installer window opens, keep the defaults and continue.</li>
+</ol>
+<h4 id="b-use-it">b. Use it</h4>
+<ol>
+<li>Next to <code>Projects</code> on the left, press the <strong>folder icon with a <code>+</code></strong> (<code>Add Project</code>) and pick the folder to work in. That folder <strong>must be a Git repository</strong> — if it is not, open a terminal there and run <code>git init</code> once.</li>
+<li>Press the <strong><code>+</code></strong> above the project name (<code>New workspace</code>) to create a workspace.</li>
+<li>Pick the agent you want from the dropdown on the run screen and give it instructions as usual.</li>
+<li>Create a second and third workspace, and that is parallel work.</li>
+</ol>
+<blockquote>
+<p><strong>Switch the approval mode to <code>Manual</code> at first.</strong> Orca ships with permission bypass on by default.</p>
+</blockquote>
+<p>→ In full: <strong><a href="orca.en.html">Orca beginner's guide</a></strong></p>
+<h2 id="7-the-five-essential-commands">7. The five essential commands</h2>
+<p>Inside the chat window these five are effectively all you use. <strong>Know them and you will never be stuck.</strong></p>
+<table>
+<thead>
+<tr>
+<th>What you want</th>
+<th>Input</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Get back to the terminal</strong></td>
+<td><code>Ctrl + C</code> twice</td>
+<td>Once stops the running job, twice quits the chat window. This is the first thing to press when something goes wrong</td>
+</tr>
+<tr>
+<td><strong>Choose a model</strong></td>
+<td><code>/model</code></td>
+<td>Picks the model to use. A lighter model is faster and consumes less of your allowance; a heavier one is better at hard problems</td>
+</tr>
+<tr>
+<td><strong>Choose a mode</strong></td>
+<td><code>Shift + Tab</code></td>
+<td>Cycles the approval mode (ask every time ↔ auto-accept reads ↔ accept everything). <strong>Leave it on ask-every-time at first</strong></td>
+</tr>
+<tr>
+<td><strong>Run to completion</strong></td>
+<td><code>/goal</code></td>
+<td>Give it a goal and it works through to the end instead of stopping to ask. Use it for multi-step jobs</td>
+</tr>
+<tr>
+<td><strong>Check your usage</strong></td>
+<td><code>/usage</code></td>
+<td>Shows how much allowance is left and when the limit resets</td>
+</tr>
+</tbody>
+</table>
+<p>→ In full, with usage limits: <strong>section 5.0</strong></p>
 <hr />
 <h1 id="part-1-why-run-ai-in-a-terminal">Part 1. Why run AI in a terminal</h1>
 <h2 id="11-how-this-differs-from-the-ai-chatbot-you-already-use">1.1 How this differs from the AI chatbot you already use</h2>

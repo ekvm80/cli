@@ -8,11 +8,189 @@
 
 ## How to read this document
 
+- **Want to start right now?** Follow **The short version — the fastest path through** below. Open the relevant section only when you get stuck.
 - **First time?** Start at Part 1 and read in order. Do not skip.
 - **Already used a terminal?** Skip Part 2 and start at Part 3.
 - **Text in grey boxes** is a command you type into the computer. Copy and paste it as is.
 - Every step has a **"Check that it worked"** item. Confirm it before moving on.
 - **Appendix E** holds optional settings you only need if something breaks. Skip it on a first pass.
+
+---
+
+# The short version — the fastest path through
+
+**If you have no time to read the whole thing, just follow this sequence.** The section number at the end of each step is where the full explanation and troubleshooting live.
+
+## 1. Open a terminal
+
+1. Press the **`Windows key`** on your keyboard (the one with the window icon, usually next to the left Ctrl).
+2. Type **`terminal`** into the search box that appears.
+3. When the app named **`Terminal`** shows up, press **Enter**.
+
+A black (or blue) window opens. If you see text like this, it worked.
+
+```
+PS C:\Users\Jane>
+```
+
+→ In full: **section 2.1**
+
+## 2. Install Node.js
+
+Type this into the terminal and press Enter.
+
+```
+winget install --id OpenJS.NodeJS.LTS -e
+```
+
+**Check** — close the terminal, open a new one, and type this.
+
+```
+node --version
+```
+
+Output like this means it worked. The numbers will differ.
+
+```
+v24.9.0
+```
+
+→ In full: **section 3.2**
+
+## 3. Install Git
+
+Type this into the terminal and press Enter.
+
+```
+winget install --id Git.Git -e
+```
+
+**Check** — open a new terminal and type this.
+
+```
+git --version
+```
+
+```
+git version 2.52.0.windows.1
+```
+
+Output like that means you are set. If nothing comes back, open a fresh terminal and install again.
+
+→ In full: **section 3.3**
+
+## 4. Install an AI agent
+
+Install **only the one you subscribe to**.
+
+#### a. Claude Code (Claude subscribers)
+
+Type this into the terminal.
+
+```
+irm https://claude.ai/install.ps1 | iex
+```
+
+If that fails, type this instead.
+
+```
+npm install -g @anthropic-ai/claude-code
+```
+
+**Check** — close the terminal completely, open a new one, and type this.
+
+```
+claude --version
+```
+
+#### b. Codex CLI (ChatGPT subscribers)
+
+Type this into the terminal.
+
+```
+irm https://chatgpt.com/codex/install.ps1 | iex
+```
+
+If that fails,
+
+```
+npm install -g @openai/codex
+```
+
+If that fails too,
+
+```
+winget install --id OpenAI.Codex -e
+```
+
+**Check** — close the terminal completely, open a new one, and type this.
+
+```
+codex --version
+```
+
+→ In full: **section 4.2** (Claude Code) and **section 4.3** (Codex CLI)
+
+## 5. Log in and start
+
+First make a working folder and move into it. **Do not launch it on your Desktop or in `C:\Users\yourname`.**
+
+```
+mkdir C:\ai-practice
+```
+```
+cd C:\ai-practice
+```
+
+From there, type whichever one you installed and press Enter.
+
+```
+claude
+```
+```
+codex
+```
+
+The first time, a login prompt appears. Sign in with your subscription account in the browser and come back to the terminal. After that it starts straight away.
+
+→ In full: **sections 5.1 to 5.3**
+
+## 6. Run several agents at once with Orca (optional)
+
+Orca is an app for running several AI coding agents at the same time. **If you finished step 4, you are already set up.**
+
+#### a. Install
+
+1. Go to **https://www.onorca.dev** in a web browser.
+2. Press the **Download** button.
+3. Download the Windows installer (`orca-windows-setup.exe`).
+4. Double-click the downloaded file.
+5. When the installer window opens, keep the defaults and continue.
+
+#### b. Use it
+
+1. Next to `Projects` on the left, press the **folder icon with a `+`** (`Add Project`) and pick the folder to work in. That folder **must be a Git repository** — if it is not, open a terminal there and run `git init` once.
+2. Press the **`+`** above the project name (`New workspace`) to create a workspace.
+3. Pick the agent you want from the dropdown on the run screen and give it instructions as usual.
+4. Create a second and third workspace, and that is parallel work.
+
+> **Switch the approval mode to `Manual` at first.** Orca ships with permission bypass on by default.
+
+→ In full: **[Orca beginner's guide](orca.en.html)**
+
+## 7. The five essential commands
+
+Inside the chat window these five are effectively all you use. **Know them and you will never be stuck.**
+
+| What you want | Input | What it does |
+|---|---|---|
+| **Get back to the terminal** | `Ctrl + C` twice | Once stops the running job, twice quits the chat window. This is the first thing to press when something goes wrong |
+| **Choose a model** | `/model` | Picks the model to use. A lighter model is faster and consumes less of your allowance; a heavier one is better at hard problems |
+| **Choose a mode** | `Shift + Tab` | Cycles the approval mode (ask every time ↔ auto-accept reads ↔ accept everything). **Leave it on ask-every-time at first** |
+| **Run to completion** | `/goal` | Give it a goal and it works through to the end instead of stopping to ask. Use it for multi-step jobs |
+| **Check your usage** | `/usage` | Shows how much allowance is left and when the limit resets |
+
+→ In full, with usage limits: **section 5.0**
 
 ---
 
