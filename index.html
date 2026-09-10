@@ -624,6 +624,16 @@ blockquote .codeblock pre { background: var(--bg); }
 <li><a href="#이-문서를-읽는-방법">이 문서를 읽는 방법</a></li>
 </ul>
 </li>
+<li><a href="#가장-간단-최단-경로-요약">가장 간단 — 최단 경로 요약</a><ul>
+<li><a href="#1-터미널-열기">1. 터미널 열기</a></li>
+<li><a href="#2-nodejs-설치하기">2. Node.js 설치하기</a></li>
+<li><a href="#3-git-설치하기">3. Git 설치하기</a></li>
+<li><a href="#4-ai-에이전트-설치하기">4. AI 에이전트 설치하기</a></li>
+<li><a href="#5-로그인하고-시작하기">5. 로그인하고 시작하기</a></li>
+<li><a href="#6-orca-로-여러-에이전트를-동시에-선택">6. Orca 로 여러 에이전트를 동시에 (선택)</a></li>
+<li><a href="#7-필수-명령어-5개">7. 필수 명령어 5개</a></li>
+</ul>
+</li>
 <li><a href="#1부-왜-터미널에서-ai를-쓰는가">1부. 왜 터미널에서 AI를 쓰는가</a><ul>
 <li><a href="#11-지금-쓰는-ai-챗봇과-무엇이-다른가">1.1 지금 쓰는 AI 챗봇과 무엇이 다른가</a></li>
 <li><a href="#12-실제로-무엇을-할-수-있나">1.2 실제로 무엇을 할 수 있나</a></li>
@@ -784,12 +794,147 @@ Windows 11 기준이며, 처음부터 끝까지 순서대로 따라 하면 됩�
 <hr />
 <h2 id="이-문서를-읽는-방법">이 문서를 읽는 방법</h2>
 <ul>
+<li><strong>바로 시작하고 싶다면</strong>: 아래 <strong>가장 간단 — 최단 경로 요약</strong>만 따라 하세요. 막히면 그때 해당 절을 펼쳐 보면 됩니다.</li>
 <li><strong>처음이라면</strong>: 1부부터 순서대로 읽으세요. 건너뛰지 마세요.</li>
 <li><strong>터미널을 이미 써 봤다면</strong>: 2부를 건너뛰고 3부부터 보세요.</li>
 <li><strong>회색 상자 안의 글자</strong>는 컴퓨터에 입력하는 명령어입니다. 그대로 복사해서 붙여넣으면 됩니다.</li>
 <li>각 단계마다 <strong>"제대로 됐는지 확인하기"</strong> 항목이 있습니다. 반드시 확인하고 다음으로 넘어가세요.</li>
 <li><strong>부록 E</strong>는 문제가 생겼을 때만 보는 선택 설정입니다. 처음에는 건너뛰세요.</li>
 </ul>
+<hr />
+<h1 id="가장-간단-최단-경로-요약">가장 간단 — 최단 경로 요약</h1>
+<p><strong>전체를 읽을 시간이 없다면 이 순서만 따라 하면 됩니다.</strong> 각 단계 끝의 절 번호에 자세한 설명과 문제 해결 방법이 있습니다.</p>
+<h2 id="1-터미널-열기">1. 터미널 열기</h2>
+<ol>
+<li>키보드에서 <strong><code>Windows 키</code></strong> 를 누릅니다 (창문 모양이 그려진 키, 보통 왼쪽 Ctrl 옆에 있습니다).</li>
+<li>나타난 검색창에 <strong><code>터미널</code></strong> 이라고 입력합니다.</li>
+<li><strong><code>터미널</code></strong> 이라는 앱이 나오면 <strong>Enter</strong> 를 누릅니다.</li>
+</ol>
+<p>검은색(또는 파란색) 창이 열리고 이런 글자가 보이면 성공입니다.</p>
+<pre><code>PS C:\Users\홍길동&gt;
+</code></pre>
+<p>→ 자세히: <strong>2.1절</strong></p>
+<h2 id="2-nodejs-설치하기">2. Node.js 설치하기</h2>
+<p>터미널에 아래를 입력하고 Enter.</p>
+<pre><code>winget install --id OpenJS.NodeJS.LTS -e
+</code></pre>
+<p><strong>확인</strong> — 기존 터미널을 닫고 새 터미널에 입력합니다.</p>
+<pre><code>node --version
+</code></pre>
+<p>이런 결과가 나오면 성공입니다. 숫자는 달라도 됩니다.</p>
+<pre><code>v24.9.0
+</code></pre>
+<p>→ 자세히: <strong>3.2절</strong></p>
+<h2 id="3-git-설치하기">3. Git 설치하기</h2>
+<p>터미널에 아래를 입력하고 Enter.</p>
+<pre><code>winget install --id Git.Git -e
+</code></pre>
+<p><strong>확인</strong> — 터미널을 새로 열고 입력합니다.</p>
+<pre><code>git --version
+</code></pre>
+<pre><code>git version 2.52.0.windows.1
+</code></pre>
+<p>이런 결과가 나오면 됩니다. 안 나오면 터미널을 새로 켜서 다시 설치하세요.</p>
+<p>→ 자세히: <strong>3.3절</strong></p>
+<h2 id="4-ai-에이전트-설치하기">4. AI 에이전트 설치하기</h2>
+<p><strong>구독 중인 것 하나만</strong> 설치하면 됩니다.</p>
+<h4 id="a-claude-code-claude-구독자">a. Claude Code (Claude 구독자)</h4>
+<p>터미널에 입력합니다.</p>
+<pre><code>irm https://claude.ai/install.ps1 | iex
+</code></pre>
+<p>안 되면 아래를 터미널에 입력합니다.</p>
+<pre><code>npm install -g @anthropic-ai/claude-code
+</code></pre>
+<p><strong>확인</strong> — 터미널을 완전히 닫고 새로 연 뒤 입력합니다.</p>
+<pre><code>claude --version
+</code></pre>
+<h4 id="b-codex-cli-chatgpt-구독자">b. Codex CLI (ChatGPT 구독자)</h4>
+<p>터미널에 입력합니다.</p>
+<pre><code>irm https://chatgpt.com/codex/install.ps1 | iex
+</code></pre>
+<p>안 되면</p>
+<pre><code>npm install -g @openai/codex
+</code></pre>
+<p>그래도 안 되면</p>
+<pre><code>winget install --id OpenAI.Codex -e
+</code></pre>
+<p><strong>확인</strong> — 터미널을 완전히 닫고 새로 연 뒤 입력합니다.</p>
+<pre><code>codex --version
+</code></pre>
+<p>→ 자세히: <strong>4.2절</strong>(Claude Code) · <strong>4.3절</strong>(Codex CLI)</p>
+<h2 id="5-로그인하고-시작하기">5. 로그인하고 시작하기</h2>
+<p>먼저 작업할 폴더를 만들고 그 안으로 들어갑니다. <strong>바탕화면이나 <code>C:\Users\내이름</code> 에서 실행하지 마세요.</strong></p>
+<pre><code>mkdir C:\AI연습
+</code></pre>
+<pre><code>cd C:\AI연습
+</code></pre>
+<p>그 상태에서 설치한 것을 입력하고 Enter.</p>
+<pre><code>claude
+</code></pre>
+<pre><code>codex
+</code></pre>
+<p>처음이면 로그인 화면이 뜹니다. 브라우저에서 구독 계정으로 로그인하고 터미널로 돌아오면 됩니다. 다음부터는 로그인 없이 바로 시작됩니다.</p>
+<p>→ 자세히: <strong>5.1절 ~ 5.3절</strong></p>
+<h2 id="6-orca-로-여러-에이전트를-동시에-선택">6. Orca 로 여러 에이전트를 동시에 (선택)</h2>
+<p>Orca는 여러 AI 코딩 에이전트를 동시에 돌리기 위한 프로그램입니다. <strong>4단계까지 마쳤다면 준비는 이미 끝났습니다.</strong></p>
+<h4 id="a-설치하기">a. 설치하기</h4>
+<ol>
+<li>웹브라우저로 <strong>https://www.onorca.dev</strong> 에 접속합니다.</li>
+<li><strong>Download</strong> 버튼을 누릅니다.</li>
+<li>Windows 용 설치 파일(<code>orca-windows-setup.exe</code>)을 내려받습니다.</li>
+<li>내려받은 파일을 더블클릭합니다.</li>
+<li>설치 창이 뜨면 기본값 그대로 계속 진행합니다.</li>
+</ol>
+<h4 id="b-사용하기">b. 사용하기</h4>
+<ol>
+<li>왼쪽 <code>Projects</code> 옆의 <strong>폴더에 <code>+</code> 가 붙은 아이콘</strong>(<code>Add Project</code>)으로 작업할 폴더를 추가합니다. 그 폴더는 <strong>Git 저장소여야 합니다.</strong> 아니라면 그 폴더에서 터미널을 열고 <code>git init</code> 을 한 번 실행하세요.</li>
+<li>프로젝트 이름 위의 <strong><code>+</code></strong>(<code>New workspace</code>)를 눌러 작업공간을 만듭니다.</li>
+<li>실행 화면의 드롭다운에서 쓸 에이전트를 고르고, 평소처럼 한국어로 지시합니다.</li>
+<li>작업공간을 두 개, 세 개 더 만들면 그게 병렬 실행입니다.</li>
+</ol>
+<blockquote>
+<p><strong>처음에는 승인 방식을 <code>Manual</code> 로 바꾸세요.</strong> Orca는 권한 확인을 건너뛰는 옵션이 기본으로 켜져 있습니다.</p>
+</blockquote>
+<p>→ 자세히: <strong><a href="orca.html">Orca 병렬 AI 에이전트 입문 가이드</a></strong></p>
+<h2 id="7-필수-명령어-5개">7. 필수 명령어 5개</h2>
+<p>대화창 안에서 쓰는 것은 사실상 이 다섯 개입니다. <strong>이것만 알면 막히지 않습니다.</strong></p>
+<table>
+<thead>
+<tr>
+<th>하려는 것</th>
+<th>입력</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>터미널로 돌아가기</strong></td>
+<td><code>Ctrl + C</code> 를 두 번</td>
+<td>한 번은 진행 중인 작업 중단, 두 번은 대화창 종료. 뭔가 잘못 돌아갈 때 가장 먼저 누릅니다</td>
+</tr>
+<tr>
+<td><strong>모델 선택</strong></td>
+<td><code>/model</code></td>
+<td>쓸 모델을 고릅니다. 가벼운 모델은 빠르고 사용량을 덜 먹고, 무거운 모델은 어려운 일에 강합니다</td>
+</tr>
+<tr>
+<td><strong>모드 선택</strong></td>
+<td><code>Shift + Tab</code></td>
+<td>승인 방식을 순환 전환합니다(매번 묻기 ↔ 읽기는 자동 ↔ 전부 자동). <strong>처음에는 매번 묻기로 두세요</strong></td>
+</tr>
+<tr>
+<td><strong>끝까지 실행하기</strong></td>
+<td><code>/goal</code></td>
+<td>목표를 정해 주면 중간에 되묻지 않고 끝까지 진행합니다. 여러 단계짜리 작업에 씁니다</td>
+</tr>
+<tr>
+<td><strong>사용량 확인</strong></td>
+<td><code>/usage</code></td>
+<td>남은 사용량과 한도가 언제 회복되는지 봅니다</td>
+</tr>
+</tbody>
+</table>
+<p>→ 자세히와 사용량 한도: <strong>5.0절</strong></p>
 <hr />
 <h1 id="1부-왜-터미널에서-ai를-쓰는가">1부. 왜 터미널에서 AI를 쓰는가</h1>
 <h2 id="11-지금-쓰는-ai-챗봇과-무엇이-다른가">1.1 지금 쓰는 AI 챗봇과 무엇이 다른가</h2>
