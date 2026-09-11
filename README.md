@@ -35,9 +35,10 @@ If terminals are new to you, start with **Terminal AI Agents**. After Part 4 you
 4. AI 에이전트 설치 — Installing an agent
 5. 첫 사용 (필수 명령어 5개 · 사용량 한도) — Your first session (five essential commands, usage limits)
 6. 실제로 시켜볼 만한 일들 — Things worth trying
-7. 안전하게 쓰기 — Using it safely
-8. 문제 해결 — Troubleshooting
-9. 부록 A~E (용어, 명령어 요약, Mac, WSL, 선택 설정) — Appendices A–E
+7. 기능 늘리기 (MCP·플러그인) — Extending it with MCP servers and plugins
+8. 안전하게 쓰기 — Using it safely
+9. 문제 해결 — Troubleshooting
+10. 부록 A~E (용어, 명령어 요약, Mac, WSL, 선택 설정) — Appendices A–E
 
 **Orca 병렬 에이전트 입문 / Orca Parallel Agents**
 
@@ -111,6 +112,8 @@ Facts verified as of September 2026. Key points:
   The execution-policy and encoding settings are **optional** and now live in Appendix E — do them only if something breaks.
 - 사용량은 회사별로 **5시간·주(7일) 단위 한도**로 관리됩니다. 정확한 수치는 요금제마다 다르므로 `/usage` 로 확인하세요.
   Usage is metered per **5-hour and weekly (7-day) windows**; exact allocations vary by plan, so check with `/usage`.
+- 7부에 소개한 확장(kordoc, korean-law-mcp, korean-stats-mcp, gptaku_plugins)은 **제3자 공개 도구**입니다. 저장소와 설치 명령은 2026년 9월 기준으로 확인했습니다.
+  The extensions in Part 7 are **third-party open-source tools**; repositories and install commands were checked in September 2026.
 
 도구 쪽 사정이 자주 바뀝니다. 어긋나는 부분을 발견하면 이슈로 알려주세요.
 These tools change often. Please open an issue if something no longer matches.

@@ -192,6 +192,25 @@ Inside the chat window these five are effectively all you use. **Know them and y
 
 → In full, with usage limits: **section 5.0**
 
+## 8. Extend it with MCP servers and plugins (optional)
+
+Korean HWP documents, statutes, national statistics — **things the AI cannot do out of the box** get added as extensions. You do not need to find the install command; **give it the repository address and ask.**
+
+```
+Install https://github.com/chrisryugj/kordoc globally so I can use it.
+```
+
+When it finishes, **close the terminal completely and open a new one.**
+
+| Extension | What it does | Requirements |
+|---|---|---|
+| [kordoc](https://github.com/chrisryugj/kordoc) | Read and generate Korean HWP/HWPX documents | None |
+| [korean-law-mcp](https://github.com/chrisryugj/korean-law-mcp) | Korean statutes and case law, citation checking | Free API key |
+| [korean-stats-mcp](https://github.com/chrisryugj/korean-stats-mcp) | Korean national statistics (KOSIS) | Free API key |
+| [gptaku_plugins](https://github.com/fivetaku/gptaku_plugins) | A collection of 18 Claude Code plugins | None |
+
+→ In full: **Part 7**
+
 ---
 
 # Part 1. Why run AI in a terminal
@@ -267,11 +286,11 @@ No. You say "do this for me" in plain English. You do need to know how to open a
 
 #### "What if it wrecks my files?"
 
-An AI agent **asks "may I make this change?" every single time** before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 7 (backups, a dedicated folder), the risk is close to zero.
+An AI agent **asks "may I make this change?" every single time** before it modifies a file. Nothing runs without your approval. On top of that, if you follow the safety rules in Part 8 (backups, a dedicated folder), the risk is close to zero.
 
 #### "Will my files leak?"
 
-File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. **Do not put personal data, unpublished research data, or company confidential material in your working folder.** Details in Part 7.
+File contents the AI reads are sent to a server so it can produce an answer. This is the same as uploading a file to a web chatbot. **Do not put personal data, unpublished research data, or company confidential material in your working folder.** Details in Part 8.
 
 #### "Does it cost money?"
 
@@ -594,7 +613,7 @@ If you see `'node' is not recognized...`:
 
 1. Confirm you closed and reopened the terminal. (This is the most common cause.)
 2. If that fails, **reboot** and check again.
-3. Still failing? See section 8.1.
+3. Still failing? See section 9.1.
 
 ## 3.3 Install Git
 
@@ -636,7 +655,7 @@ npm --version
 git --version
 ```
 
-**If all three return version numbers, you are ready.** If any one fails, see Part 8.
+**If all three return version numbers, you are ready.** If any one fails, see Part 9.
 
 ---
 
@@ -688,7 +707,7 @@ It takes one to three minutes. No Node.js needed, and it keeps itself updated. *
 npm install -g @anthropic-ai/claude-code
 ```
 
-Lines of text scrolling past is normal. A few yellow `WARN` messages can be ignored. A red `ERR!` means you should look at Part 8. Requires Node.js 22 or later.
+Lines of text scrolling past is normal. A few yellow `WARN` messages can be ignored. A red `ERR!` means you should look at Part 9. Requires Node.js 22 or later.
 
 > `-g` means "install for the whole machine." You need it so the command works from any folder.
 > Do not use `sudo npm install -g`. It creates permission problems.
@@ -842,7 +861,7 @@ It installs to `C:\Users\yourname\AppData\Local\agy\bin`, and the install script
 agy --version
 ```
 
-A version number means success. If it says `agy` cannot be found, nine times out of ten you did not open a new terminal. If that is not it, see section 8.1.
+A version number means success. If it says `agy` cannot be found, nine times out of ten you did not open a new terminal. If that is not it, see section 9.1.
 
 ### Log in
 
@@ -914,7 +933,7 @@ Paying a subscription does not buy unlimited use. The AI companies allocate an a
 
 - **`/clear` when the topic changes** — a long conversation is re-read on every turn, which burns allowance fast. Clear it before starting a new subject.
 - **Use a lighter model for easy work** — switch with `/model`. There is no reason to spend a heavy model on file tidying or simple conversions.
-- **Keep the working folder small** — the fewer files the AI has to scan, the less it consumes. The "dedicated working folder" rule in Part 7 pays off here too.
+- **Keep the working folder small** — the fewer files the AI has to scan, the less it consumes. The "dedicated working folder" rule in Part 8 pays off here too.
 
 ---
 
@@ -1109,7 +1128,184 @@ Suggest five useful things I could do in this folder.
 
 ---
 
-# Part 7. Using it safely — five rules
+# Part 7. Extending it — MCP servers and plugins
+
+There are things an AI agent cannot do out of the box: open a Korean HWP document, check the text of a statute, pull national statistics. **You add capabilities like these by installing an extension.**
+
+## 7.1 How MCP servers and plugins differ
+
+| | MCP server | Plugin |
+|---|---|---|
+| What it does | Connects the AI to **outside data and services** (a legal database, a statistics database, Google Drive) | Adds **ways of working** to the AI (commands, procedures, checklists) |
+| Where it installs | System-wide, or into an AI client's config | Inside Claude Code |
+| How to install | `npx`/`npm`, or an entry in a config file | The `/plugin` command |
+| How to use it | Just ask in plain language; the AI reaches for it | Same |
+
+**Both widen the range of what the AI can do.** Once installed, there are no commands to memorise — instruct it as you normally would and it picks up the extension when it needs to.
+
+> **MCP is short for Model Context Protocol.** It is the name of the standard an AI and an outside program use to talk, and a program built to that standard is called an **MCP server**.
+
+## 7.2 The easiest way to install — have the AI do it
+
+You do not have to hunt down the install command. **Give it the repository address and ask.**
+
+Type this into the chat window.
+
+```
+Install https://github.com/chrisryugj/kordoc globally so I can use it.
+```
+
+The AI reads that repository's documentation, picks the install command that suits your machine, and runs it. Approval prompts appear along the way.
+
+**When it finishes, close the terminal completely and open a new one.** Most newly installed extensions are only picked up after a restart.
+
+> **Read the approval screen before you click.**
+> Installing an extension puts a new program on your machine. The rules in Part 8 apply here too. **Read which command it is about to run**, and do not install from a repository you do not know. Once installed, an MCP server can reach the files and data the AI works with.
+
+Sections 7.3 onward are for when you want to type the install commands yourself. **If asking the AI worked, you can skip them.**
+
+## 7.3 kordoc — working with Korean HWP/HWPX documents
+
+The most common sticking point in Korea. **It reads, edits and generates HWP and HWPX files.**
+
+| Item | Detail |
+|---|---|
+| Repository | https://github.com/chrisryugj/kordoc |
+| What it does | Converts HWP, HWPX, PDF, Excel and Word to Markdown while preserving table structure; fills form templates; generates government-style documents; OCR for scanned PDFs; document comparison; PII redaction |
+| Requirements | Node.js 18 or later (installed in section 3.2). **No API key** |
+| Form | MCP server, Claude Code plugin and CLI tool |
+
+**Method A — the setup wizard (recommended)**
+
+Type this into the terminal. It finds the AI clients on your machine and patches their configuration for you.
+
+```
+npx -y kordoc setup
+```
+
+**Method B — as a Claude Code plugin**
+
+Inside the Claude Code chat window:
+
+```
+/plugin marketplace add chrisryugj/kordoc
+```
+```
+/plugin install kordoc@kordoc
+```
+
+**Try it** — open a new terminal in a folder containing an HWPX file and ask:
+
+```
+Summarise report.hwpx and keep the tables intact
+```
+
+## 7.4 korean-law-mcp — Korean statutes and case law
+
+**It stops the AI inventing legal provisions.** It queries the National Law Information Center (the Ministry of Government Legislation) directly and checks whether a citation actually exists.
+
+| Item | Detail |
+|---|---|
+| Repository | https://github.com/chrisryugj/korean-law-mcp |
+| What it does | Searches statutes, precedents, administrative rules, local ordinances and treaties; retrieves article text; verifies citations; compares versions across dates |
+| Requirements | **A free API key** from https://open.law.go.kr (about a minute to register), Node.js 20.19 or later |
+| Form | MCP server and Claude Code plugin |
+
+**Method A — as a Claude Code plugin (simplest)**
+
+```
+/plugin marketplace add chrisryugj/korean-law-mcp
+```
+```
+/plugin install korean-law@korean-law-marketplace
+```
+
+**Method B — global install**
+
+```
+npm install --ignore-scripts --omit=optional -g korean-law-mcp
+```
+
+The key you registered goes in the `LAW_OC` environment variable. Asking the AI is quicker than doing this by hand.
+
+```
+Set the LAW_OC environment variable so korean-law-mcp uses my API key. The key is: (your key)
+```
+
+**Try it**
+
+```
+Show me the text of Article 750 of the Civil Act and any recent amendments
+```
+
+## 7.5 korean-stats-mcp — Korean national statistics (KOSIS)
+
+**It pulls live data from Statistics Korea's KOSIS service.** Every answer carries its source (the KOSIS table id), so it can go straight into a report.
+
+| Item | Detail |
+|---|---|
+| Repository | https://github.com/chrisryugj/korean-stats-mcp |
+| What it does | Queries statistics for 17 provinces and 230+ municipalities; time-series trends, rankings and regional comparisons; automatic source citation |
+| Requirements | **A free API key** from https://kosis.kr/openapi/, Node.js 20 or later |
+| Form | MCP server |
+
+**Method — the Windows install script**
+
+Type this into the terminal.
+
+```
+irm https://raw.githubusercontent.com/chrisryugj/korean-stats-mcp/main/install.ps1 | iex
+```
+
+It asks for your KOSIS API key during installation. Paste in the key you registered.
+
+**Try it**
+
+```
+Tabulate the population of Gwangju over the last ten years and cite the source
+```
+
+## 7.6 gptaku_plugins — a Claude Code plugin collection
+
+**Eighteen plugins that add capabilities to Claude Code, gathered in one marketplace.**
+
+| Item | Detail |
+|---|---|
+| Repository | https://github.com/fivetaku/gptaku_plugins |
+| Notable plugins | `insane-search` (searches pages that normally block you), `insane-design` (extracts a site's design rules), `insane-review` (code review), `insane-research` (research reports with citations) |
+| Requirements | Claude Code. A few plugins need more (`insane-review` needs a signed-in ChatGPT session, `pumasi` needs Codex CLI) |
+| Form | Claude Code plugin marketplace |
+
+**Install** — in the Claude Code chat window, one after another:
+
+```
+/plugin marketplace add https://github.com/fivetaku/gptaku_plugins.git
+```
+```
+/plugin install insane-search@gptaku-plugins
+```
+```
+/reload-plugins
+```
+
+Once the marketplace is registered, pick up others with `/plugin install <name>@gptaku-plugins`. **Start with one and get a feel for it.**
+
+## 7.7 Checking what you installed, and removing it
+
+| What you want | Input |
+|---|---|
+| List connected MCP servers and their status | `/mcp` in the chat window |
+| List installed plugins | `/plugin` in the chat window |
+| List MCP servers (from the terminal) | `claude mcp list` |
+| Remove an MCP server | `claude mcp remove <name>` |
+
+**If something starts misbehaving, switch extensions off one at a time.** With several installed it gets hard to tell which one is at fault. Install one at a time, and remove what you do not use.
+
+> **Everything here is third-party open-source software.** None of it is an official Anthropic, OpenAI or Google product. The repositories and install commands were checked in September 2026. These tools change, so if an install fails, check the repository's own documentation first.
+
+---
+
+# Part 8. Using it safely — five rules
 
 ## 1. Only run it in a dedicated working folder
 
@@ -1150,9 +1346,9 @@ Tip articles online sometimes recommend turning this on for convenience. That ad
 
 ---
 
-# Part 8. When something goes wrong
+# Part 9. When something goes wrong
 
-## 8.1 "The term ... is not recognized"
+## 9.1 "The term ... is not recognized"
 
 ```
 'claude' is not recognized as the name of a cmdlet, function, script file...
@@ -1175,7 +1371,7 @@ You get a path like `C:\Users\yourname\AppData\Roaming\npm`. Register it with Wi
 - **"New"** -> paste the path -> press **"OK"** on every window to close them
 - Open a new terminal and try again
 
-## 8.2 "...cannot be loaded because running scripts is disabled"
+## 9.2 "...cannot be loaded because running scripts is disabled"
 
 Windows is blocking script execution. The script-permission setting in **[Appendix E](#appendix-e-optional-settings-script-permission-and-text-encoding)** fixes it. One line into the terminal:
 
@@ -1185,7 +1381,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 Type `Y` and press Enter.
 
-## 8.3 Non-English text shows as `???` or garbled characters
+## 9.3 Non-English text shows as `???` or garbled characters
 
 Temporary fix:
 
@@ -1201,14 +1397,14 @@ If that still fails, change a Windows setting.
 
 > This can cause side effects in some older non-Unicode programs. Use it only when nothing else works.
 
-## 8.4 Red `ERR!` errors during installation
+## 9.4 Red `ERR!` errors during installation
 
 **If it is a permissions problem**: reopen the terminal **as administrator**.
 `Windows key` -> search `Terminal` -> right-click the entry -> **"Run as administrator"**
 
 **If it is a network problem**: corporate and university firewalls block these installs often. Try again on a personal connection (phone tethering, for instance).
 
-## 8.5 Trouble caused by spaces or non-English characters in a path
+## 9.5 Trouble caused by spaces or non-English characters in a path
 
 Paths like `D:\My Research\2026 Data` occasionally cause problems.
 
@@ -1223,7 +1419,7 @@ When you must use an existing path, **wrap it in double quotes.**
 cd "D:\My Research\2026 Data"
 ```
 
-## 8.6 The AI answers oddly, or the conversation gets tangled
+## 9.6 The AI answers oddly, or the conversation gets tangled
 
 In a long conversation the AI can get dragged along by earlier context.
 
@@ -1232,7 +1428,7 @@ In a long conversation the AI can get dragged along by earlier context.
 
 Getting into the habit of pressing `/clear` whenever the topic changes noticeably improves answer quality.
 
-## 8.7 Updating to the latest version
+## 9.7 Updating to the latest version
 
 **Update the same way you installed.**
 
@@ -1246,7 +1442,7 @@ Getting into the habit of pressing `/clear` whenever the topic changes noticeabl
 
 If you installed Codex through winget, use `winget upgrade --id OpenAI.Codex -e`.
 
-## 8.8 Removing them
+## 9.8 Removing them
 
 ```
 npm uninstall -g @anthropic-ai/claude-code
@@ -1284,7 +1480,8 @@ npm uninstall -g @google/gemini-cli
 | Execution policy | The Windows security setting that decides whether scripts may run |
 | Agent | An AI that uses tools on its own to get work done |
 | Token | The unit an AI counts text in. Used to measure usage |
-| MCP | The standard for connecting an AI to outside services such as Google Drive |
+| MCP | The standard for connecting an AI to outside services and data; a program built to it is an MCP server (Part 7) |
+| Plugin | A bundle that adds commands and ways of working to the AI; installed in Claude Code with `/plugin` (Part 7) |
 | WSL | The feature that runs Linux inside Windows. Not needed any more (Appendix D) |
 | Git Bash | The Linux-style command window installed with Git. Claude Code uses it as its shell |
 | `CLAUDE.md` / `AGENTS.md` | The file holding your working folder's rules. The AI reads it every time |
@@ -1505,7 +1702,7 @@ Save with `Ctrl + S` and close Notepad. **Close the terminal and open a new one.
 
 > This file (`$PROFILE`) runs automatically every time you start the terminal. Put it here once and you never touch it again.
 
-If that still fails, consider the Windows system-locale change in section 8.3.
+If that still fails, consider the Windows system-locale change in section 9.3.
 
 ---
 
@@ -1517,7 +1714,7 @@ If you got this far, you have the fundamentals. Once you are comfortable, try th
 
 2. **Save the instructions you reuse** — keep the prompts for recurring work in a text file and paste them in.
 
-3. **Connect outside services (MCP)** — you can wire services like Google Drive or Notion directly into the AI. Attempt this once the basics feel routine.
+3. **Add extensions (MCP servers and plugins)** — Korean documents, statutes, national statistics, Google Drive and more can be wired directly into the AI. **Part 7** covers how to install them.
 
 4. **Compare the tools** — giving the same job to Claude, Codex and Antigravity teaches you their different characters.
 
